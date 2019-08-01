@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments.html :: head (info='home')">
+
+    </head>
+    <body>
+        <div th:replace="fragments.html :: menu (${loggedIn})">
+
+        </div>
+        <div class="middle" th:if="${loggedIn}" >
+            <h1>
+               Games you've joined
+            </h1>
+            <table class="lobby">
+                <tr class="headerrow">
+                    <th >Game name</th>
+                    <th>Players</th>
+                    <th></th>
+                </tr>
+                <tr th:each="game : ${games}">
+                        <input type="hidden" name="gameId" th:value="${game.id}">
+                        <td th:text="${game.name}"></td>
+                        <td th:text="${game.amountOfPlayers()}"></td>
+                        <td><a th:href="@{'/setup/' + ${game.getId()}}"><button th:text="${'Go to'}"></button></a></td>
+                </tr>
+            </table>
+        </div>
+        <div class="middle" th:if="${!loggedIn}">
+            <h1>
+                Welcome to Districar!
+            </h1>
+            <p>
+                You need to be logged in to play this game, you can do so by pressing "Login" in the menu.<br/>
+                If you do not have an account yet, you can register one by clicking the "sign up" button below.
+            </p>
+            <form th:action="@{/signup}" th:method="get">
+                <input type="submit" value="Sign up!">
+            </form>
+        </div>
+    </body>
+</html>

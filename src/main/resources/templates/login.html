@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en_US">
+    <head th:replace="fragments.html :: head ('Login')">
+    </head>
+    <body>
+        <div th:replace="fragments.html :: menu(false)">
+
+        </div>
+        <div class="alert" th:if="${param.error}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Invalid email or password.
+        </div>
+        <div class="info" th:if="${param.logout}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            You have been logged out.
+        </div>
+
+        <div class="middle">
+            <h1>Login to Districar</h1>
+            <p>If you don't have an account yet, <a th:href="@{/signup}">click here.</a></p>
+            <form th:action="@{/login}" th:method="post">
+                <div><label> Email address: <input type="text" name="username" required/> </label></div>
+                <div><label> Password: <input type="password" name="password" required/> </label></div>
+                <div><input type="submit" value="Sign In"/></div>
+            </form>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en_US">
+<head th:replace="fragments.html :: head ('Sign up')">
+</head>
+    <body>
+    <div th:replace="fragments.html :: menu(false)">
+
+    </div>
+    <div th:if="${param.emailerror}">
+        An account with that email already exists.
+    </div>
+    <div class="middle">
+        <h1>
+            Sign up for Districar
+        </h1>
+        <p>
+            To make an account you need to enter a name for your new company. We'll also need an email address and a password to allow you to login.
+        </p>
+        <form th:action="@{/signup}" th:object="${newCompany}" th:method="post">
+            <div><label> Company name: <input type="text" name="companyName" required/></label></div>
+            <div><label> Email address: <input type="text" name="email" required/> </label></div>
+            <div><label> Password: <input type="password" name="password" required/> </label></div>
+            <div><input type="submit" value="Sign Up"/></div>
+        </form>
+    </div>
+    </body>
+</html>
