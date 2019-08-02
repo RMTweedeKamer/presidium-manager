@@ -15,7 +15,7 @@ public class RedditSupplier {
     public RedditClient redditClient;
 
     public RedditSupplier() {
-        this.userAgent = new UserAgent("GERDI-BOT", "com.th8.presidium", "v0.1", Constants.USERNAME);
+        this.userAgent = new UserAgent("GERDI-RMTK", "com.th8.presidium", "v0.1", Constants.USERNAME);
         Credentials credentials = Credentials.script(Constants.USERNAME, Constants.PASSWORD, Constants.CLIENT_ID, Constants.CLIENT_SECRET);
         NetworkAdapter adapter = new OkHttpNetworkAdapter(this.userAgent);
         this.redditClient = OAuthHelper.automatic(adapter, credentials);

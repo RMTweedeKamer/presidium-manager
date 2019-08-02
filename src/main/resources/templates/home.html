@@ -1,40 +1,31 @@
 <!DOCTYPE HTML>
 <html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="fragments.html :: head (info='home')">
+    <head th:replace="fragments.html :: head (info='Indienpaneel')">
 
     </head>
     <body>
         <div th:replace="fragments.html :: menu (${loggedIn})">
 
         </div>
-        <div class="middle" th:if="${loggedIn}" >
-            <h1>
-               Games you've joined
-            </h1>
-            <table class="lobby">
-                <tr class="headerrow">
-                    <th >Game name</th>
-                    <th>Players</th>
-                    <th></th>
-                </tr>
-                <tr th:each="game : ${games}">
-                        <input type="hidden" name="gameId" th:value="${game.id}">
-                        <td th:text="${game.name}"></td>
-                        <td th:text="${game.amountOfPlayers()}"></td>
-                        <td><a th:href="@{'/setup/' + ${game.getId()}}"><button th:text="${'Go to'}"></button></a></td>
-                </tr>
-            </table>
+        <div class="info" th:if="${param.submitted}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Uw kamerstuk is ingediend!
         </div>
-        <div class="middle" th:if="${!loggedIn}">
-            <h1>
-                Welcome to Districar!
-            </h1>
-            <p>
-                You need to be logged in to play this game, you can do so by pressing "Login" in the menu.<br/>
-                If you do not have an account yet, you can register one by clicking the "sign up" button below.
-            </p>
-            <form th:action="@{/signup}" th:method="get">
-                <input type="submit" value="Sign up!">
+        <div class="middle">
+            <form th:action="@{/}" th:object="${kamerstuk}" th:method="post">
+                <label>
+                    Titel van de motie:
+                    <input type="text" th:field="*{title}" placeholder="Motie tot..." required>
+                </label>
+                <label>
+                    Inhoud van de motie:
+                    <textarea maxlength="40000" th:field="*{content}" required></textarea>
+                </label>
+                <label>
+                    Spoed?
+                    <input type="checkbox" th:field="*{urgent}">
+                </label>
+                <input type="submit" value="Indienen">
             </form>
         </div>
     </body>
