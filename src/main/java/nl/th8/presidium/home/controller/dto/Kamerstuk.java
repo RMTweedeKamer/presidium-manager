@@ -3,15 +3,21 @@ package nl.th8.presidium.home.controller.dto;
 import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.NotNull;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class Kamerstuk {
+public class Kamerstuk implements Comparable<Kamerstuk> {
 
     @Id
-    private String submit_id;
+    private String id;
+
     private KamerstukType type;
-    private String identifier;
+
+    private String callsign;
 
     @NotNull
     private String title;
@@ -21,18 +27,21 @@ public class Kamerstuk {
 
     @NotNull
     private boolean urgent;
+
     private List<Minister> toCall;
+
+    private Date postDate;
 
     public Kamerstuk() {
         this.toCall = new ArrayList<>();
     }
 
-    public String getSubmit_id() {
-        return submit_id;
+    public String getId() {
+        return id;
     }
 
-    public void setSubmit_id(String submit_id) {
-        this.submit_id = submit_id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public KamerstukType getType() {
@@ -43,12 +52,12 @@ public class Kamerstuk {
         this.type = type;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getCallsign() {
+        return callsign;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public void setCallsign(String callsign) {
+        this.callsign = callsign;
     }
 
     public String getTitle() {
@@ -85,5 +94,27 @@ public class Kamerstuk {
 
     public void addCall(Minister minister) {
         this.toCall.add(minister);
+    }
+
+    public Date getPostDate() {
+        return postDate;
+    }
+
+    public void setPostDate(String datetime) throws ParseException {
+        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        this.postDate = formatter.parse(datetime);
+    }
+
+    @Override
+    public int compareTo(@org.jetbrains.annotations.NotNull Kamerstuk k2) {
+        if(this.postDate.after(k2.postDate)) {
+            return 1;
+        }
+        else if(this.postDate.equals(k2.postDate)) {
+            return 0;
+        }
+        else {
+            return -1;
+        }
     }
 }

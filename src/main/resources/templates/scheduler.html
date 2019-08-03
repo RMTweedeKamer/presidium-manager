@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments.html :: head ('Planner')">
+
+    </head>
+    <body>
+        <div th:replace="fragments.html :: menu(true)">
+
+        </div>
+        <div class="info" th:if="${param.waiting}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Waiting for other players to finish their turn.
+        </div>
+
+        <!--Info-->
+        <div class="small-container">
+            <div class="menu">
+                <ul>
+                    <li>Ingekomen stukken</li>
+                </ul>
+            </div>
+            <div class="small-content middle">
+                <div th:each="kamerstuk: ${kamerstukken}">
+                    <button class="collapsible" th:text="${kamerstuk.title}">
+                    </button>
+                    <div class="collapsed-content">
+                        <form th:object="${kamerstuk}" th:action="@{/scheduler/plan}" th:method="post">
+                            <input type="hidden" th:name="id" th:value="*{id}">
+                            <label>
+                                Kamerstuknummer:
+                                <input class="submitpanel" type="text" th:name="callsign" th:value="*{callsign}" placeholder="M00xx" required>
+                            </label>
+                            <label>
+                                Titel:
+                                <input class="submitpanel"  type="text" th:name="title" th:value="*{title}" required>
+                            </label>
+                            <label>
+                                Inhoud:
+                                <textarea class="submitpanel" th:name="content" th:text="*{content}" required></textarea>
+                            </label>
+                            <div class='input-group date' id='datetimepicker1'>
+                                <label>
+                                    Postdatum:
+                                    <input type='text' th:name="postDate" id="datetime" required/>
+                                </label>
+                            </div>
+                            <input type="submit" th:value="Inplannen">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="small-container">
+            <div class="menu">
+                <ul>
+                    <li>Ingeplande stukken</li>
+                </ul>
+            </div>
+            <div class="small-content middle">
+                <div th:each="kamerstuk: ${queue}">
+                    <button class="collapsible" th:text="${kamerstuk.callsign} + ': ' + ${kamerstuk.title}">
+                    </button>
+                    <div class="collapsed-content">
+                        <form th:object="${kamerstuk}" th:action="@{/scheduler/unplan}" th:method="post">
+                            <p th:text="'Ingepland voor: ' + ${kamerstuk.postDate}"></p>
+                            <input type="submit" th:value="'Uit de wachtrij halen'">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        Notifications
+        <div class="small-container">
+            <div class="menu">
+                <ul>
+                    <li th:text="Notificaties"></li>
+                </ul>
+            </div>
+            <div class="small-content middle">
+                <div th:each="notification : ${notifications}">
+                    <button class="collapsible" th:text="${notification.getTitle()}">
+                    </button>
+                    <div class="collapsed-content">
+                        <p th:text="${notification.getText()}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Fabrieken-->
+<!--        <div class="small-container">-->
+<!--            <div class="menu">-->
+<!--                <ul>-->
+<!--                    <li>Ingeplande stukken</li>-->
+<!--                </ul>-->
+<!--            </div>-->
+<!--            <div class="small-content middle">-->
+<!--                <table class="lobby">-->
+<!--                    <tr class="headerrow">-->
+<!--                        <th>-->
+<!--                            Code-->
+<!--                        </th>-->
+<!--                        <th>-->
+<!--                            Production capacity-->
+<!--                        </th>-->
+<!--                        <th>-->
+<!--                            Currently producing-->
+<!--                        </th>-->
+<!--                        <th>-->
+<!--                            Manage-->
+<!--                        </th>-->
+<!--                    </tr>-->
+<!--                    <tr th:each="factory: ${player.getFactories()}">-->
+<!--                        <td th:text="${#strings.substring(factory.getId(), 0, 5)}">-->
+
+<!--                        </td>-->
+<!--                        <td th:text="${factory.getCapacity()}">-->
+
+<!--                        </td>-->
+<!--                        <td th:text="${factory.getProducing().getName()}">-->
+
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                            <a th:href="@{'/game/' + ${game.getId()} + '/factory/' + ${factory.getId()}}"><button th:text="${'Manage'}">-->
+<!--                            </button></a>-->
+<!--                        </td>-->
+<!--                    </tr>-->
+<!--                </table>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <script>
+            var coll = document.getElementsByClassName("collapsible");
+            var i;
+
+            for (i = 0; i < coll.length; i++) {
+                coll[i].addEventListener("click", function() {
+                    this.classList.toggle("active");
+                    var content = this.nextElementSibling;
+                    if (content.style.display === "block") {
+                        content.style.display = "none";
+                    } else {
+                        content.style.display = "block";
+                    }
+                });
+            }
+        </script>
+        <script>
+            tail.DateTime("#datetime", {
+                dateFormat: "dd-mm-YYYY",
+                timeFormat: "HH:ii"
+            });
+        </script>
+    </body>
+</html>

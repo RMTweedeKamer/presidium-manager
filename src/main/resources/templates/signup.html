@@ -16,9 +16,8 @@
         <p>
             To make an account you need to enter a name for your new company. We'll also need an email address and a password to allow you to login.
         </p>
-        <form th:action="@{/signup}" th:object="${newCompany}" th:method="post">
-            <div><label> Company name: <input type="text" name="companyName" required/></label></div>
-            <div><label> Email address: <input type="text" name="email" required/> </label></div>
+        <form th:action="@{/signup}" th:object="${newUser}" th:method="post">
+            <div><label> Reddit username: <input type="text" name="username" required/></label></div>
             <div><label> Password: <input type="password" name="password" required/> </label></div>
             <div><input type="submit" value="Sign Up"/></div>
         </form>

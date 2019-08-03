@@ -27,16 +27,16 @@ public class UserService implements UserDetailsService {
     PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        System.out.println(email);
-        Optional<User> user = repository.findById(email);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println(username);
+        Optional<User> user = repository.findById(username);
 
         if(user.isPresent()) {
             List<GrantedAuthority> authorityList = Arrays.asList();
 
             return new org.springframework.security.core.userdetails.User(user.get().getUsername(), user.get().getPassword(), authorityList);
         } else {
-            throw new UsernameNotFoundException("Company not found");
+            throw new UsernameNotFoundException("User not found");
         }
     }
 

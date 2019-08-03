@@ -182,23 +182,11 @@ p.small-content {
     font-size: 15px;
 }
 
-/* --- Game tables ---*/
-table.game {
-    margin-top: 15px;
-    margin-left: 15px;
+/* --- Indienpaneel ---*/
+label.submitpanel {
+    display: block;
+    margin-left: auto;
     margin-right: auto;
-    border-collapse: collapse;
-    font-family: 'Source Sans Pro', sans-serif;
-    text-align: left;
-}
-
-tr.headerrow {
-    border-bottom: 2px solid black;
-}
-
-td {
-    padding-left: 15px;
-    padding-right: 15px;
 }
 
 /* --- Collapsibles --- */

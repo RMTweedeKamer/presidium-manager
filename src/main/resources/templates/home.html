@@ -12,16 +12,17 @@
             Uw kamerstuk is ingediend!
         </div>
         <div class="middle">
+            <h1>Dien een motie in</h1>
             <form th:action="@{/}" th:object="${kamerstuk}" th:method="post">
-                <label>
+                <label class="submitpanel">
                     Titel van de motie:
                     <input type="text" th:field="*{title}" placeholder="Motie tot..." required>
                 </label>
-                <label>
+                <label class="submitpanel">
                     Inhoud van de motie:
                     <textarea maxlength="40000" th:field="*{content}" required></textarea>
                 </label>
-                <label>
+                <label class="submitpanel">
                     Spoed?
                     <input type="checkbox" th:field="*{urgent}">
                 </label>
