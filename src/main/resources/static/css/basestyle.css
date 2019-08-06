@@ -22,11 +22,11 @@ div.menu {
     align-items: center;
     width:100%;
     height: 10%;
-    background-color: rgba(39, 174, 96,1.0);
+    background-color: rgba(41, 128, 185,1.0);
 }
 
 div.logo{
-    background: url(../img/logo.png) no-repeat center;
+    background: url(../img/logo.png) no-repeat center right;
     background-size: cover;
     width:20%;
     height: 100%;
@@ -55,17 +55,17 @@ ul.navigation li a {
 
 /*--- The alert message box ---*/
 .alert {
+    margin: 5px 10px 15px;
     padding: 20px;
     background-color: #f44336; /* Red */
     color: white;
-    margin-bottom: 15px;
 }
 
 .info {
     padding: 20px;
-    background-color: #34495e; /* Red */
+    background-color: #34495e; /* Grey */
     color: white;
-    margin-bottom: 15px;
+    margin: 5px 10px 15px;
 }
 
 .closebtn {
@@ -133,7 +133,7 @@ div.small-container div.menu {
     align-items: center;
     width:100%;
     height: 10%;
-    background-color: rgba(39, 174, 96,1.0);
+    background-color: rgba(41, 128, 185,1.0);
 }
 
 div.small-container ul {
@@ -170,14 +170,14 @@ img.tile {
     border: 0;
     margin: 3% 0 15px;
     border-radius: 5px;
-    box-shadow: 0 0 5px rgba(39, 174, 96,1.0);
+    box-shadow: 0 0 5px rgba(41, 128, 185,1.0);
 }
 
 p.small-content {
     margin-top: 10px;
     text-decoration: none;
     text-align: center;
-    color: rgba(39, 174, 96,1.0);
+    color: rgba(41, 128, 185,1.0);
     font-family: 'Source Sans Pro', sans-serif;
     font-size: 15px;
 }
@@ -191,7 +191,7 @@ label.submitpanel {
 
 /* --- Collapsibles --- */
 .collapsible {
-    background-color: rgba(129, 228, 170, 1);
+    background-color: rgba(125, 189, 232, 1.0);
     color: white;
     cursor: pointer;
     padding: 14px;
@@ -202,15 +202,85 @@ label.submitpanel {
     font-size: 15px;
 }
 
+.urgent {
+    background-color: rgba(213, 82, 68, 1.0)!important;
+}
+
 .active, .collapsible:hover {
-    background-color: rgba(129, 228, 170, 0.5);
+    background-color: rgba(52, 152, 219, 0.5);
 }
 
 .collapsed-content {
-    padding: 0 12px;
+    padding: 5px 12px;
     font-family: 'Source Sans Pro', sans-serif;
     font-size: 14px;
     display: none;
     overflow: hidden;
-    background-color: rgba(213, 246, 227, 1);
+    background-color: white;
+    border-left: 3px solid rgba(52, 152, 219, 0.5);
+    border-right: 3px solid rgba(52, 152, 219, 0.5);
+    border-bottom: 3px solid rgba(52, 152, 219, 0.5);
+}
+
+.urgent2 {
+    border-left: 3px solid rgba(213, 82, 68, 1.0);
+    border-right: 3px solid rgba(213, 82, 68, 1.0);
+    border-bottom: 3px solid rgba(213, 82, 68, 1.0);
+}
+
+label {
+    display: block;
+    text-align: left;
+}
+
+label>p {
+    display: inline-block;
+    width: 125px;
+}
+
+input {
+    display: inline-block;
+}
+
+input.small {
+    width: 100px;
+    height: 25px;
+}
+
+input.medium {
+    width: 205px;
+    height: 25px;
+}
+
+input.big {
+    width: 75%;
+    height: 25px;
+}
+
+label.login {
+    text-align: center;
+}
+
+label.login>p {
+    margin: 5px;
+}
+
+textarea {
+    display: inline-block;
+    width: 75%;
+    height: 300px;
+    vertical-align: top;
+}
+
+div.collapsed-content textarea {
+    display: inline-block;
+    width: 75%;
+    height: 205px;
+    vertical-align: top;
+}
+
+.content {
+    margin-left: 20%;
+    margin-right: 20%;
+    padding-bottom: 25px;
 }

@@ -16,11 +16,10 @@
         </div>
 
         <div class="middle">
-            <h1>Login to Districar</h1>
-            <p>If you don't have an account yet, <a th:href="@{/signup}">click here.</a></p>
+            <h1>Login voor het presidium</h1>
             <form th:action="@{/login}" th:method="post">
-                <div><label> Username: <input type="text" name="username" required/> </label></div>
-                <div><label> Password: <input type="password" name="password" required/> </label></div>
+                <div><label class="login"> <p>Username:</p> <input type="text" name="username" required/> </label></div>
+                <div><label class="login"> <p>Password:</p> <input type="password" name="password" required/> </label></div>
                 <div><input type="submit" value="Sign In"/></div>
             </form>
         </div>

@@ -11,19 +11,29 @@
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
             Uw kamerstuk is ingediend!
         </div>
-        <div class="middle">
-            <h1>Dien een motie in</h1>
+        <div class="middle content">
+            <h1>Dien een kamerstuk in</h1>
             <form th:action="@{/}" th:object="${kamerstuk}" th:method="post">
                 <label class="submitpanel">
-                    Titel van de motie:
-                    <input type="text" th:field="*{title}" placeholder="Motie tot..." required>
+                    <p>Type kamerstuk:</p>
+                    <select th:field="*{type}">
+                        <option th:each="type : ${types}" th:value="${type}" th:text="${type.getName()}"></option>
+                    </select>
                 </label>
                 <label class="submitpanel">
-                    Inhoud van de motie:
+                    <p>Titel het kamerstuk:</p>
+                    <input class="big" type="text" th:field="*{title}" placeholder="Motie tot..." required>
+                </label>
+                <label class="submitpanel">
+                    <p>Inhoud van het kamerstuk:</p>
                     <textarea maxlength="40000" th:field="*{content}" required></textarea>
                 </label>
                 <label class="submitpanel">
-                    Spoed?
+                    <p>Gebruikersnaam indiener:</p>
+                    <input class="medium" type="text" th:field="*{submittedBy}" placeholder="th8" required>
+                </label>
+                <label class="submitpanel">
+                    <p>Spoed?</p>
                     <input type="checkbox" th:field="*{urgent}">
                 </label>
                 <input type="submit" value="Indienen">

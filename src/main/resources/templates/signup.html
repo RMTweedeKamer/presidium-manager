@@ -6,15 +6,15 @@
     <div th:replace="fragments.html :: menu(false)">
 
     </div>
-    <div th:if="${param.emailerror}">
-        An account with that email already exists.
+    <div th:if="${param.nameerror}">
+        An account with that username already exists.
     </div>
     <div class="middle">
         <h1>
-            Sign up for Districar
+            Maak een account als presidiumlid
         </h1>
         <p>
-            To make an account you need to enter a name for your new company. We'll also need an email address and a password to allow you to login.
+            Voer om een account aan te maken je reddit username (zonder /u/) en een wachtwoord in.
         </p>
         <form th:action="@{/signup}" th:object="${newUser}" th:method="post">
             <div><label> Reddit username: <input type="text" name="username" required/></label></div>

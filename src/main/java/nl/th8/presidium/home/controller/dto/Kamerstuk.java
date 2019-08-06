@@ -1,5 +1,6 @@
 package nl.th8.presidium.home.controller.dto;
 
+import nl.th8.presidium.Constants;
 import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.NotNull;
@@ -9,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class Kamerstuk implements Comparable<Kamerstuk> {
 
@@ -31,6 +33,10 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
     private List<Minister> toCall;
 
     private Date postDate;
+
+    private String submittedBy;
+
+    private String reason;
 
     public Kamerstuk() {
         this.toCall = new ArrayList<>();
@@ -100,9 +106,18 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
         return postDate;
     }
 
+    public String getPostDateAsString() {
+        DateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT, new Locale("nl", "NL"));
+        return format.format(this.postDate);
+    }
+
     public void setPostDate(String datetime) throws ParseException {
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         this.postDate = formatter.parse(datetime);
+    }
+
+    public void unsetPostDate() {
+        this.postDate = null;
     }
 
     @Override
@@ -116,5 +131,21 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
         else {
             return -1;
         }
+    }
+
+    public String getSubmittedBy() {
+        return submittedBy;
+    }
+
+    public void setSubmittedBy(String submittedBy) {
+        this.submittedBy = submittedBy;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }

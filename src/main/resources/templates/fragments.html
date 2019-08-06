@@ -3,7 +3,7 @@
 <head th:fragment="head (info)">
     <title th:text="'RMTK Presidium - ' + ${info ?: ''}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="description" content="Districar, the car distribution game.">
+    <meta name="description" content="Indienpaneel van het RMTK Presidium">
     <meta name="viewport" content="width=device-width, initial-scale=0.5">
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet">
@@ -16,6 +16,7 @@
     <div class="logo"></div>
     <ul class="navigation">
         <li><a th:href="@{/}">Indienpaneel</a></li>
+        <li><a th:href="@{/scheduler}">Kamerstukken manager</a></li>
         <li><a th:href="@{https://reddit.com/r/rmtk}">Naar RMTK</a></li>
         <li th:if="${!loggedIn}"><a th:href="@{/login}">Login</a></li>
         <li th:if="${loggedIn}"><form id="logout" th:action="@{/logout}" th:method="post"><a onclick="document.getElementById('logout').submit()">Logout</a></form></li>

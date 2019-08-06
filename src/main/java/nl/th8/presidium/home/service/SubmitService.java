@@ -13,7 +13,6 @@ public class SubmitService {
     private KamerstukRepository kamerstukRepository;
 
     public void processKamerstuk(Kamerstuk kamerstuk) {
-        kamerstuk.setType(KamerstukType.MOTIE); //TODO implement other types.
         kamerstukRepository.insert(kamerstuk);
     }
 }
