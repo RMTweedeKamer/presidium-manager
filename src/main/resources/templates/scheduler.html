@@ -29,47 +29,54 @@
             </div>
             <div class="small-content middle">
                 <div th:each="kamerstuk: ${kamerstukken}">
-                    <button th:classappend="${kamerstuk.isUrgent()}? urgent" class="collapsible" th:text="${kamerstuk.title}">
+                    <button th:classappend="${kamerstuk.isUrgent()}? urgent" class="openBtn" th:text="${kamerstuk.title}">
                     </button>
-                    <div th:classappend="${kamerstuk.isUrgent()}? urgent2" class="collapsed-content">
-                        <form th:object="${kamerstuk}" th:action="@{/scheduler/plan}" th:method="post">
-                            <input type="hidden" th:name="id" th:value="*{id}">
-                            <input type="hidden" th:name="type" th:value="*{type}">
-                            <input type="hidden" th:name="urgent" th:value="*{urgent}">
-                            <label>
-                                <p>Kamerstuknummer:</p>
-                                <input class="submitpanel small" type="text" th:name="callsign" th:value="*{callsign}" th:placeholder="${kamerstuk.type.getCall()} + '0000'" required>
-                            </label>
-                            <label>
-                                <p>Titel:</p>
-                                <input class="submitpanel big"  type="text" th:name="title" th:value="*{title}" required>
-                            </label>
-                            <label>
-                                <p>Inhoud:</p>
-                                <textarea class="submitpanel" th:name="content" th:text="*{content}" required></textarea>
-                            </label>
-                            <label>
-                                <p>Indiener:</p>
-                                <input class="medium" type="text" th:name="submittedBy" th:value="*{submittedBy}" readonly>
-                            </label>
-                            <div class='input-group date' id='datetimepicker1'>
+                    <div th:classappend="${kamerstuk.isUrgent()}? urgent2" class="modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <form th:object="${kamerstuk}" th:action="@{/scheduler/plan}" th:method="post">
+                                <input type="hidden" th:name="id" th:value="*{id}">
+                                <input type="hidden" th:name="type" th:value="*{type}">
+                                <input type="hidden" th:name="urgent" th:value="*{urgent}">
                                 <label>
-                                    <p>Postdatum:</p>
-                                    <input class="submitpanel medium" type='text' th:name="postDate" id="datetime" required/>
+                                    <p>Kamerstuknummer:</p>
+                                    <input class="submitpanel small" type="text" th:name="callsign" th:value="*{callsign}" th:placeholder="${kamerstuk.type.getCall()} + '0000'" required>
                                 </label>
-                            </div>
-                            <input type="submit" th:value="Inplannen">
-                        </form>
-                        <hr>
-                        <form th:object="${kamerstuk}" th:action="@{/scheduler/deny}" th:method="post">
-                            <input type="hidden" th:name="id" th:value="*{id}">
-                            <input type="hidden" th:name="title" th:value="*{title}">
-                            <label>
-                                <p>Reden voor afwijzing:</p>
-                                <input class="submitpanel big" type="text" th:name="reason" th:value="*{reason}" required>
-                            </label>
-                            <input type="submit" th:value="Afwijzen">
-                        </form>
+                                <label>
+                                    <p>Titel:</p>
+                                    <input class="submitpanel big"  type="text" th:name="title" th:value="*{title}" required>
+                                </label>
+                                <label>
+                                    <p>Inhoud:</p>
+                                    <textarea class="submitpanel" th:name="content" th:text="*{content}" required></textarea>
+                                </label>
+                                <label>
+                                    <p>Indiener:</p>
+                                    <input class="medium" type="text" th:name="submittedBy" th:value="*{submittedBy}" readonly>
+                                </label>
+                                <div class='input-group date' id='datetimepicker1'>
+                                    <label>
+                                        <p>Postdatum:</p>
+                                        <input class="submitpanel medium" type='text' th:name="postDate" id="datetime" required/>
+                                    </label>
+                                </div>
+                                <label>
+                                    <p>Oproepen:</p>
+                                    <input class="submitpanel big" type="text" th:name="toCallString" th:value="*{toCallString}">
+                                </label>
+                                <input type="submit" th:value="Inplannen">
+                            </form>
+                            <hr>
+                            <form th:object="${kamerstuk}" th:action="@{/scheduler/deny}" th:method="post">
+                                <input type="hidden" th:name="id" th:value="*{id}">
+                                <input type="hidden" th:name="title" th:value="*{title}">
+                                <label>
+                                    <p>Reden voor afwijzing:</p>
+                                    <input class="submitpanel big" type="text" th:name="reason" th:value="*{reason}" required>
+                                </label>
+                                <input type="submit" th:value="Afwijzen">
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -89,6 +96,7 @@
                         <form th:object="${kamerstuk}" th:action="@{/scheduler/unplan}" th:method="post">
                             <input type="hidden" th:name="id" th:value="*{id}">
                             <p th:text="'Ingepland op: ' + ${kamerstuk.getPostDateAsString()}"></p>
+                            <p th:each="minister: ${kamerstuk.toCall}" th:text="'Opgeroepen: ' + ${minister}"></p>
                             <label>
                                 <p>Reden:</p>
                                 <input class="submitpanel big" type="text" th:name="reason" th:value="*{reason}" required>
@@ -161,10 +169,9 @@
 
         <script>
             var coll = document.getElementsByClassName("collapsible");
-            var i;
 
-            for (i = 0; i < coll.length; i++) {
-                coll[i].addEventListener("click", function() {
+            for (var i = 0; i < coll.length; i++) {
+                coll[i].addEventListener("click", function () {
                     this.classList.toggle("active");
                     var content = this.nextElementSibling;
                     if (content.style.display === "block") {
@@ -174,6 +181,22 @@
                     }
                 });
             }
+
+                var modals = document.getElementsByClassName("openBtn");
+                var span = document.getElementsByClassName("close");
+
+                for (i = 0; i < modals.length; i++) {
+                    modals[i].addEventListener("click", function() {
+                        this.classList.toggle("active");
+                        var content = this.nextElementSibling;
+                        content.style.display = "block";
+                    });
+                    span[i].addEventListener("click", function() {
+                        this.classList.toggle("closed");
+                        var content = this.parentElement.parentElement;
+                        content.style.display = "none";
+                    })
+                }
         </script>
         <script>
             tail.DateTime("#datetime", {

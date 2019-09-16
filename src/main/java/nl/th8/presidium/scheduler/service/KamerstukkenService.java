@@ -1,6 +1,9 @@
 package nl.th8.presidium.scheduler.service;
 
+import net.dean.jraw.models.Comment;
+import net.dean.jraw.models.DistinguishedStatus;
 import net.dean.jraw.models.SubmissionKind;
+import net.dean.jraw.references.SubmissionReference;
 import nl.th8.presidium.Constants;
 import nl.th8.presidium.RedditSupplier;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
@@ -101,6 +104,13 @@ public class KamerstukkenService {
     private void postKamerstuk(Kamerstuk kamerstuk) {
         String title = String.format("%s: %s", kamerstuk.getCallsign(), kamerstuk.getTitle());
         String content = String.format("##%s \n \n %s", kamerstuk.getTitle(), kamerstuk.getContent());
-        supplier.redditClient.subreddit(Constants.SUBREDDIT).submit(SubmissionKind.SELF, title, content, false);
+        SubmissionReference submission = supplier.redditClient.subreddit(Constants.SUBREDDIT).submit(SubmissionKind.SELF, title, content, false);
+        StringBuilder replyBuilder = new StringBuilder();
+        replyBuilder.append("###Voor een reactie op dit kamerstuk wordt opgeroepen:  ").append("\n");
+        for(String minister : kamerstuk.getToCall()) {
+            replyBuilder.append("* ").append(minister).append("  ").append("\n");
+        }
+        Comment comment = submission.reply(replyBuilder.toString());
+        comment.toReference(supplier.redditClient).distinguish(DistinguishedStatus.MODERATOR, true);
     }
 }

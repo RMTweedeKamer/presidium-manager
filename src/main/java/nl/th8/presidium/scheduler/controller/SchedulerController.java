@@ -39,6 +39,7 @@ public class SchedulerController {
 
     @PostMapping("/plan")
     public String planKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
+        kamerstuk.processToCallString();
         kamerstukkenService.queueKamerstuk(kamerstuk, principal.getName());
         logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());
 

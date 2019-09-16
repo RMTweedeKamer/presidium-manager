@@ -7,10 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class Kamerstuk implements Comparable<Kamerstuk> {
 
@@ -30,7 +27,9 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
     @NotNull
     private boolean urgent;
 
-    private List<Minister> toCall;
+    private List<String> toCall;
+
+    private String toCallString;
 
     private Date postDate;
 
@@ -90,15 +89,15 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
         this.urgent = urgent;
     }
 
-    public List<Minister> getToCall() {
+    public List<String> getToCall() {
         return toCall;
     }
 
-    public void setToCall(List<Minister> toCall) {
+    public void setToCall(List<String> toCall) {
         this.toCall = toCall;
     }
 
-    public void addCall(Minister minister) {
+    public void addCall(String minister) {
         this.toCall.add(minister);
     }
 
@@ -147,5 +146,17 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public String getToCallString() {
+        return toCallString;
+    }
+
+    public void setToCallString(String toCallString) {
+        this.toCallString = toCallString;
+    }
+
+    public void processToCallString() {
+        this.toCall = Arrays.asList(this.toCallString.split(";"));
     }
 }
