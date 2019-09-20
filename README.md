@@ -5,7 +5,7 @@
 
 ### Plan a Kamerstuk
 
-Method: `POST`
+Method: `POST`  
 Endpoint: `/scheduler/plan/api`
 
 | Param        | Description                                                                                                     | Required |  Allowed values                                                                                  |
@@ -22,7 +22,8 @@ Endpoint: `/scheduler/plan/api`
 
 #### Example
 
-```{
+```
+{
   "secret": "supersecrettoken",
   "type": "Motie",
   "callsign": "M0001",
