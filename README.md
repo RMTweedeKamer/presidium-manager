@@ -5,6 +5,9 @@
 
 ### Plan a Kamerstuk
 
+Method: `POST`
+Endpoint: `/scheduler/plan/api`
+
 | Param        | Description                                                                                                     | Required |  Allowed values                                                                                  |
 |--------------|-----------------------------------------------------------------------------------------------------------------|----------|--------------------------------------------------------------------------------------------------|
 | secret       | Secret API token to authenticate request                                                                        | yes      | Any string                                                                                       |
@@ -29,5 +32,6 @@
   "toCallString": "De Secretaris-Generaal, /u/th8;De Voorzitter, /u/HiddeVdV96",
   "postDate": "21-09-2019 00:00",
   "submittedBy: "th8"
-}```
+}
+```
 
