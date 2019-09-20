@@ -1,5 +1,6 @@
 package nl.th8.presidium.home.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import nl.th8.presidium.Constants;
 import org.springframework.data.annotation.Id;
 
@@ -14,6 +15,9 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
     @Id
     private String id;
 
+    private String secret;
+
+    @NotNull
     private KamerstukType type;
 
     private String callsign;
@@ -115,6 +119,10 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
         this.postDate = formatter.parse(datetime);
     }
 
+    public void setPostDateFromDate(Date datetime) {
+        this.postDate = datetime;
+    }
+
     public void unsetPostDate() {
         this.postDate = null;
     }
@@ -157,6 +165,25 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
     }
 
     public void processToCallString() {
-        this.toCall = Arrays.asList(this.toCallString.split(";"));
+        if(this.toCallString != null) {
+            this.toCall = Arrays.asList(this.toCallString.split(";"));
+        }
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
+    public void processCallsigns() {
+        switch(type) {
+            case RESULTATEN:
+            case STEMMING:
+                this.callsign = type.getName();
+                break;
+        }
     }
 }

@@ -62,11 +62,41 @@ public class KamerstukkenService {
         return kamerstukRepository.findAllByPostDateIsAfter(new Date());
     }
 
-    public void queueKamerstuk(Kamerstuk kamerstuk, String mod) {
-        kamerstukRepository.save(kamerstuk);
+    public String queueKamerstuk(Kamerstuk kamerstuk, String mod) {
+        //Process kamerstuk data
+        kamerstuk.processToCallString();
+        kamerstuk.processCallsigns();
+
+        //Save kamerstuk to MongoDB
+        Kamerstuk kamerstukSaved = kamerstukRepository.save(kamerstuk);
+
+        //Notify
         notificationService.addNotification(new Notification(String.format(Constants.QUEUED_TITLE, kamerstuk.getCallsign()),
                 String.format(Constants.QUEUED_TEXT, kamerstuk.getPostDateAsString(), mod)));
-        supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.QUEUED_SUBJECT, String.format(Constants.QUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
+        if(kamerstuk.getSubmittedBy() != null) {
+            supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.QUEUED_SUBJECT, String.format(Constants.QUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
+        }
+        return kamerstukSaved.getId();
+    }
+
+    public void rescheduleKamerstuk(String id, Date postDate, String mod) throws KamerstukNotFoundException {
+        Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(id);
+        Kamerstuk kamerstuk;
+        if(possibleKamerstuk.isPresent()) {
+            kamerstuk = possibleKamerstuk.get();
+        }
+        else {
+            throw new KamerstukNotFoundException();
+        }
+
+        kamerstuk.setPostDateFromDate(postDate);
+        kamerstukRepository.save(kamerstuk);
+        notificationService.addNotification(new Notification(String.format(Constants.REQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.REQUEUED_TEXT, mod)));
+        if (kamerstuk.getSubmittedBy() != null) {
+            supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.REQUEUED_SUBJECT, String.format(Constants.REQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
+        }
+
+
     }
 
     public void dequeueKamerstuk(String kamerstukId, String reason, String mod) throws KamerstukNotFoundException {
@@ -83,7 +113,9 @@ public class KamerstukkenService {
         kamerstuk.unsetPostDate();
         kamerstukRepository.save(kamerstuk);
         notificationService.addNotification(new Notification(String.format(Constants.DEQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.DEQUEUED_TEXT, mod)));
-        supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DEQUEUED_SUBJECT, String.format(Constants.DEQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getReason()));
+        if(kamerstuk.getSubmittedBy() != null) {
+            supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DEQUEUED_SUBJECT, String.format(Constants.DEQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getReason()));
+        }
     }
 
     public void denyKamerstuk(String kamerstukId, String reason, String mod) throws KamerstukNotFoundException {
@@ -98,19 +130,28 @@ public class KamerstukkenService {
 
         kamerstukRepository.delete(kamerstuk);
         notificationService.addNotification(new Notification(String.format(Constants.DENIED_TITLE, kamerstuk.getTitle()), String.format(Constants.DENIED_TEXT, mod)));
-        supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DENIED_SUBJECT, String.format(Constants.DENIED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), reason));
+        if(kamerstuk.getSubmittedBy() != null) {
+            supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DENIED_SUBJECT, String.format(Constants.DENIED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), reason));
+        }
     }
 
     private void postKamerstuk(Kamerstuk kamerstuk) {
-        String title = String.format("%s: %s", kamerstuk.getCallsign(), kamerstuk.getTitle());
+        String title;
+        if(kamerstuk.getCallsign() != null) {
+            title = String.format("%s: %s", kamerstuk.getCallsign(), kamerstuk.getTitle());
+        } else {
+            title = kamerstuk.getTitle();
+        }
         String content = String.format("##%s \n \n %s", kamerstuk.getTitle(), kamerstuk.getContent());
         SubmissionReference submission = supplier.redditClient.subreddit(Constants.SUBREDDIT).submit(SubmissionKind.SELF, title, content, false);
-        StringBuilder replyBuilder = new StringBuilder();
-        replyBuilder.append("###Voor een reactie op dit kamerstuk wordt opgeroepen:  ").append("\n");
-        for(String minister : kamerstuk.getToCall()) {
-            replyBuilder.append("* ").append(minister).append("  ").append("\n");
+        if(kamerstuk.getToCall().size() > 0) {
+            StringBuilder replyBuilder = new StringBuilder();
+            replyBuilder.append("###Voor een reactie op dit kamerstuk wordt opgeroepen:  ").append("\n");
+            for (String minister : kamerstuk.getToCall()) {
+                replyBuilder.append("* ").append(minister).append("  ").append("\n");
+            }
+            Comment comment = submission.reply(replyBuilder.toString());
+            comment.toReference(supplier.redditClient).distinguish(DistinguishedStatus.MODERATOR, true);
         }
-        Comment comment = submission.reply(replyBuilder.toString());
-        comment.toReference(supplier.redditClient).distinguish(DistinguishedStatus.MODERATOR, true);
     }
 }

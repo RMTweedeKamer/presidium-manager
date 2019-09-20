@@ -1,5 +1,6 @@
 package nl.th8.presidium.scheduler.controller;
 
+import nl.th8.presidium.Constants;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
 import nl.th8.presidium.scheduler.service.KamerstukkenService;
@@ -7,13 +8,12 @@ import nl.th8.presidium.scheduler.service.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 
 @Controller
@@ -39,11 +39,35 @@ public class SchedulerController {
 
     @PostMapping("/plan")
     public String planKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
-        kamerstuk.processToCallString();
         kamerstukkenService.queueKamerstuk(kamerstuk, principal.getName());
         logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());
 
         return "redirect:/scheduler?planned";
+    }
+
+    @PostMapping("/plan/api")
+    public ResponseEntity planKamerstukAPI(@RequestBody @Valid Kamerstuk kamerstuk) {
+        String id;
+        if(kamerstuk.getSecret().equals(Constants.SECRET)) {
+            kamerstuk.processToCallString();
+            id = kamerstukkenService.queueKamerstuk(kamerstuk, "API");
+            logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());
+        }
+        else {
+            return ResponseEntity.status(403).build();
+        }
+        return ResponseEntity.status(201).body(id);
+    }
+
+    @PostMapping("/reschedule")
+    public String rescheduleKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
+        try {
+            kamerstukkenService.rescheduleKamerstuk(kamerstuk.getId(), kamerstuk.getPostDate(), principal.getName());
+        }
+        catch (KamerstukNotFoundException e) {
+            return "redirect:/scheduler?notfound";
+        }
+        return "redirect:/scheduler?rescheduled";
     }
 
     @PostMapping("/unplan")
