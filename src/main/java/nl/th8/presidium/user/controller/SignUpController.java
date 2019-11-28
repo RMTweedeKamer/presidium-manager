@@ -1,5 +1,6 @@
 package nl.th8.presidium.user.controller;
 
+import nl.th8.presidium.user.InvalidSecretException;
 import nl.th8.presidium.user.UsernameExistsException;
 import nl.th8.presidium.user.controller.dto.User;
 import nl.th8.presidium.user.service.UserService;
@@ -33,6 +34,8 @@ public class SignUpController {
             userService.createUser(user);
         } catch (UsernameExistsException e) {
             return "redirect:/signup?nameerror";
+        } catch (InvalidSecretException e) {
+            return "redirect:/signup?invalidsecret";
         }
         return "login";
     }

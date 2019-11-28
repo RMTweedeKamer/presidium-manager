@@ -1,6 +1,7 @@
 package nl.th8.presidium.user.service;
 
 import nl.th8.presidium.Constants;
+import nl.th8.presidium.user.InvalidSecretException;
 import nl.th8.presidium.user.UsernameExistsException;
 import nl.th8.presidium.user.controller.dto.User;
 import nl.th8.presidium.user.data.UserRepository;
@@ -41,11 +42,13 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public void createUser(User newUser) throws UsernameExistsException {
+    public void createUser(User newUser) throws UsernameExistsException, InvalidSecretException {
         if(usernameExists(newUser.getUsername())) {
             throw new UsernameExistsException("There is an account with that username: " +  newUser.getUsername());
         }
-        if(newUser.getSecret().equals(Constants.SECRET))
+        if(newUser.getSecret().equals(Constants.SECRET)) {
+            throw new InvalidSecretException("The entered secret is incorrect");
+        }
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         repository.insert(newUser);
     }
