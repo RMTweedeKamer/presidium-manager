@@ -6,11 +6,11 @@
     <div th:replace="fragments.html :: menu(false)">
 
     </div>
-    <div class="warning" th:if="${param.nameerror}">
+    <div class="alert" th:if="${param.nameerror}">
         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
         An account with that username already exists.
     </div>
-    <div class="warning" th:if="${param.invalidsecret}">
+    <div class="alert" th:if="${param.invalidsecret}">
         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
         The entered secret is invalid.
     </div>
@@ -22,9 +22,9 @@
             Voer om een account aan te maken je reddit username (zonder /u/) en een wachtwoord in.
         </p>
         <form th:action="@{/signup}" th:object="${newUser}" th:method="post">
-            <div><label> Reddit username: <input type="text" name="username" required/></label></div>
-            <div><label> Password: <input type="password" name="password" required/></label></div>
-            <div><label> Secret: <input type="text" name="secret" required></label></div>
+            <div><label class="login"> Reddit username: <input type="text" name="username" required/></label></div>
+            <div><label class="login"> Password: <input type="password" name="password" required/></label></div>
+            <div><label class="login"> Secret: <input type="text" name="secret" required></label></div>
             <div><input type="submit" value="Sign Up"/></div>
         </form>
     </div>

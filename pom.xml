@@ -119,6 +119,8 @@
             </to>
             <container>
               <jvmFlags>
+                <jvmFlag>-Xms64m</jvmFlag>
+                <jvmFlag>-Xmx256m</jvmFlag>
                 <jvmFlag>-server</jvmFlag>
               </jvmFlags>
             </container>

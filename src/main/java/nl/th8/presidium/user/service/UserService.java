@@ -46,7 +46,7 @@ public class UserService implements UserDetailsService {
         if(usernameExists(newUser.getUsername())) {
             throw new UsernameExistsException("There is an account with that username: " +  newUser.getUsername());
         }
-        if(newUser.getSecret().equals(Constants.SECRET)) {
+        if(!newUser.getSecret().equals(Constants.SECRET)) {
             throw new InvalidSecretException("The entered secret is incorrect");
         }
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
