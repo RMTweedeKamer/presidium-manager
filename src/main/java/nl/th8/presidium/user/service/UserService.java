@@ -1,5 +1,6 @@
 package nl.th8.presidium.user.service;
 
+import nl.th8.presidium.Constants;
 import nl.th8.presidium.user.UsernameExistsException;
 import nl.th8.presidium.user.controller.dto.User;
 import nl.th8.presidium.user.data.UserRepository;
@@ -44,6 +45,7 @@ public class UserService implements UserDetailsService {
         if(usernameExists(newUser.getUsername())) {
             throw new UsernameExistsException("There is an account with that username: " +  newUser.getUsername());
         }
+        if(newUser.getSecret().equals(Constants.SECRET))
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         repository.insert(newUser);
     }

@@ -20,6 +20,8 @@ public class User {
     @NotEmpty
     private String password;
 
+    private String secret;
+
     private List<GrantedAuthority> authorityList;
 
     private boolean verified;
@@ -60,5 +62,13 @@ public class User {
 
     public void grantAuthority(String authority) {
         this.authorityList.add(new SimpleGrantedAuthority(authority));
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
     }
 }
