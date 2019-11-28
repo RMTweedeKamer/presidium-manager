@@ -11,8 +11,13 @@
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
             Uw kamerstuk is ingediend!
         </div>
+        <div class="warning" th:if="${param.problem}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Er is helaas iets misgegaan, laat dit even weten aan /u/th8.
+        </div>
         <div class="middle content">
             <h1>Dien een kamerstuk in</h1>
+            <p><b>Let op, momenteel gaat er soms iets mis bij het versturen. Zorg dat je de inhoud van je kamerstuk elders hebt staan zodat je deze niet verliest!</b></p>
             <form th:action="@{/}" th:object="${kamerstuk}" th:method="post">
                 <label class="submitpanel">
                     <p>Type kamerstuk:</p>

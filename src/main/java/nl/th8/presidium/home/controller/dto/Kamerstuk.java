@@ -166,7 +166,9 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     public void processToCallString() {
         if(this.toCallString != null) {
-            this.toCall = Arrays.asList(this.toCallString.split(";"));
+            if (!this.toCallString.isEmpty()) {
+                this.toCall = Arrays.asList(this.toCallString.split(";"));
+            }
         }
     }
 
