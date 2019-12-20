@@ -11,7 +11,13 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
 
     List<Kamerstuk> findAllByPostDateIsNull();
 
-    PriorityQueue<Kamerstuk> findAllByPostDateIsAfter(Date date);
+    PriorityQueue<Kamerstuk> findAllByPostDateIsAfterAndDeniedIsFalse(Date date);
 
-    PriorityQueue<Kamerstuk> findAllByPostDateIsBefore(Date date);
+    PriorityQueue<Kamerstuk> findAllByPostDateIsBeforeAndPostedIsFalseAndDeniedIsFalse(Date date);
+
+    PriorityQueue<Kamerstuk> findAllByVoteDateAfterAndPostedIsTrue(Date date);
+
+    PriorityQueue<Kamerstuk> findAllByPostedIsTrueAndVotePostedIsFalse();
+
+    List<Kamerstuk> findAllByPostDateIsNullAndDeniedIsFalse();
 }

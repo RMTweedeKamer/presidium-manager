@@ -2,6 +2,7 @@ package nl.th8.presidium.home.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import nl.th8.presidium.Constants;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.NotNull;
@@ -20,6 +21,7 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
     @NotNull
     private KamerstukType type;
 
+    @UniqueElements
     private String callsign;
 
     @NotNull
@@ -37,12 +39,25 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     private Date postDate;
 
+    private Date voteDate;
+
     private String submittedBy;
 
     private String reason;
 
+    private boolean posted;
+
+    private boolean votePosted;
+
+    private boolean denied;
+
+    private String url;
+
     public Kamerstuk() {
         this.toCall = new ArrayList<>();
+        this.posted = false;
+        this.votePosted = false;
+        this.denied = false;
     }
 
     public String getId() {
@@ -127,6 +142,28 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
         this.postDate = null;
     }
 
+    public Date getVoteDate() {
+        return voteDate;
+    }
+
+    public String getVoteDateAsString() {
+        DateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT, new Locale("nl", "NL"));
+        return format.format(this.voteDate);
+    }
+
+    public void setVoteDate(String datetime) throws ParseException {
+        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        this.voteDate = formatter.parse(datetime);
+    }
+
+    public void setVoteDateFromDate(Date datetime) {
+        this.voteDate = datetime;
+    }
+
+    public void unsetVoteDate() {
+        this.voteDate = null;
+    }
+
     @Override
     public int compareTo(@org.jetbrains.annotations.NotNull Kamerstuk k2) {
         if(this.postDate.after(k2.postDate)) {
@@ -187,5 +224,37 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
                 this.callsign = type.getName();
                 break;
         }
+    }
+
+    public boolean isPosted() {
+        return posted;
+    }
+
+    public void setPosted(boolean posted) {
+        this.posted = posted;
+    }
+
+    public boolean isVotePosted() {
+        return votePosted;
+    }
+
+    public void setVotePosted(boolean votePosted) {
+        this.votePosted = votePosted;
+    }
+
+    public boolean isDenied() {
+        return denied;
+    }
+
+    public void setDenied(boolean denied) {
+        this.denied = denied;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

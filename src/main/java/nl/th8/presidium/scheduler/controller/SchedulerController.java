@@ -8,12 +8,10 @@ import nl.th8.presidium.scheduler.service.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -35,6 +33,7 @@ public class SchedulerController {
         model.addAttribute("kamerstukken", kamerstukkenService.getNonScheduledKamerstukken());
         model.addAttribute("queue", kamerstukkenService.getKamerstukkenQueue());
         model.addAttribute("notifications", notificationService.getAllSettings().getNotifications());
+        model.addAttribute("votesQueued", kamerstukkenService.getKamerstukkenVoteQueue());
 
         return "scheduler";
     }
@@ -64,7 +63,7 @@ public class SchedulerController {
     @PostMapping("/reschedule")
     public String rescheduleKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
         try {
-            kamerstukkenService.rescheduleKamerstuk(kamerstuk.getId(), kamerstuk.getPostDate(), principal.getName());
+            kamerstukkenService.rescheduleKamerstuk(kamerstuk.getId(), kamerstuk.getPostDate(), kamerstuk.getVoteDate(), principal.getName());
         }
         catch (KamerstukNotFoundException e) {
             return "redirect:/scheduler?notfound";
