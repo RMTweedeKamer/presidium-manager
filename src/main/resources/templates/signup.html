@@ -21,7 +21,7 @@
         <p>
             Voer om een account aan te maken je reddit username (zonder /u/) en een wachtwoord in.
         </p>
-        <form th:action="@{/signup}" th:object="${newUser}" th:method="post">
+        <form class="middle" th:action="@{/signup}" th:object="${newUser}" th:method="post">
             <div><label class="login"> Reddit username: <input type="text" name="username" required/></label></div>
             <div><label class="login"> Password: <input type="password" name="password" required/></label></div>
             <div><label class="login"> Secret: <input type="text" name="secret" required></label></div>

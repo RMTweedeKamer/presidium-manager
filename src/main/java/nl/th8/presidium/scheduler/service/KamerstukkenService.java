@@ -204,7 +204,7 @@ public class KamerstukkenService {
         content.append("Voor/Tegen/Onthouden:\n");
         content.append(format.toString());
         content.append("\n---\n");
-        content.append("###Deze stemming sluit op ").append(newVote.getVoteDateAsString()).append("\n");
+        content.append("###Deze stemming sluit op: ").append(newVote.getVoteDateAsString()).append("\n");
         content.append("**Let op: stemmen na deze datum zijn ongeldig**");
 
         newVote.setType(KamerstukType.STEMMING);
