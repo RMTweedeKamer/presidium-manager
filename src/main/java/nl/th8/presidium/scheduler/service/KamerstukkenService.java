@@ -63,6 +63,7 @@ public class KamerstukkenService {
             Kamerstuk toVoteOn = kamerstukkenToCheck.poll();
             if(DateUtils.isSameDay(toVoteOn.getVoteDate(), currentDate) || toVoteOn.getVoteDate().before(currentDate)) {
                 votesToPost.add(toVoteOn);
+                toVoteOn.setVotePosted(true);
             }
             constructVotePost(votesToPost);
         }
