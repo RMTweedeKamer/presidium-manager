@@ -39,7 +39,11 @@ public class HomeController {
 
     @PostMapping
     public String submitKamerstuk(@ModelAttribute Kamerstuk kamerstuk) {
-        submitService.processKamerstuk(kamerstuk);
+        try {
+            submitService.processKamerstuk(kamerstuk);
+        } catch (IllegalArgumentException e) {
+            return "redirect:/?problem";
+        }
 
         return "redirect:/?submitted";
     }

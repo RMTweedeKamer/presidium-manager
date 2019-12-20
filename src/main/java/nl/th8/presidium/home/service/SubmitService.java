@@ -12,7 +12,12 @@ public class SubmitService {
     @Autowired
     private KamerstukRepository kamerstukRepository;
 
-    public void processKamerstuk(Kamerstuk kamerstuk) {
+    public void processKamerstuk(Kamerstuk kamerstuk) throws IllegalArgumentException {
+        if (kamerstuk.getTitle().isEmpty() ||
+            kamerstuk.getContent().isEmpty() ||
+            kamerstuk.getSubmittedBy().isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         kamerstukRepository.insert(kamerstuk);
     }
 }
