@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head (info=${status})">
+
+</head>
+<body>
+<div th:replace="fragments.html :: menu (false)">
+
+</div>
+<div class="normal-container">
+    <div class="menu">
+        <ul>
+            <li>Error</li>
+        </ul>
+    </div>
+    <div class="normal-content middle">
+        <div class="middle content">
+            <h1 th:text="${status} + ' - ' + ${error}"></h1>
+            <p>
+                Er is iets fout gegaan tijdens het ophalen van deze pagina.
+                Als je niet weet waarom kun je <a href="mailto:bug@th8.nl">th8</a> een mailtje sturen met onderstaande informatie:
+            </p>
+            <button class="collapsible">
+                Klik hier voor error informatie!
+            </button>
+            <div class="collapsed-content">
+                <h1 th:text="${exception}"></h1>
+                <p class="error" th:each="st : ${trace}" th:text="${st}"></p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    var coll = document.getElementsByClassName("collapsible");
+
+    for (var i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
+    }
+
+    var modals = document.getElementsByClassName("openBtn");
+    var span = document.getElementsByClassName("close");
+
+    for (i = 0; i < modals.length; i++) {
+        modals[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            content.style.display = "block";
+        });
+        span[i].addEventListener("click", function() {
+            this.classList.toggle("closed");
+            var content = this.parentElement.parentElement;
+            content.style.display = "none";
+        })
+    }
+</script>
+</body>
+</html>
