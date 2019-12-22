@@ -115,8 +115,21 @@ public class KamerstukkenService {
         if (kamerstuk.getSubmittedBy() != null) {
             supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.REQUEUED_SUBJECT, String.format(Constants.REQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
         }
+    }
 
+    public void rescheduleVote(String id, Date voteDate, String mod) throws KamerstukNotFoundException {
+        Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(id);
+        Kamerstuk kamerstuk;
+        if(possibleKamerstuk.isPresent()) {
+            kamerstuk = possibleKamerstuk.get();
+        }
+        else {
+            throw new KamerstukNotFoundException();
+        }
 
+        kamerstuk.setVoteDateFromDate(voteDate);
+        kamerstukRepository.save(kamerstuk);
+        notificationService.addNotification(new Notification(String.format(Constants.REQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.REQUEUED_TEXT, mod)));
     }
 
     public void dequeueKamerstuk(String kamerstukId, String reason, String mod) throws KamerstukNotFoundException {

@@ -71,6 +71,17 @@ public class SchedulerController {
         return "redirect:/scheduler?rescheduled";
     }
 
+    @PostMapping("/rescheduleVote")
+    public String rescheduleVote(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
+        try {
+            kamerstukkenService.rescheduleVote(kamerstuk.getId(), kamerstuk.getVoteDate(), principal.getName());
+        }
+        catch (KamerstukNotFoundException e) {
+            return "redirect:/scheduler?notfound";
+        }
+        return "redirect:/scheduler?rescheduled";
+    }
+
     @PostMapping("/unplan")
     public String unplanKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
         try {

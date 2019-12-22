@@ -150,7 +150,7 @@ div.normal-container div.menu {
     display: block;
     align-items: center;
     width:100%;
-    height: 10%;
+    height: 7.5%;
     background-color: rgba(41, 128, 185,1.0);
 }
 
@@ -179,9 +179,10 @@ div.small-container li {
 
 div.normal-container li {
     height:100%;
-    padding:12px 20px;
+    padding:16px 20px;
     text-align:center;
     font-weight: bold;
+    font-size: 18px;
     margin: 0;
     color: white;
 }

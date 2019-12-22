@@ -23,9 +23,15 @@
             <button class="collapsible">
                 Klik hier voor error informatie!
             </button>
-            <div class="collapsed-content">
+            <div th:if="${exception}" class="collapsed-content">
                 <h1 th:text="${exception}"></h1>
                 <p class="error" th:each="st : ${trace}" th:text="${st}"></p>
+            </div>
+            <div th:if="!${exception}" class="collapsed-content">
+                <h1>Geen extra informatie</h1>
+                <p>
+                    Dit betekent dat er aan onze kant niks mis ging, als je toch denkt dat dit niet had moeten voorkomen kun dit ook bij <a href="mailto:bug@th8.nl">th8</a> melden met de statuscode bovenaan de pagina.
+                </p>
             </div>
         </div>
     </div>
