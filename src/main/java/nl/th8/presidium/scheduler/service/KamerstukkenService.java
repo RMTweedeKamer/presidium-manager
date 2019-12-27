@@ -65,6 +65,8 @@ public class KamerstukkenService {
                 votesToPost.add(toVoteOn);
                 toVoteOn.setVotePosted(true);
             }
+        }
+        if(votesToPost.size() > 0) {
             constructVotePost(votesToPost);
         }
     }
@@ -202,6 +204,7 @@ public class KamerstukkenService {
         c.setTime(new Date());
         c.add(Calendar.DATE, 3);
         newVote.setVoteDateFromDate(c.getTime());
+        title.append("Stemming Tweede Kamer over ");
 
         for(Kamerstuk kamerstuk : votesToPost) {
             title.append(kamerstuk.getCallsign()).append(", ");
