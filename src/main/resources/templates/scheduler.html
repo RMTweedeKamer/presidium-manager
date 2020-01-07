@@ -100,7 +100,9 @@
             </div>
             <div class="small-content middle">
                 <div th:each="kamerstuk: ${queue}">
-                    <button th:classappend="${kamerstuk.isUrgent()}? urgent" class="collapsible" th:text="${kamerstuk.callsign} + ': ' + ${kamerstuk.title}">
+                    <button th:if="${kamerstuk.callsign} != null" th:classappend="${kamerstuk.isUrgent()}? urgent" class="collapsible" th:text="${kamerstuk.callsign} + ': ' + ${kamerstuk.title}">
+                    </button>
+                    <button th:if="${kamerstuk.callsign} == null" th:classappend="${kamerstuk.isUrgent()}? urgent" class="collapsible" th:text="${kamerstuk.title}">
                     </button>
                     <div th:classappend="${kamerstuk.isUrgent()}? urgent2" class="collapsed-content">
                         <p th:text="'Ingepland op: ' + ${kamerstuk.getPostDateAsString()}"></p>

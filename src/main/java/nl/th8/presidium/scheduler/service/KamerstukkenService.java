@@ -8,6 +8,7 @@ import nl.th8.presidium.Constants;
 import nl.th8.presidium.RedditSupplier;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import nl.th8.presidium.home.controller.dto.KamerstukType;
+import nl.th8.presidium.home.controller.dto.StatDTO;
 import nl.th8.presidium.home.data.KamerstukRepository;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
 import nl.th8.presidium.scheduler.controller.dto.Notification;
@@ -40,14 +41,23 @@ public class KamerstukkenService {
     public void postQueuedKamerstukken() {
         PriorityQueue<Kamerstuk> queueToPost = kamerstukRepository.findAllByPostDateIsBeforeAndPostedIsFalseAndDeniedIsFalse(new Date());
 
-        logger.info("Checking for kamerstukken to post at {}", new Date().toString());
+        Date checktime = new Date();
+        logger.info("Checking for kamerstukken to post at {}", checktime.toString());
+        StatDTO.setLastToPostCheck(checktime);
 
         while(queueToPost.size() > 0) {
             Kamerstuk toPost = queueToPost.poll();
             postKamerstuk(toPost);
-            logger.info("Posting kamerstuk with identifier: {}", toPost.getCallsign());
-            notificationService.addNotification(new Notification(String.format("Kamerstuk met identificator: %s is gepost.", toPost.getCallsign()),
-                    String.format("Gepost op: %s", new Date().toString())));
+            if(toPost.getCallsign() != null) {
+                logger.info("Posting kamerstuk with identifier: {}", toPost.getCallsign());
+                notificationService.addNotification(new Notification(String.format("Kamerstuk met identificator: %s is gepost.", toPost.getCallsign()),
+                        String.format("Gepost op: %s", new Date().toString())));
+            } else {
+                logger.info("Posting kamerstuk of type: {}", toPost.getType().getName());
+                notificationService.addNotification(new Notification(String.format("Kamerstuk van het type: %s is gepost.", toPost.getType().getName()),
+                        String.format("Gepost op: %s", new Date().toString())));
+            }
+
         }
     }
 
@@ -55,15 +65,17 @@ public class KamerstukkenService {
     public void postVote() {
         PriorityQueue<Kamerstuk> kamerstukkenToCheck = kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalse();
         PriorityQueue<Kamerstuk> votesToPost = new PriorityQueue<>();
-        Date currentDate = new Date();
 
+        Date currentDate = new Date();
         logger.info("Checking for vote to post at {}", currentDate.toString());
+        StatDTO.setLastToVoteCheck(currentDate);
 
         while(kamerstukkenToCheck.size() > 0) {
             Kamerstuk toVoteOn = kamerstukkenToCheck.poll();
             if(DateUtils.isSameDay(toVoteOn.getVoteDate(), currentDate) || toVoteOn.getVoteDate().before(currentDate)) {
                 votesToPost.add(toVoteOn);
                 toVoteOn.setVotePosted(true);
+                kamerstukRepository.save(toVoteOn);
             }
         }
         if(votesToPost.size() > 0) {
@@ -80,7 +92,7 @@ public class KamerstukkenService {
     }
 
     public PriorityQueue<Kamerstuk> getKamerstukkenVoteQueue() {
-        return kamerstukRepository.findAllByVoteDateAfterAndPostedIsTrue(new Date());
+        return kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalse();
     }
 
     public String queueKamerstuk(Kamerstuk kamerstuk, String mod) {
@@ -207,17 +219,17 @@ public class KamerstukkenService {
         title.append("Stemming Tweede Kamer over ");
 
         for(Kamerstuk kamerstuk : votesToPost) {
-            title.append(kamerstuk.getCallsign()).append(", ");
+            title.append(", ").append(kamerstuk.getCallsign());
             links.append("[").append(kamerstuk.getCallsign()).append(": ").append(kamerstuk.getTitle()).append("](").append(kamerstuk.getUrl()).append(")\n");
             format.append(kamerstuk.getCallsign()).append(":  \n");
         }
-        content.append("Leden van de Tweede Kamer der Staten-Generaal,\n");
-        content.append("**U kunt op de volgende kamerstuk(ken) uw stem uitbrengen:\n");
+        content.append("Leden van de Tweede Kamer der Staten-Generaal,\n\n");
+        content.append("**U kunt op de volgende kamerstuk(ken) uw stem uitbrengen:**\n");
         content.append(links.toString());
         content.append("\n---\n");
-        content.append("**Hanteer a.u.b. het volgende format:\n");
+        content.append("**Hanteer a.u.b. het volgende format:**\n\n");
         content.append("Telkens met twee spaties achter de regel\n");
-        content.append("Voor/Tegen/Onthouden:\n");
+        content.append("Voor/Tegen/Onthouden:\n\n");
         content.append(format.toString());
         content.append("\n---\n");
         content.append("###Deze stemming sluit op: ").append(newVote.getVoteDateAsString()).append("\n");
