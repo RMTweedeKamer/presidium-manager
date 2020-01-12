@@ -218,13 +218,15 @@ public class KamerstukkenService {
         newVote.setVoteDateFromDate(c.getTime());
         title.append("Stemming Tweede Kamer over ");
 
+        String prefix = "";
         for(Kamerstuk kamerstuk : votesToPost) {
-            title.append(", ").append(kamerstuk.getCallsign());
-            links.append("[").append(kamerstuk.getCallsign()).append(": ").append(kamerstuk.getTitle()).append("](").append(kamerstuk.getUrl()).append(")\n");
+            title.append(prefix).append(kamerstuk.getCallsign());
+            prefix = ", ";
+            links.append("[").append(kamerstuk.getCallsign()).append(": ").append(kamerstuk.getTitle()).append("](").append(kamerstuk.getUrl()).append(")  \n");
             format.append(kamerstuk.getCallsign()).append(":  \n");
         }
         content.append("Leden van de Tweede Kamer der Staten-Generaal,\n\n");
-        content.append("**U kunt op de volgende kamerstuk(ken) uw stem uitbrengen:**\n");
+        content.append("**U kunt op de volgende kamerstuk(ken) uw stem uitbrengen:**  \n");
         content.append(links.toString());
         content.append("\n---\n");
         content.append("**Hanteer a.u.b. het volgende format:**\n\n");
