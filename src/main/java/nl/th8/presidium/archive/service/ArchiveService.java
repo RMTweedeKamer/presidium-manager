@@ -9,6 +9,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils.*;
 
 @Service
 public class ArchiveService {
@@ -81,9 +83,9 @@ public class ArchiveService {
             throw new TypeNotFoundException();
         }
 
-        Predicate<Kamerstuk> callsignContains = kamerstuk -> kamerstuk.getCallsign().contains(filterString);
-        Predicate<Kamerstuk> titleContains = kamerstuk -> kamerstuk.getTitle().contains(filterString);
-        Predicate<Kamerstuk> contentContains = kamerstuk -> kamerstuk.getContent().contains(filterString);
+        Predicate<Kamerstuk> callsignContains = kamerstuk -> StringUtils.containsIgnoreCase(kamerstuk.getCallsign(), filterString);
+        Predicate<Kamerstuk> titleContains = kamerstuk -> StringUtils.containsIgnoreCase(kamerstuk.getTitle(), filterString);
+        Predicate<Kamerstuk> contentContains = kamerstuk -> StringUtils.containsIgnoreCase(kamerstuk.getContent(), filterString);
         return kamerstukList.stream()
                 .filter(callsignContains.or(titleContains).or(contentContains))
                 .sorted(Comparator.comparing(Kamerstuk::getCallnumber))
