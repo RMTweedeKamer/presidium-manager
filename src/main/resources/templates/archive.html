@@ -7,6 +7,12 @@
 <div th:replace="fragments.html :: menu (${loggedIn})">
 
 </div>
+
+<div class="alert" th:if="${param.notfound}">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    Geen resultaten gevonden!
+</div>
+
 <div class="normal-container middle">
     <div class="menu">
         <ul>

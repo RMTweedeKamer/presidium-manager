@@ -45,7 +45,7 @@ public class ArchiveController {
         try {
             model.addAttribute("kamerstukken", archiveService.getKamerstukkenForType(type));
         } catch (TypeNotFoundException e) {
-            return "redirect:/select-archive?notfound";
+            return "redirect:/archive/" + type+ "?notfound";
         }
         model.addAttribute("loggedIn", loggedIn);
         model.addAttribute("current", type);
@@ -68,7 +68,7 @@ public class ArchiveController {
         try {
             model.addAttribute("kamerstukken", archiveService.getKamerstukkenForTypeFiltered(type, filterDTO.getFilterString()));
         } catch (TypeNotFoundException e) {
-            return "redirect:/select-archive?notfound";
+            return "redirect:/archive/" + type+ "?notfound";
         }
         model.addAttribute("loggedIn", loggedIn);
         model.addAttribute("current", type);
@@ -84,7 +84,7 @@ public class ArchiveController {
             model.addAttribute("callsign", archiveService.getNiceCallsign(type, id));
             return "kamerstuk";
         } catch (KamerstukNotFoundException e) {
-            return "redirect: /archive?notfound";
+            return "redirect:/archive/" + type+ "?notfound";
         }
     }
 }
