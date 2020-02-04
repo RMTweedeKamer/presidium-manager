@@ -16,7 +16,8 @@ public class StatsService {
         long queue = repository.countAllByPostDateIsNullAndDeniedIsFalse() + repository.countAllByPostDateIsNotNullAndPostedIsFalse();
         long queueVote = repository.countAllByPostedIsTrueAndVotePostedIsFalse();
         long denied = repository.countAllByDeniedIsTrue();
+        long withdrawn = repository.countAllByPostedIsTrueAndDeniedIsTrue();
 
-        return new StatDTO(kamerstukken, queue, queueVote, denied);
+        return new StatDTO(kamerstukken, queue, queueVote, denied, withdrawn);
     }
 }

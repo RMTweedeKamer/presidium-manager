@@ -106,4 +106,16 @@ public class SchedulerController {
 
         return "redirect:/scheduler?denied";
     }
+
+    @PostMapping("/withdraw")
+    public String withdrawKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
+        try {
+            kamerstukkenService.withdrawKamerstuk(kamerstuk.getId(), principal.getName());
+        } catch (KamerstukNotFoundException e) {
+            return "redirect:/scheduler?notfound";
+        }
+        logger.info("Withdrew kamerstuk " + kamerstuk.getTitle());
+
+        return "redirect:/scheduler?withdrawn";
+    }
 }

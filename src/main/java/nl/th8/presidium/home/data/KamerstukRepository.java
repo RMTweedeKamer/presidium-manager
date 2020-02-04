@@ -20,7 +20,7 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
 
     PriorityQueue<Kamerstuk> findAllByVoteDateAfterAndPostedIsTrue(Date date);
 
-    PriorityQueue<Kamerstuk> findAllByPostedIsTrueAndVotePostedIsFalse();
+    PriorityQueue<Kamerstuk> findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse();
 
     List<Kamerstuk> findAllByPostDateIsNullAndDeniedIsFalse();
 
@@ -31,4 +31,6 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
     long countAllByPostedIsTrueAndVotePostedIsFalse();
 
     long countAllByDeniedIsTrue();
+
+    long countAllByPostedIsTrueAndDeniedIsTrue();
 }

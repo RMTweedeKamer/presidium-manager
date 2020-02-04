@@ -11,13 +11,15 @@ public class StatDTO {
     private long queue;
     private long queueVote;
     private long denied;
+    private long withdrawn;
     private String javaVersion;
 
-    public StatDTO(long kamerstukken, long queue, long queueVote, long denied) {
+    public StatDTO(long kamerstukken, long queue, long queueVote, long denied, long withdrawn) {
         this.kamerstukken = kamerstukken;
         this.queue = queue;
         this.queueVote = queueVote;
         this.denied = denied;
+        this.withdrawn = withdrawn;
         this.javaVersion = System.getProperty("java.version");
     }
 
@@ -75,6 +77,14 @@ public class StatDTO {
 
     public void setDenied(long denied) {
         this.denied = denied;
+    }
+
+    public long getWithdrawn() {
+        return withdrawn;
+    }
+
+    public void setWithdrawn(long withdrawn) {
+        this.withdrawn = withdrawn;
     }
 
     public String getJavaVersion() {

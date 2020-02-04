@@ -63,7 +63,7 @@ public class KamerstukkenService {
 
     @Scheduled(cron = "0 0 12 ? * FRI")
     public void postVote() {
-        PriorityQueue<Kamerstuk> kamerstukkenToCheck = kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalse();
+        PriorityQueue<Kamerstuk> kamerstukkenToCheck = kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse();
         PriorityQueue<Kamerstuk> votesToPost = new PriorityQueue<>();
 
         Date currentDate = new Date();
@@ -92,7 +92,7 @@ public class KamerstukkenService {
     }
 
     public PriorityQueue<Kamerstuk> getKamerstukkenVoteQueue() {
-        return kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalse();
+        return kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse();
     }
 
     public String queueKamerstuk(Kamerstuk kamerstuk, String mod) {
@@ -181,6 +181,21 @@ public class KamerstukkenService {
         if(kamerstuk.getSubmittedBy() != null) {
             supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DENIED_SUBJECT, String.format(Constants.DENIED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), reason));
         }
+    }
+
+    public void withdrawKamerstuk(String kamerstukId, String mod) throws KamerstukNotFoundException {
+        Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(kamerstukId);
+        Kamerstuk kamerstuk;
+        if(possibleKamerstuk.isPresent()) {
+            kamerstuk = possibleKamerstuk.get();
+        }
+        else {
+            throw new KamerstukNotFoundException();
+        }
+
+        kamerstuk.setDenied(true);
+        kamerstukRepository.save(kamerstuk);
+        notificationService.addNotification(new Notification(String.format(Constants.WITHDRAW_TITLE, kamerstuk.getTitle()), String.format(Constants.WITHDRAW_TEXT, mod)));
     }
 
     private void postKamerstuk(Kamerstuk kamerstuk) {
