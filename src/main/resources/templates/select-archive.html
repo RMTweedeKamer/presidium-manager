@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head (info='Archief')">
+
+</head>
+<body>
+<div th:replace="fragments.html :: menu (${loggedIn})">
+
+</div>
+<div class="normal-container middle">
+    <div class="menu">
+        <ul>
+            <li>Mogelijke kamerstukken</li>
+        </ul>
+    </div>
+    <div class="normal-content middle">
+        <div th:each="type: ${types}">
+            <form th:id="${type.getCall()}" th:action="@{'/archive/' + ${type.getCall()}}" th:method="GET">
+                <button class="collapsible" th:text="${type.getName()}" th:onclick="document.getElementById(${type.getCall()}).submit()">
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    var coll = document.getElementsByClassName("collapsible");
+
+    for (var i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
+    }
+
+    var modals = document.getElementsByClassName("openBtn");
+    var span = document.getElementsByClassName("close");
+
+    for (i = 0; i < modals.length; i++) {
+        modals[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            content.style.display = "block";
+        });
+        span[i].addEventListener("click", function() {
+            this.classList.toggle("closed");
+            var content = this.parentElement.parentElement;
+            content.style.display = "none";
+        })
+    }
+</script>
+</body>
+</html>

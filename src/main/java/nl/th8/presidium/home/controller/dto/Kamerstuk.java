@@ -80,6 +80,11 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
         return callsign;
     }
 
+    public String getCallnumber() {
+        int prefixLength = this.type.getCall().length();
+        return callsign.substring(prefixLength);
+    }
+
     public void setCallsign(String callsign) {
         this.callsign = callsign;
     }

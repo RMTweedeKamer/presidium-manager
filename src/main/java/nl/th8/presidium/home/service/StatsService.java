@@ -15,7 +15,7 @@ public class StatsService {
         long kamerstukken = repository.count();
         long queue = repository.countAllByPostDateIsNullAndDeniedIsFalse() + repository.countAllByPostDateIsNotNullAndPostedIsFalse();
         long queueVote = repository.countAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse();
-        long denied = repository.countAllByPostedIsFalseDeniedIsTrue();
+        long denied = repository.countAllByPostedIsFalseAndDeniedIsTrue();
         long withdrawn = repository.countAllByPostedIsTrueAndDeniedIsTrue();
         long succesfullyPosted = repository.countAllByPostedIsTrueAndVotePostedIsTrue();
 
