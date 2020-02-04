@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head (info=${callsign})">
+
+</head>
+<body>
+<div th:replace="fragments.html :: menu (false)">
+
+</div>
+<div class="normal-container">
+    <div class="menu">
+        <ul>
+            <li th:text="${callsign}"></li>
+        </ul>
+    </div>
+    <div class="normal-content">
+        <div th:remove="tag" th:utext="${content}"></div>
+    </div>
+</div>
+</body>
+</html>

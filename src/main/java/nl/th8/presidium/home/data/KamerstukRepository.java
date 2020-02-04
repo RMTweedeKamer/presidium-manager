@@ -5,9 +5,12 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.PriorityQueue;
 
 public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> {
+
+    Optional<Kamerstuk> findByCallsignEqualsAndPostedIsTrue(String callsign);
 
     List<Kamerstuk> findAllByPostDateIsNull();
 

@@ -39,7 +39,7 @@ ul.navigation {
     list-style: none;
 }
 
-ul.navigation li {
+ul.navigation > li {
     height:100%;
     padding:12px 20px;
     text-align:center;
@@ -47,7 +47,7 @@ ul.navigation li {
     border-left: 1px solid white;
 }
 
-ul.navigation li a {
+ul.navigation > li > a {
     font-family: Raleway, sans-serif;
     color:#FFFFFF;
     font-size:18px;
@@ -146,7 +146,7 @@ div.small-container div.menu {
     background-color: rgba(41, 128, 185,1.0);
 }
 
-div.normal-container div.menu {
+div.normal-container > div.menu {
     display: block;
     align-items: center;
     width:100%;
@@ -161,7 +161,7 @@ div.small-container ul {
     text-align: center;
 }
 
-div.normal-container ul {
+div.normal-container > div.menu > ul {
     padding: 0;
     display: list-item;
     list-style: none;
@@ -177,7 +177,7 @@ div.small-container li {
     color: white;
 }
 
-div.normal-container li {
+div.normal-container > div.menu  li {
     height:100%;
     padding:16px 20px;
     text-align:center;

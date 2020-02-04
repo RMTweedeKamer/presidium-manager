@@ -11,12 +11,14 @@ public class StatDTO {
     private long queue;
     private long queueVote;
     private long denied;
+    private String javaVersion;
 
     public StatDTO(long kamerstukken, long queue, long queueVote, long denied) {
         this.kamerstukken = kamerstukken;
         this.queue = queue;
         this.queueVote = queueVote;
         this.denied = denied;
+        this.javaVersion = System.getProperty("java.version");
     }
 
     public static Date getStartDate() {
@@ -73,5 +75,13 @@ public class StatDTO {
 
     public void setDenied(long denied) {
         this.denied = denied;
+    }
+
+    public String getJavaVersion() {
+        return javaVersion;
+    }
+
+    public void setJavaVersion(String javaVersion) {
+        this.javaVersion = javaVersion;
     }
 }

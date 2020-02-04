@@ -194,6 +194,9 @@ public class KamerstukkenService {
         SubmissionReference submission = supplier.redditClient.subreddit(Constants.SUBREDDIT).submit(SubmissionKind.SELF, title, content, false);
         kamerstuk.setUrl("https://reddit.com/r/"+Constants.SUBREDDIT+"/comments/"+submission.getId());
         kamerstuk.setPosted(true);
+        if(!kamerstuk.getType().needsVote()) {
+            kamerstuk.setVotePosted(true);
+        }
         kamerstukRepository.save(kamerstuk);
         if(kamerstuk.getToCall().size() > 0) {
             StringBuilder replyBuilder = new StringBuilder();

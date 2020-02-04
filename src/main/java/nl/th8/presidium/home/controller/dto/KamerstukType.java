@@ -6,25 +6,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum KamerstukType {
-    MOTIE ("Motie", "M", true),
-    WET ("Wet", "W", true),
-    AMENDEMENT ("Amendement", "W", true),
-    BRIEF ("Kamerbrief", "KS", true),
-    BESLUIT ("Koninklijk Besluit", "KB", true),
-    DEBAT ("Debat", "DB", true),
-    VRAGEN ("Kamervragen", "KV", true),
-    RESULTATEN ("Resultaten", "", false),
-    STEMMING ("Stemming", "", false);
+    MOTIE ("Motie", "M", true, true),
+    WET ("Wet", "W", true, true),
+    AMENDEMENT ("Amendement", "W", true, true),
+    BRIEF ("Kamerbrief", "KS", true, false),
+    BESLUIT ("Koninklijk Besluit", "KB", true, false),
+    DEBAT ("Debat", "DB", true, false),
+    VRAGEN ("Kamervragen", "KV", true, false),
+    RESULTATEN ("Resultaten", "", false, false),
+    STEMMING ("Stemming", "", false, false);
 
     @JsonValue
     private final String name;
     private final String call;
     private final boolean selectable;
+    private final boolean needsVote;
 
-    KamerstukType(String name, String call, boolean selectable) {
+    KamerstukType(String name, String call, boolean selectable, boolean needsVote) {
         this.name = name;
         this.call = call;
         this.selectable = selectable;
+        this.needsVote = needsVote;
     }
 
     public static List<KamerstukType> getPublics() {
@@ -43,5 +45,9 @@ public enum KamerstukType {
 
     public String getCall() {
         return call;
+    }
+
+    public boolean needsVote() {
+        return needsVote;
     }
 }
