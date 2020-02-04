@@ -36,9 +36,13 @@
                 <td>Laatste check voor het posten van stemmingen: </td>
                 <td th:text="${stats.getLastToVoteCheck()}"></td>
             </tr>
-            <tr>
+            <tr class="headerrow">
                 <td>Totaal aantal kamerstukken: </td>
                 <td th:text="${stats.getKamerstukken()}"></td>
+            </tr>
+            <tr>
+                <td>Aantal kamerstukken dat succesvol gepost is: </td>
+                <td th:text="${stats.getSuccesfullyPosted()}"></td>
             </tr>
             <tr>
                 <td>Aantal kamerstukken in de wachtrij: </td>

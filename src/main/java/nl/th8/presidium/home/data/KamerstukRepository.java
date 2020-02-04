@@ -33,4 +33,6 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
     long countAllByDeniedIsTrue();
 
     long countAllByPostedIsTrueAndDeniedIsTrue();
+
+    long countAllByPostedIsTrueAndVotePostedIsTrue();
 }

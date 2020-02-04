@@ -12,14 +12,16 @@ public class StatDTO {
     private long queueVote;
     private long denied;
     private long withdrawn;
+    private long succesfullyPosted;
     private String javaVersion;
 
-    public StatDTO(long kamerstukken, long queue, long queueVote, long denied, long withdrawn) {
+    public StatDTO(long kamerstukken, long queue, long queueVote, long denied, long withdrawn, long succesfullyPosted) {
         this.kamerstukken = kamerstukken;
         this.queue = queue;
         this.queueVote = queueVote;
         this.denied = denied;
         this.withdrawn = withdrawn;
+        this.succesfullyPosted = succesfullyPosted;
         this.javaVersion = System.getProperty("java.version");
     }
 
@@ -85,6 +87,14 @@ public class StatDTO {
 
     public void setWithdrawn(long withdrawn) {
         this.withdrawn = withdrawn;
+    }
+
+    public long getSuccesfullyPosted() {
+        return succesfullyPosted;
+    }
+
+    public void setSuccesfullyPosted(long succesfullyPosted) {
+        this.succesfullyPosted = succesfullyPosted;
     }
 
     public String getJavaVersion() {
