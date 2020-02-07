@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 public class KamerstukkenService {
@@ -63,23 +65,23 @@ public class KamerstukkenService {
 
     @Scheduled(cron = "0 0 12 ? * FRI")
     public void postVote() {
-        PriorityQueue<Kamerstuk> kamerstukkenToCheck = kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse();
-        PriorityQueue<Kamerstuk> votesToPost = new PriorityQueue<>();
+        List<Kamerstuk> kamerstukkenToCheck = kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse();
 
         Date currentDate = new Date();
         logger.info("Checking for vote to post at {}", currentDate.toString());
         StatDTO.setLastToVoteCheck(currentDate);
 
-        while(kamerstukkenToCheck.size() > 0) {
-            Kamerstuk toVoteOn = kamerstukkenToCheck.poll();
-            if(DateUtils.isSameDay(toVoteOn.getVoteDate(), currentDate) || toVoteOn.getVoteDate().before(currentDate)) {
-                votesToPost.add(toVoteOn);
-                toVoteOn.setVotePosted(true);
-                kamerstukRepository.save(toVoteOn);
-            }
-        }
-        if(votesToPost.size() > 0) {
-            constructVotePost(votesToPost);
+        Predicate<Kamerstuk> onSameDay = kamerstuk -> DateUtils.isSameDay(kamerstuk.getVoteDate(), currentDate);
+        Predicate<Kamerstuk> dayHasPassed = kamerstuk -> kamerstuk.getVoteDate().before(currentDate);
+        kamerstukkenToCheck = kamerstukkenToCheck.stream()
+                .filter(onSameDay.or(dayHasPassed))
+                .sorted(Comparator.comparing(Kamerstuk::getCallnumber))
+                .collect(Collectors.toList());
+        kamerstukkenToCheck
+                .forEach(kamerstuk -> kamerstuk.setVotePosted(true));
+
+        if(kamerstukkenToCheck.size() > 0) {
+            constructVotePost(kamerstukkenToCheck);
         }
     }
 
@@ -87,12 +89,16 @@ public class KamerstukkenService {
         return kamerstukRepository.findAllByPostDateIsNullAndDeniedIsFalse();
     }
 
-    public PriorityQueue<Kamerstuk> getKamerstukkenQueue() {
-        return kamerstukRepository.findAllByPostDateIsAfterAndDeniedIsFalse(new Date());
+    public List<Kamerstuk> getKamerstukkenQueue() {
+        return kamerstukRepository.findAllByPostDateIsAfterAndDeniedIsFalse(new Date()).stream()
+                .sorted(Comparator.comparing(Kamerstuk::getCallsign))
+                .collect(Collectors.toList());
     }
 
-    public PriorityQueue<Kamerstuk> getKamerstukkenVoteQueue() {
-        return kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse();
+    public List<Kamerstuk> getKamerstukkenVoteQueue() {
+        return kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse().stream()
+                .sorted(Comparator.comparing(Kamerstuk::getVoteDate))
+                .collect(Collectors.toList());
     }
 
     public String queueKamerstuk(Kamerstuk kamerstuk, String mod) {
@@ -224,7 +230,7 @@ public class KamerstukkenService {
         }
     }
 
-    private void constructVotePost(PriorityQueue<Kamerstuk> votesToPost) {
+    private void constructVotePost(List<Kamerstuk> votesToPost) {
         StringBuilder title = new StringBuilder();
         StringBuilder links = new StringBuilder();
         StringBuilder format = new StringBuilder();
