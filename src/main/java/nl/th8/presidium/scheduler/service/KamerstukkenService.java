@@ -78,7 +78,10 @@ public class KamerstukkenService {
                 .sorted(Comparator.comparing(Kamerstuk::getCallnumber))
                 .collect(Collectors.toList());
         kamerstukkenToCheck
-                .forEach(kamerstuk -> kamerstuk.setVotePosted(true));
+                .forEach(kamerstuk -> {
+                    kamerstuk.setVotePosted(true);
+                    kamerstukRepository.save(kamerstuk);
+                });
 
         if(kamerstukkenToCheck.size() > 0) {
             constructVotePost(kamerstukkenToCheck);
