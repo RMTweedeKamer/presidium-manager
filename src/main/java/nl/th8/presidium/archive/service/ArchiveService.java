@@ -1,5 +1,6 @@
 package nl.th8.presidium.archive.service;
 
+import nl.th8.presidium.Constants;
 import nl.th8.presidium.archive.TypeNotFoundException;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import nl.th8.presidium.home.controller.dto.KamerstukType;
@@ -25,12 +26,14 @@ import org.apache.commons.lang3.StringUtils.*;
 @Service
 public class ArchiveService {
 
+    private int callsignLength = Constants.CALLSIGN_LENGTH;
+
     @Autowired
     KamerstukRepository repository;
 
     public String getKamerstukHtml(String type, String id) throws KamerstukNotFoundException {
-        if(id.length() < 4) {
-            id = padLeftZeros(id, 4);
+        if(id.length() < callsignLength) {
+            id = padLeftZeros(id, callsignLength);
         }
         type = type.toUpperCase();
 
@@ -53,31 +56,28 @@ public class ArchiveService {
     }
 
     public String getNiceCallsign(String type, String id) {
-        if(id.length() < 4) {
-            id = padLeftZeros(id, 4);
+        if(id.length() < callsignLength) {
+            id = padLeftZeros(id, callsignLength);
         }
         type = type.toUpperCase();
         return type+id;
     }
 
     public List<Kamerstuk> getKamerstukkenForType(String type) throws TypeNotFoundException {
-        for(KamerstukType k : KamerstukType.getPublics()) {
-            if(k.getCall().equals(type)) {
-                List<Kamerstuk> kamerstukList = repository.findAllByPostedIsTrueAndCallsignContains(type);
-                return kamerstukList.stream()
-                        .sorted(Comparator.comparing(Kamerstuk::getCallsign))
-                        .collect(Collectors.toList());
-            }
+        if (KamerstukType.isPublicByCall(type)) {
+            List<Kamerstuk> kamerstukList = repository.findAllByPostedIsTrueAndCallsignContains(type);
+            return kamerstukList.stream()
+                    .sorted(Comparator.comparing(Kamerstuk::getCallsign))
+                    .collect(Collectors.toList());
         }
         throw new TypeNotFoundException();
     }
 
     public List<Kamerstuk> getKamerstukkenForTypeFiltered(String type, String filterString) throws TypeNotFoundException {
         List<Kamerstuk> kamerstukList = new ArrayList<>();
-        for(KamerstukType k : KamerstukType.getPublics()) {
-            if(k.getCall().equals(type)) {
-                kamerstukList = repository.findAllByPostedIsTrueAndCallsignContains(type);
-            }
+
+        if(KamerstukType.isPublicByCall(type)) {
+            kamerstukList = repository.findAllByPostedIsTrueAndCallsignContains(type);
         }
         if(kamerstukList.isEmpty()) {
             throw new TypeNotFoundException();

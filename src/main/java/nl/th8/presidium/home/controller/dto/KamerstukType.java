@@ -2,8 +2,9 @@ package nl.th8.presidium.home.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public enum KamerstukType {
     MOTIE ("Motie", "M", true, true),
@@ -30,13 +31,17 @@ public enum KamerstukType {
     }
 
     public static List<KamerstukType> getPublics() {
-        List<KamerstukType> publics = new ArrayList<>();
-        for(KamerstukType kamerstukType : KamerstukType.values()) {
-            if(kamerstukType.selectable) {
-                publics.add(kamerstukType);
-            }
+        return Arrays.stream(KamerstukType.values())
+                .filter(kamerstukType -> kamerstukType.selectable)
+                .collect(Collectors.toList());
+    }
+
+    public static boolean isPublicByCall(String call) {
+        for(KamerstukType k : KamerstukType.getPublics()) {
+            if(call.equals(k.getCall()))
+                return true;
         }
-        return publics;
+        return false;
     }
 
     public String getName() {
