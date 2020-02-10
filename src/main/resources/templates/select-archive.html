@@ -15,7 +15,11 @@
     </div>
     <div class="normal-content middle">
         <div th:each="type: ${types}">
-            <form th:id="${type.getCall()}" th:action="@{'/archive/' + ${type.getCall()}}" th:method="GET">
+            <form th:if="${type.getName() == 'Amendement'}" th:id="${type.getCall()}" th:action="@{'/archive/A'}" th:method="GET">
+                <button class="collapsible" th:text="${type.getName()}" th:onclick="document.getElementById(${type.getCall()}).submit()">
+                </button>
+            </form>
+            <form th:if="${type.getName() != 'Amendement'}" th:id="${type.getCall()}" th:action="@{'/archive/' + ${type.getCall()}}" th:method="GET">
                 <button class="collapsible" th:text="${type.getName()}" th:onclick="document.getElementById(${type.getCall()}).submit()">
                 </button>
             </form>

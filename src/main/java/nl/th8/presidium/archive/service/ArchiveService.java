@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils.*;
 public class ArchiveService {
 
     private int callsignLength = Constants.CALLSIGN_LENGTH;
+    private int callsignWithCharLength = Constants.CALLSIGN_LENGTH + 1;
 
     @Autowired
     KamerstukRepository repository;
@@ -70,13 +71,21 @@ public class ArchiveService {
                     .sorted(Comparator.comparing(Kamerstuk::getCallsign))
                     .collect(Collectors.toList());
         }
+        //Ugly amendementen hotfix
+        else if(type.equals("A")) {
+            List<Kamerstuk> kamerstukList = repository.findAllByPostedIsTrueAndCallsignContains("W");
+            return kamerstukList.stream()
+                    .filter(kamerstuk -> kamerstuk.getCallsign().length() > callsignWithCharLength)
+                    .sorted(Comparator.comparing(Kamerstuk::getCallsign))
+                    .collect(Collectors.toList());
+        }
         throw new TypeNotFoundException();
     }
 
     public List<Kamerstuk> getKamerstukkenForTypeFiltered(String type, String filterString) throws TypeNotFoundException {
         List<Kamerstuk> kamerstukList = new ArrayList<>();
 
-        if(KamerstukType.isPublicByCall(type)) {
+        if(KamerstukType.isPublicByCall(type) || type.equals("A")) {
             kamerstukList = repository.findAllByPostedIsTrueAndCallsignContains(type);
         }
         if(kamerstukList.isEmpty()) {
@@ -86,10 +95,21 @@ public class ArchiveService {
         Predicate<Kamerstuk> callsignContains = kamerstuk -> StringUtils.containsIgnoreCase(kamerstuk.getCallsign(), filterString);
         Predicate<Kamerstuk> titleContains = kamerstuk -> StringUtils.containsIgnoreCase(kamerstuk.getTitle(), filterString);
         Predicate<Kamerstuk> contentContains = kamerstuk -> StringUtils.containsIgnoreCase(kamerstuk.getContent(), filterString);
-        return kamerstukList.stream()
-                .filter(callsignContains.or(titleContains).or(contentContains))
-                .sorted(Comparator.comparing(Kamerstuk::getCallnumber))
-                .collect(Collectors.toList());
+
+        //Ugly amendementen hotfix
+        if(type.equals("A")) {
+            return kamerstukList.stream()
+                    .filter(kamerstuk -> kamerstuk.getCallsign().length() > callsignWithCharLength)
+                    .filter(callsignContains.or(titleContains).or(contentContains))
+                    .sorted(Comparator.comparing(Kamerstuk::getCallnumber))
+                    .collect(Collectors.toList());
+        }
+        else {
+            return kamerstukList.stream()
+                    .filter(callsignContains.or(titleContains).or(contentContains))
+                    .sorted(Comparator.comparing(Kamerstuk::getCallnumber))
+                    .collect(Collectors.toList());
+        }
     }
 
     private String padLeftZeros(String inputString, int length) {
