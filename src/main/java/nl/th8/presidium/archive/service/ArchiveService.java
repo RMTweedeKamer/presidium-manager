@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils.*;
 public class ArchiveService {
 
     private int callsignLength = Constants.CALLSIGN_LENGTH;
-    private int callsignWithCharLength = Constants.CALLSIGN_LENGTH + 1;
+    private int callsignWithCharLength = Constants.CALLSIGN_LENGTH + 2;
 
     @Autowired
     KamerstukRepository repository;
