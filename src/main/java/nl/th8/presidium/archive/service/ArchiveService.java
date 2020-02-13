@@ -64,10 +64,13 @@ public class ArchiveService {
         return type+id;
     }
 
+    Predicate<Kamerstuk> isAmendement = kamerstuk -> kamerstuk.getCallsign().length() > callsignWithCharLength;
+
     public List<Kamerstuk> getKamerstukkenForType(String type) throws TypeNotFoundException {
         if (KamerstukType.isPublicByCall(type)) {
             List<Kamerstuk> kamerstukList = repository.findAllByPostedIsTrueAndCallsignContains(type);
             return kamerstukList.stream()
+                    .filter(isAmendement.negate())
                     .sorted(Comparator.comparing(Kamerstuk::getCallsign))
                     .collect(Collectors.toList());
         }
@@ -75,7 +78,7 @@ public class ArchiveService {
         else if(type.equals("A")) {
             List<Kamerstuk> kamerstukList = repository.findAllByPostedIsTrueAndCallsignContains("W");
             return kamerstukList.stream()
-                    .filter(kamerstuk -> kamerstuk.getCallsign().length() > callsignWithCharLength)
+                    .filter(isAmendement)
                     .sorted(Comparator.comparing(Kamerstuk::getCallsign))
                     .collect(Collectors.toList());
         }
@@ -86,7 +89,10 @@ public class ArchiveService {
         List<Kamerstuk> kamerstukList = new ArrayList<>();
 
         if(KamerstukType.isPublicByCall(type) || type.equals("A")) {
-            kamerstukList = repository.findAllByPostedIsTrueAndCallsignContains(type);
+            if(!type.equals("A"))
+                kamerstukList = repository.findAllByPostedIsTrueAndCallsignContains(type);
+            else
+                kamerstukList = repository.findAllByPostedIsTrueAndCallsignContains("W");
         }
         if(kamerstukList.isEmpty()) {
             throw new TypeNotFoundException();
@@ -95,18 +101,18 @@ public class ArchiveService {
         Predicate<Kamerstuk> callsignContains = kamerstuk -> StringUtils.containsIgnoreCase(kamerstuk.getCallsign(), filterString);
         Predicate<Kamerstuk> titleContains = kamerstuk -> StringUtils.containsIgnoreCase(kamerstuk.getTitle(), filterString);
         Predicate<Kamerstuk> contentContains = kamerstuk -> StringUtils.containsIgnoreCase(kamerstuk.getContent(), filterString);
+        Predicate<Kamerstuk> isAmendement = kamerstuk -> kamerstuk.getCallsign().length() > callsignWithCharLength;
 
         //Ugly amendementen hotfix
         if(type.equals("A")) {
             return kamerstukList.stream()
-                    .filter(kamerstuk -> kamerstuk.getCallsign().length() > callsignWithCharLength)
-                    .filter(callsignContains.or(titleContains).or(contentContains))
+                    .filter(isAmendement.and(callsignContains.or(titleContains).or(contentContains)))
                     .sorted(Comparator.comparing(Kamerstuk::getCallnumber))
                     .collect(Collectors.toList());
         }
         else {
             return kamerstukList.stream()
-                    .filter(callsignContains.or(titleContains).or(contentContains))
+                    .filter((callsignContains.or(titleContains).or(contentContains)).and(isAmendement.negate()))
                     .sorted(Comparator.comparing(Kamerstuk::getCallnumber))
                     .collect(Collectors.toList());
         }

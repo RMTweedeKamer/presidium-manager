@@ -10,6 +10,7 @@ import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import nl.th8.presidium.home.controller.dto.KamerstukType;
 import nl.th8.presidium.home.controller.dto.StatDTO;
 import nl.th8.presidium.home.data.KamerstukRepository;
+import nl.th8.presidium.scheduler.InvalidUsernameException;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
 import nl.th8.presidium.scheduler.controller.dto.Notification;
 import org.slf4j.Logger;
@@ -104,7 +105,7 @@ public class KamerstukkenService {
                 .collect(Collectors.toList());
     }
 
-    public String queueKamerstuk(Kamerstuk kamerstuk, String mod) {
+    public String queueKamerstuk(Kamerstuk kamerstuk, String mod) throws InvalidUsernameException {
         //Process kamerstuk data
         kamerstuk.processToCallString();
         kamerstuk.processCallsigns();
@@ -116,12 +117,16 @@ public class KamerstukkenService {
         notificationService.addNotification(new Notification(String.format(Constants.QUEUED_TITLE, kamerstuk.getCallsign()),
                 String.format(Constants.QUEUED_TEXT, kamerstuk.getPostDateAsString(), mod)));
         if(kamerstuk.getSubmittedBy() != null) {
-            supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.QUEUED_SUBJECT, String.format(Constants.QUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
+            try {
+                supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.QUEUED_SUBJECT, String.format(Constants.QUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
+            } catch (Exception e) {
+                throw new InvalidUsernameException();
+            }
         }
         return kamerstukSaved.getId();
     }
 
-    public void rescheduleKamerstuk(String id, Date postDate, Date voteDate, String mod) throws KamerstukNotFoundException {
+    public void rescheduleKamerstuk(String id, Date postDate, Date voteDate, String mod) throws KamerstukNotFoundException, InvalidUsernameException {
         Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(id);
         Kamerstuk kamerstuk;
         if(possibleKamerstuk.isPresent()) {
@@ -136,7 +141,11 @@ public class KamerstukkenService {
         kamerstukRepository.save(kamerstuk);
         notificationService.addNotification(new Notification(String.format(Constants.REQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.REQUEUED_TEXT, mod)));
         if (kamerstuk.getSubmittedBy() != null) {
-            supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.REQUEUED_SUBJECT, String.format(Constants.REQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
+            try {
+                supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.REQUEUED_SUBJECT, String.format(Constants.REQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
+            } catch (Exception e) {
+                throw new InvalidUsernameException();
+            }
         }
     }
 
@@ -155,7 +164,7 @@ public class KamerstukkenService {
         notificationService.addNotification(new Notification(String.format(Constants.REQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.REQUEUED_TEXT, mod)));
     }
 
-    public void dequeueKamerstuk(String kamerstukId, String reason, String mod) throws KamerstukNotFoundException {
+    public void dequeueKamerstuk(String kamerstukId, String reason, String mod) throws KamerstukNotFoundException, InvalidUsernameException {
         Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(kamerstukId);
         Kamerstuk kamerstuk;
         if(possibleKamerstuk.isPresent()) {
@@ -170,11 +179,15 @@ public class KamerstukkenService {
         kamerstukRepository.save(kamerstuk);
         notificationService.addNotification(new Notification(String.format(Constants.DEQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.DEQUEUED_TEXT, mod)));
         if(kamerstuk.getSubmittedBy() != null) {
-            supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DEQUEUED_SUBJECT, String.format(Constants.DEQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getReason()));
+            try {
+                supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DEQUEUED_SUBJECT, String.format(Constants.DEQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getReason()));
+            } catch (Exception e) {
+                throw new InvalidUsernameException();
+            }
         }
     }
 
-    public void denyKamerstuk(String kamerstukId, String reason, String mod) throws KamerstukNotFoundException {
+    public void denyKamerstuk(String kamerstukId, String reason, String mod) throws KamerstukNotFoundException, InvalidUsernameException {
         Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(kamerstukId);
         Kamerstuk kamerstuk;
         if(possibleKamerstuk.isPresent()) {
@@ -188,7 +201,11 @@ public class KamerstukkenService {
         kamerstukRepository.save(kamerstuk);
         notificationService.addNotification(new Notification(String.format(Constants.DENIED_TITLE, kamerstuk.getTitle()), String.format(Constants.DENIED_TEXT, mod)));
         if(kamerstuk.getSubmittedBy() != null) {
-            supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DENIED_SUBJECT, String.format(Constants.DENIED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), reason));
+            try {
+                supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DENIED_SUBJECT, String.format(Constants.DENIED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), reason));
+            } catch (Exception e) {
+                throw new InvalidUsernameException();
+            }
         }
     }
 

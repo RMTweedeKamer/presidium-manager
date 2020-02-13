@@ -2,6 +2,7 @@ package nl.th8.presidium.scheduler.controller;
 
 import nl.th8.presidium.Constants;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
+import nl.th8.presidium.scheduler.InvalidUsernameException;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
 import nl.th8.presidium.scheduler.service.KamerstukkenService;
 import nl.th8.presidium.scheduler.service.NotificationService;
@@ -40,7 +41,11 @@ public class SchedulerController {
 
     @PostMapping("/plan")
     public String planKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
-        kamerstukkenService.queueKamerstuk(kamerstuk, principal.getName());
+        try {
+            kamerstukkenService.queueKamerstuk(kamerstuk, principal.getName());
+        } catch (InvalidUsernameException e) {
+            return "redirect:/scheduler?invalidUsername";
+        }
         logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());
 
         return "redirect:/scheduler?planned";
@@ -51,7 +56,11 @@ public class SchedulerController {
         String id;
         if(kamerstuk.getSecret().equals(Constants.SECRET)) {
             kamerstuk.processToCallString();
-            id = kamerstukkenService.queueKamerstuk(kamerstuk, "API");
+            try {
+                id = kamerstukkenService.queueKamerstuk(kamerstuk, "API");
+            } catch (InvalidUsernameException e) {
+                return ResponseEntity.status(400).build();
+            }
             logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());
         }
         else {
@@ -67,6 +76,8 @@ public class SchedulerController {
         }
         catch (KamerstukNotFoundException e) {
             return "redirect:/scheduler?notfound";
+        } catch (InvalidUsernameException e) {
+            return "redirect:/scheduler?invalidUsername";
         }
         return "redirect:/scheduler?rescheduled";
     }
@@ -88,6 +99,8 @@ public class SchedulerController {
             kamerstukkenService.dequeueKamerstuk(kamerstuk.getId(), kamerstuk.getReason(), principal.getName());
         } catch (KamerstukNotFoundException e) {
             return "redirect:/scheduler?notfound";
+        } catch (InvalidUsernameException e) {
+            return "redirect:/scheduler?invalidUsername";
         }
 
         logger.info("Removed kamerstuk " + kamerstuk.getCallsign() + " from queue");
@@ -101,6 +114,8 @@ public class SchedulerController {
             kamerstukkenService.denyKamerstuk(kamerstuk.getId(), kamerstuk.getReason(), principal.getName());
         } catch (KamerstukNotFoundException e) {
             return "redirect:/scheduler?notfound";
+        } catch (InvalidUsernameException e) {
+            return "redirect:/scheduler?invalidUsername";
         }
         logger.info("Denied kamerstuk " + kamerstuk.getTitle());
 

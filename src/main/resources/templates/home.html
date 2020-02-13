@@ -34,7 +34,7 @@
                 </label>
                 <label class="submitpanel">
                     <p>Gebruikersnaam indiener:</p>
-                    <input class="medium" type="text" th:field="*{submittedBy}" placeholder="th8" required>
+                    <input class="medium" type="text" th:field="*{submittedBy}" placeholder="th8" pattern="[A-Za-z0-9_-]+" title="Een valide reddit username, zonder /u/" required>
                 </label>
                 <label class="submitpanel">
                     <p>Spoed?</p>
