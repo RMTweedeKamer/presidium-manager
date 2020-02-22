@@ -21,7 +21,15 @@
         </div>
         <div class="info" th:if="${param.rescheduled}">
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            Kamerstuk in verzet.
+            Kamerstuk is verzet.
+        </div>
+        <div class="info" th:if="${param.withdrawn}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Kamerstuk is ingetrokken.
+        </div>
+        <div class="info" th:if="${param.delayed}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Stemming is uitgesteld.
         </div>
         <div class="alert" th:if="${param.notfound}">
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
@@ -72,6 +80,10 @@
                                         <input class="submitpanel medium" type='text' th:name="postDate" id="datetime" required autocomplete="off"/>
                                     </label>
                                 </div>
+                                <label>
+                                    <p>Lengte van de lezing:</p>
+                                    <input class="small" type="number" th:name="readingLength" th:value="*{readingLength}" required>
+                                </label>
                                 <div th:if="${kamerstuk.type.needsVote()}" class='input-group date' id='datetimepicker5'>
                                     <label>
                                         <p>Stemdatum:</p>
@@ -133,6 +145,12 @@
                             <input type="submit" th:value="'Herplannen'">
                         </form>
                         <hr>
+                        <form th:object="${kamerstuk}" th:action="@{/scheduler/setDelay}" th:method="post">
+                            <input type="hidden" th:name="id" th:value="*{id}">
+
+                            <input type="submit" th:value="'Stemming uitstellen'">
+                        </form>
+                        <hr>
                         <form th:object="${kamerstuk}" th:action="@{/scheduler/unplan}" th:method="post">
                             <input type="hidden" th:name="id" th:value="*{id}">
 
@@ -150,15 +168,30 @@
         <div class="small-container">
             <div class="menu">
                 <ul>
-                    <li th:text="Notificaties"></li>
+                    <li>Stemming uitgesteld</li>
                 </ul>
             </div>
             <div class="small-content middle">
-                <div th:each="notification : ${notifications}">
-                    <button class="collapsible" th:text="${notification.getTitle()}">
+                <div th:each="kamerstuk: ${votesDelayed}">
+                    <button th:classappend="${kamerstuk.isUrgent()}? urgent" class="collapsible" th:text="${kamerstuk.callsign} + ': ' + ${kamerstuk.title}">
                     </button>
-                    <div class="collapsed-content">
-                        <p th:text="${notification.getText()}"></p>
+                    <div th:classappend="${kamerstuk.isUrgent()}? urgent2" class="collapsed-content">
+                        <form th:object="${kamerstuk}" th:action="@{scheduler/rescheduleVote}" th:method="post">
+                            <input type="hidden" th:name="id" th:value="*{id}">
+                            <div class='input-group date' id='datetimepicker6'>
+                                <label>
+                                    <p>Stemdatum:</p>
+                                    <input class="submitpanel medium" type='text' th:name="voteDate" id="datetime6" th:placeholder="*{voteDate}" required autocomplete="off"/>
+                                </label>
+                            </div>
+                            <input type="submit" th:value="'Inplannen'">
+                        </form>
+                        <hr>
+                        <form th:object="${kamerstuk}" th:action="@{/scheduler/withdraw}" th:method="post">
+                            <input type="hidden" th:name="id" th:value="*{id}">
+                            <input type="hidden" th:name="title" th:value="*{title}">
+                            <input type="submit" th:value="Intrekken">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -188,6 +221,12 @@
                             <input type="submit" th:value="'Herplannen'">
                         </form>
                         <hr>
+                        <form th:object="${kamerstuk}" th:action="@{/scheduler/setDelay}" th:method="post">
+                            <input type="hidden" th:name="id" th:value="*{id}">
+
+                            <input type="submit" th:value="'Stemming uitstellen'">
+                        </form>
+                        <hr>
                         <form th:object="${kamerstuk}" th:action="@{/scheduler/withdraw}" th:method="post">
                             <input type="hidden" th:name="id" th:value="*{id}">
                             <input type="hidden" th:name="title" th:value="*{title}">
@@ -198,47 +237,22 @@
             </div>
         </div>
 
-        <!--Fabrieken-->
-<!--        <div class="small-container">-->
-<!--            <div class="menu">-->
-<!--                <ul>-->
-<!--                    <li>Ingeplande stukken</li>-->
-<!--                </ul>-->
-<!--            </div>-->
-<!--            <div class="small-content middle">-->
-<!--                <table class="lobby">-->
-<!--                    <tr class="headerrow">-->
-<!--                        <th>-->
-<!--                            Code-->
-<!--                        </th>-->
-<!--                        <th>-->
-<!--                            Production capacity-->
-<!--                        </th>-->
-<!--                        <th>-->
-<!--                            Currently producing-->
-<!--                        </th>-->
-<!--                        <th>-->
-<!--                            Manage-->
-<!--                        </th>-->
-<!--                    </tr>-->
-<!--                    <tr th:each="factory: ${player.getFactories()}">-->
-<!--                        <td th:text="${#strings.substring(factory.getId(), 0, 5)}">-->
-
-<!--                        </td>-->
-<!--                        <td th:text="${factory.getCapacity()}">-->
-
-<!--                        </td>-->
-<!--                        <td th:text="${factory.getProducing().getName()}">-->
-
-<!--                        </td>-->
-<!--                        <td>-->
-<!--                            <a th:href="@{'/game/' + ${game.getId()} + '/factory/' + ${factory.getId()}}"><button th:text="${'Manage'}">-->
-<!--                            </button></a>-->
-<!--                        </td>-->
-<!--                    </tr>-->
-<!--                </table>-->
-<!--            </div>-->
-<!--        </div>-->
+        <div class="small-container">
+            <div class="menu">
+                <ul>
+                    <li th:text="Notificaties"></li>
+                </ul>
+            </div>
+            <div class="small-content middle">
+                <div th:each="notification : ${notifications}">
+                    <button class="collapsible" th:text="${notification.getTitle()}">
+                    </button>
+                    <div class="collapsed-content">
+                        <p th:text="${notification.getText()}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script>
             var coll = document.getElementsByClassName("collapsible");
@@ -289,6 +303,10 @@
                 timeFormat: "HH:ii"
             });
             tail.DateTime("#datetime5", {
+                dateFormat: "dd-mm-YYYY",
+                timeFormat: "HH:ii"
+            });
+            tail.DateTime("#datetime6", {
                 dateFormat: "dd-mm-YYYY",
                 timeFormat: "HH:ii"
             });

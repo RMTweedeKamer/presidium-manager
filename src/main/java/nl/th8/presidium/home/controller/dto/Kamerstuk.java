@@ -53,6 +53,8 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     private String url;
 
+    private int readingLength;
+
     public Kamerstuk() {
         this.toCall = new ArrayList<>();
         this.posted = false;
@@ -261,5 +263,22 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public int getReadingLength() {
+        return readingLength;
+    }
+
+    public void setReadingLength(int readingLength) {
+        this.readingLength = readingLength;
+    }
+
+    public String getReadLengthString() {
+        Calendar c = Calendar.getInstance();
+        c.setTime(this.postDate);
+        c.add(Calendar.DATE, this.readingLength);
+        Date endReading = c.getTime();
+
+        return String.format("Deze lezing loopt tot en met %s", endReading.toString());
     }
 }

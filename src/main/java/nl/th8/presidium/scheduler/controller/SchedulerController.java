@@ -34,6 +34,7 @@ public class SchedulerController {
         model.addAttribute("kamerstukken", kamerstukkenService.getNonScheduledKamerstukken());
         model.addAttribute("queue", kamerstukkenService.getKamerstukkenQueue());
         model.addAttribute("notifications", notificationService.getAllSettings().getNotifications());
+        model.addAttribute("votesDelayed", kamerstukkenService.getDelayedKamerstukkenVoteQueue());
         model.addAttribute("votesQueued", kamerstukkenService.getKamerstukkenVoteQueue());
 
         return "scheduler";
@@ -132,5 +133,17 @@ public class SchedulerController {
         logger.info("Withdrew kamerstuk " + kamerstuk.getTitle());
 
         return "redirect:/scheduler?withdrawn";
+    }
+
+    @PostMapping("/setDelay")
+    public String delayKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
+        try {
+            kamerstukkenService.delayKamerstuk(kamerstuk.getId(), principal.getName());
+        } catch (KamerstukNotFoundException e) {
+            return "redirect:/scheduler?notfound";
+        }
+        logger.info("Delayed voting on kamerstuk " + kamerstuk.getTitle());
+
+        return "redirect:/scheduler?delayed";
     }
 }

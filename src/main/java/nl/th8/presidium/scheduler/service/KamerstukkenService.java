@@ -76,7 +76,7 @@ public class KamerstukkenService {
         Predicate<Kamerstuk> dayHasPassed = kamerstuk -> kamerstuk.getVoteDate().before(currentDate);
         kamerstukkenToCheck = kamerstukkenToCheck.stream()
                 .filter(onSameDay.or(dayHasPassed))
-                .sorted(Comparator.comparing(Kamerstuk::getCallnumber))
+                .sorted(Comparator.comparing(Kamerstuk::getCallsign))
                 .collect(Collectors.toList());
         kamerstukkenToCheck
                 .forEach(kamerstuk -> {
@@ -99,8 +99,14 @@ public class KamerstukkenService {
                 .collect(Collectors.toList());
     }
 
+    public List<Kamerstuk> getDelayedKamerstukkenVoteQueue() {
+        return kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNull().stream()
+                .sorted(Comparator.comparing(Kamerstuk::getCallsign))
+                .collect(Collectors.toList());
+    }
+
     public List<Kamerstuk> getKamerstukkenVoteQueue() {
-        return kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse().stream()
+        return kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull().stream()
                 .sorted(Comparator.comparing(Kamerstuk::getVoteDate))
                 .collect(Collectors.toList());
     }
@@ -224,6 +230,21 @@ public class KamerstukkenService {
         notificationService.addNotification(new Notification(String.format(Constants.WITHDRAW_TITLE, kamerstuk.getTitle()), String.format(Constants.WITHDRAW_TEXT, mod)));
     }
 
+    public void delayKamerstuk(String kamerstukId, String mod) throws KamerstukNotFoundException {
+        Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(kamerstukId);
+        Kamerstuk kamerstuk;
+        if(possibleKamerstuk.isPresent()) {
+            kamerstuk = possibleKamerstuk.get();
+        }
+        else {
+            throw new KamerstukNotFoundException();
+        }
+
+        kamerstuk.setVoteDateFromDate(null);
+        kamerstukRepository.save(kamerstuk);
+        notificationService.addNotification(new Notification(String.format(Constants.DELAY_TITLE, kamerstuk.getTitle()), String.format(Constants.DELAY_TEXT, mod)));
+    }
+
     private void postKamerstuk(Kamerstuk kamerstuk) {
         String title;
         if(kamerstuk.getCallsign() != null) {
@@ -231,7 +252,7 @@ public class KamerstukkenService {
         } else {
             title = kamerstuk.getTitle();
         }
-        String content = String.format("##%s \n \n%s", kamerstuk.getTitle(), kamerstuk.getContent());
+        String content = String.format("##%s \n \n%s \n \n##%s", kamerstuk.getTitle(), kamerstuk.getContent(), kamerstuk.getReadLengthString());
         SubmissionReference submission = supplier.redditClient.subreddit(Constants.SUBREDDIT).submit(SubmissionKind.SELF, title, content, false);
         kamerstuk.setUrl("https://reddit.com/r/"+Constants.SUBREDDIT+"/comments/"+submission.getId());
         kamerstuk.setPosted(true);

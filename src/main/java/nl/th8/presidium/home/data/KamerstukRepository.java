@@ -20,7 +20,9 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
 
     PriorityQueue<Kamerstuk> findAllByVoteDateAfterAndPostedIsTrue(Date date);
 
-    List<Kamerstuk> findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse();
+    List<Kamerstuk> findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull();
+
+    List<Kamerstuk> findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNull();
 
     List<Kamerstuk> findAllByPostedIsTrueAndCallsignContains(String contains);
 
