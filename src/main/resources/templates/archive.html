@@ -28,9 +28,9 @@
         <hr>
         <div th:each="kamerstuk: ${kamerstukken}">
             <form th:id="${kamerstuk.getId()}" th:action="@{'/archive/' + ${kamerstuk.getType().getCall()} + '/' + ${kamerstuk.getCallnumber()}}" th:method="GET">
-                <button th:if="${kamerstuk.callsign} != null" th:classappend="${kamerstuk.isUrgent()}? urgent" class="collapsible" th:text="${kamerstuk.callsign} + ': ' + ${kamerstuk.title}" th:onclick="document.getElementById(${kamerstuk.getId()}).submit()">
+                <button th:if="${kamerstuk.callsign} != null" class="collapsible" th:text="${kamerstuk.callsign} + ': ' + ${kamerstuk.title}" th:onclick="document.getElementById(${kamerstuk.getId()}).submit()">
                 </button>
-                <button th:if="${kamerstuk.callsign} == null" th:classappend="${kamerstuk.isUrgent()}? urgent" class="collapsible" th:text="${kamerstuk.title}" th:onclick="document.getElementById(${kamerstuk.getId()}).submit()">
+                <button th:if="${kamerstuk.callsign} == null" class="collapsible" th:text="${kamerstuk.title}" th:onclick="document.getElementById(${kamerstuk.getId()}).submit()">
                 </button>
             </form>
         </div>
