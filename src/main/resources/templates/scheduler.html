@@ -144,10 +144,10 @@
                             </div>
                             <input type="submit" th:value="'Herplannen'">
                         </form>
-                        <hr>
-                        <form th:object="${kamerstuk}" th:action="@{/scheduler/setDelay}" th:method="post">
+                        <hr th:if="${kamerstuk.type.needsVote()}">
+                        <form th:if="${kamerstuk.type.needsVote()}" th:object="${kamerstuk}" th:action="@{/scheduler/setDelay}" th:method="post">
                             <input type="hidden" th:name="id" th:value="*{id}">
-
+                            <p>Stemming wordt hiermee uitgesteld tot er een nieuwe datum voor wordt ingesteld.</p>
                             <input type="submit" th:value="'Stemming uitstellen'">
                         </form>
                         <hr>
@@ -223,7 +223,7 @@
                         <hr>
                         <form th:object="${kamerstuk}" th:action="@{/scheduler/setDelay}" th:method="post">
                             <input type="hidden" th:name="id" th:value="*{id}">
-
+                            <p>Stemming wordt hiermee uitgesteld tot er een nieuwe datum voor wordt ingesteld.</p>
                             <input type="submit" th:value="'Stemming uitstellen'">
                         </form>
                         <hr>

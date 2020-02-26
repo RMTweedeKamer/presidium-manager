@@ -60,6 +60,7 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
         this.posted = false;
         this.votePosted = false;
         this.denied = false;
+        this.readingLength = 3;
     }
 
     public String getId() {

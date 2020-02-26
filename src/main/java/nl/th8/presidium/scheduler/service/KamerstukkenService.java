@@ -66,7 +66,7 @@ public class KamerstukkenService {
 
     @Scheduled(cron = "0 0 12 ? * FRI")
     public void postVote() {
-        List<Kamerstuk> kamerstukkenToCheck = kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse();
+        List<Kamerstuk> kamerstukkenToCheck = kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull();
 
         Date currentDate = new Date();
         logger.info("Checking for vote to post at {}", currentDate.toString());
