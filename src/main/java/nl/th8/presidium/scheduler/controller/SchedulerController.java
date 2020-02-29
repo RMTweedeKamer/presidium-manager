@@ -2,6 +2,7 @@ package nl.th8.presidium.scheduler.controller;
 
 import nl.th8.presidium.Constants;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
+import nl.th8.presidium.scheduler.DuplicateCallsignException;
 import nl.th8.presidium.scheduler.InvalidUsernameException;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
 import nl.th8.presidium.scheduler.service.KamerstukkenService;
@@ -46,6 +47,8 @@ public class SchedulerController {
             kamerstukkenService.queueKamerstuk(kamerstuk, principal.getName());
         } catch (InvalidUsernameException e) {
             return "redirect:/scheduler?invalidUsername";
+        } catch (DuplicateCallsignException e) {
+            return "redirect:/scheduler?duplicateCallsign";
         }
         logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());
 
@@ -59,7 +62,7 @@ public class SchedulerController {
             kamerstuk.processToCallString();
             try {
                 id = kamerstukkenService.queueKamerstuk(kamerstuk, "API");
-            } catch (InvalidUsernameException e) {
+            } catch (InvalidUsernameException | DuplicateCallsignException e) {
                 return ResponseEntity.status(400).build();
             }
             logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());

@@ -280,6 +280,9 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
         c.add(Calendar.DATE, this.readingLength);
         Date endReading = c.getTime();
 
-        return String.format("Deze lezing loopt tot en met %s", endReading.toString());
+        DateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT, new Locale("nl", "NL"));
+        return format.format(this.voteDate);
+
+        return String.format("Deze lezing loopt tot en met %s", format.format(endReading));
     }
 }

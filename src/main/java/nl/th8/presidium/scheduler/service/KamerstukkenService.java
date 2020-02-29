@@ -10,6 +10,7 @@ import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import nl.th8.presidium.home.controller.dto.KamerstukType;
 import nl.th8.presidium.home.controller.dto.StatDTO;
 import nl.th8.presidium.home.data.KamerstukRepository;
+import nl.th8.presidium.scheduler.DuplicateCallsignException;
 import nl.th8.presidium.scheduler.InvalidUsernameException;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
 import nl.th8.presidium.scheduler.controller.dto.Notification;
@@ -111,7 +112,11 @@ public class KamerstukkenService {
                 .collect(Collectors.toList());
     }
 
-    public String queueKamerstuk(Kamerstuk kamerstuk, String mod) throws InvalidUsernameException {
+    public String queueKamerstuk(Kamerstuk kamerstuk, String mod) throws InvalidUsernameException, DuplicateCallsignException {
+        //Check callsign
+        if(kamerstukRepository.existsByCallsign(kamerstuk.getCallsign())) {
+            throw new DuplicateCallsignException();
+        }
         //Process kamerstuk data
         kamerstuk.processToCallString();
         kamerstuk.processCallsigns();
@@ -246,13 +251,25 @@ public class KamerstukkenService {
     }
 
     private void postKamerstuk(Kamerstuk kamerstuk) {
+
+        //Set title
         String title;
         if(kamerstuk.getCallsign() != null) {
             title = String.format("%s: %s", kamerstuk.getCallsign(), kamerstuk.getTitle());
         } else {
             title = kamerstuk.getTitle();
         }
-        String content = String.format("##%s \n \n%s \n \n##%s", kamerstuk.getTitle(), kamerstuk.getContent(), kamerstuk.getReadLengthString());
+
+        //Set content
+        String content;
+        if(kamerstuk.getType().isSelectable()) {
+            content = String.format("##%s \n \n%s \n \n###%s", kamerstuk.getTitle(), kamerstuk.getContent(), kamerstuk.getReadLengthString());
+        }
+        else {
+            content = String.format("##%s \n \n%s", kamerstuk.getTitle(), kamerstuk.getContent());
+        }
+
+        //Post to reddit
         SubmissionReference submission = supplier.redditClient.subreddit(Constants.SUBREDDIT).submit(SubmissionKind.SELF, title, content, false);
         kamerstuk.setUrl("https://reddit.com/r/"+Constants.SUBREDDIT+"/comments/"+submission.getId());
         kamerstuk.setPosted(true);
@@ -260,6 +277,8 @@ public class KamerstukkenService {
             kamerstuk.setVotePosted(true);
         }
         kamerstukRepository.save(kamerstuk);
+
+        //Call relevant users
         if(kamerstuk.getToCall().size() > 0) {
             StringBuilder replyBuilder = new StringBuilder();
             replyBuilder.append("###Voor een reactie op dit kamerstuk wordt opgeroepen:  ").append("\n");

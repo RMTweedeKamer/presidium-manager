@@ -52,6 +52,8 @@ public enum KamerstukType {
         return call;
     }
 
+    public boolean isSelectable() { return selectable; }
+
     public boolean needsVote() {
         return needsVote;
     }

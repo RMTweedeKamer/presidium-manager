@@ -39,6 +39,10 @@
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
             De gebruikersnaam van de indiener was incorrect, deze is dus niet op de hoogte gesteld. De rest van de operatie is wel succesvol uitgevoerd.
         </div>
+        <div class="alert" th:if="${param.invalidUsername}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            De identificator van het kamerstuk is al in gebruik, voer een andere identificator in.
+        </div>
 
         <!--Info-->
         <div class="small-container">
