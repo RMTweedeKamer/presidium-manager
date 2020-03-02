@@ -7,18 +7,39 @@ import net.dean.jraw.http.UserAgent;
 import net.dean.jraw.oauth.Credentials;
 import net.dean.jraw.oauth.OAuthHelper;
 import net.dean.jraw.references.InboxReference;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class RedditSupplier {
+
+    public static String SUBREDDIT;
+    public String username;
+    public String password;
+    public String redditClientId;
+    public String redditClientSecret;
 
     public UserAgent userAgent;
     public RedditClient redditClient;
     public InboxReference inbox;
 
-    public RedditSupplier() {
-        this.userAgent = new UserAgent("GERDI-RMTK", "nl.th8.presidium", "v1.1", Constants.USERNAME);
-        Credentials credentials = Credentials.script(Constants.USERNAME, Constants.PASSWORD, Constants.CLIENT_ID, Constants.CLIENT_SECRET);
+    @Autowired
+    public RedditSupplier(@Value("${manager.subreddit}") String subreddit,
+                          @Value("${manager.reddit-username}") String username,
+                          @Value("${manager.reddit-password}") String password,
+                          @Value("${manager.reddit-client-id}") String redditClientId,
+                          @Value("${manager.reddit-client-secret}") String redditClientSecret)
+    {
+        SUBREDDIT = subreddit;
+        this.username = username;
+        this.password = password;
+        this.redditClientId = redditClientId;
+        this.redditClientSecret = redditClientSecret;
+
+        this.userAgent = new UserAgent("GERDI-RMTK", "nl.th8.presidium", "v1.1", username);
+        Credentials credentials = Credentials.script(username, password, redditClientId, redditClientSecret);
         NetworkAdapter adapter = new OkHttpNetworkAdapter(this.userAgent);
         this.redditClient = OAuthHelper.automatic(adapter, credentials);
         this.inbox = redditClient.me().inbox();

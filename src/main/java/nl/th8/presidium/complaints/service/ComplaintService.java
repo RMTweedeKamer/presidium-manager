@@ -12,7 +12,7 @@ public class ComplaintService {
     RedditSupplier supplier;
 
     public void sendComplaint(String complaint) {
-        supplier.inbox.compose("/r/" + Constants.SUBREDDIT, Constants.COMPLAINT_SUBJECT, complaint);
+        supplier.inbox.compose("/r/" + RedditSupplier.SUBREDDIT, Constants.COMPLAINT_SUBJECT, complaint);
 
     }
 }

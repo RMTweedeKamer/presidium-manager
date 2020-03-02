@@ -6,6 +6,7 @@ import net.dean.jraw.models.SubmissionKind;
 import net.dean.jraw.references.SubmissionReference;
 import nl.th8.presidium.Constants;
 import nl.th8.presidium.RedditSupplier;
+import nl.th8.presidium.TemmieSupplier;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import nl.th8.presidium.home.controller.dto.KamerstukType;
 import nl.th8.presidium.home.controller.dto.StatDTO;
@@ -36,7 +37,7 @@ public class KamerstukkenService {
     KamerstukRepository kamerstukRepository;
 
     @Autowired
-    RedditSupplier supplier;
+    RedditSupplier redditSupplier;
 
     @Autowired
     NotificationService notificationService;
@@ -127,9 +128,10 @@ public class KamerstukkenService {
         //Notify
         notificationService.addNotification(new Notification(String.format(Constants.QUEUED_TITLE, kamerstuk.getCallsign()),
                 String.format(Constants.QUEUED_TEXT, kamerstuk.getPostDateAsString(), mod)));
+
         if(kamerstuk.getSubmittedBy() != null) {
             try {
-                supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.QUEUED_SUBJECT, String.format(Constants.QUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
+                redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.QUEUED_SUBJECT, String.format(Constants.QUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
             } catch (Exception e) {
                 throw new InvalidUsernameException();
             }
@@ -153,7 +155,7 @@ public class KamerstukkenService {
         notificationService.addNotification(new Notification(String.format(Constants.REQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.REQUEUED_TEXT, mod)));
         if (kamerstuk.getSubmittedBy() != null) {
             try {
-                supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.REQUEUED_SUBJECT, String.format(Constants.REQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
+                redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.REQUEUED_SUBJECT, String.format(Constants.REQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
             } catch (Exception e) {
                 throw new InvalidUsernameException();
             }
@@ -191,7 +193,7 @@ public class KamerstukkenService {
         notificationService.addNotification(new Notification(String.format(Constants.DEQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.DEQUEUED_TEXT, mod)));
         if(kamerstuk.getSubmittedBy() != null) {
             try {
-                supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DEQUEUED_SUBJECT, String.format(Constants.DEQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getReason()));
+                redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DEQUEUED_SUBJECT, String.format(Constants.DEQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getReason()));
             } catch (Exception e) {
                 throw new InvalidUsernameException();
             }
@@ -213,7 +215,7 @@ public class KamerstukkenService {
         notificationService.addNotification(new Notification(String.format(Constants.DENIED_TITLE, kamerstuk.getTitle()), String.format(Constants.DENIED_TEXT, mod)));
         if(kamerstuk.getSubmittedBy() != null) {
             try {
-                supplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DENIED_SUBJECT, String.format(Constants.DENIED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), reason));
+                redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DENIED_SUBJECT, String.format(Constants.DENIED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), reason));
             } catch (Exception e) {
                 throw new InvalidUsernameException();
             }
@@ -270,8 +272,8 @@ public class KamerstukkenService {
         }
 
         //Post to reddit
-        SubmissionReference submission = supplier.redditClient.subreddit(Constants.SUBREDDIT).submit(SubmissionKind.SELF, title, content, false);
-        kamerstuk.setUrl("https://reddit.com/r/"+Constants.SUBREDDIT+"/comments/"+submission.getId());
+        SubmissionReference submission = redditSupplier.redditClient.subreddit(RedditSupplier.SUBREDDIT).submit(SubmissionKind.SELF, title, content, false);
+        kamerstuk.setUrl("https://reddit.com/r/"+RedditSupplier.SUBREDDIT+"/comments/"+submission.getId());
         kamerstuk.setPosted(true);
         if(!kamerstuk.getType().needsVote()) {
             kamerstuk.setVotePosted(true);
@@ -286,7 +288,7 @@ public class KamerstukkenService {
                 replyBuilder.append("* ").append(minister).append("  ").append("\n");
             }
             Comment comment = submission.reply(replyBuilder.toString());
-            comment.toReference(supplier.redditClient).distinguish(DistinguishedStatus.MODERATOR, true);
+            comment.toReference(redditSupplier.redditClient).distinguish(DistinguishedStatus.MODERATOR, true);
         }
     }
 

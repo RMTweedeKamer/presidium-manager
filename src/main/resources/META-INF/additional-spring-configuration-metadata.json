@@ -1,0 +1,38 @@
+{
+  "properties": [
+    {
+      "name": "manager.subreddit",
+      "type": "java.lang.String",
+      "description": "Subreddit name to post to."
+    },
+    {
+      "name": "manager.reddit-username",
+      "type": "java.lang.String",
+      "description": "Reddit username for the bot."
+    },
+    {
+      "name": "manager.reddit-password",
+      "type": "java.lang.String",
+      "description": "Reddit password for the bot."
+    },
+    {
+      "name": "manager.reddit-client-id",
+      "type": "java.lang.String",
+      "description": "Reddit client id for the bot."
+    },
+    {
+      "name": "manager.reddit-client-secret",
+      "type": "java.lang.String",
+      "description": "Reddit client secret for the bot."
+    },
+    {
+      "name": "manager.user-secret",
+      "type": "java.lang.String",
+      "description": "User secret used to validate created accounts and API calls"
+    },
+    {
+      "name": "manager.discord-webhook-url",
+      "type": "java.lang.String",
+      "description": "Discord webhook url."
+    }
+  ] }
