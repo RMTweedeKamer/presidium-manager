@@ -40,5 +40,5 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
 
     long countAllByPostedIsTrueAndVotePostedIsTrue();
 
-    boolean existsByCallsign(String callsign);
+    boolean existsByCallsignAndIdIsNot(String callsign, String id);
 }

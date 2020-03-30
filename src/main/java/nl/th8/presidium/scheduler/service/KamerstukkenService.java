@@ -97,7 +97,7 @@ public class KamerstukkenService {
 
     public List<Kamerstuk> getKamerstukkenQueue() {
         return kamerstukRepository.findAllByPostDateIsAfterAndDeniedIsFalse(new Date()).stream()
-                .sorted(Comparator.comparing(Kamerstuk::getCallsign))
+                .sorted(Comparator.comparing(Kamerstuk::getPostDate))
                 .collect(Collectors.toList());
     }
 
@@ -115,7 +115,7 @@ public class KamerstukkenService {
 
     public String queueKamerstuk(Kamerstuk kamerstuk, String mod) throws InvalidUsernameException, DuplicateCallsignException {
         //Check callsign
-        if(kamerstukRepository.existsByCallsign(kamerstuk.getCallsign())) {
+        if(kamerstukRepository.existsByCallsignAndIdIsNot(kamerstuk.getCallsign(), kamerstuk.getId())) {
             throw new DuplicateCallsignException();
         }
         //Process kamerstuk data
