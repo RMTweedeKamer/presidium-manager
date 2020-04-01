@@ -240,6 +240,12 @@ label.submitpanel {
     margin-right: auto;
 }
 
+label.fixHitbox {
+    display: block;
+    margin-left: auto;
+    margin-right: 80%;
+}
+
 /* --- Collapsibles --- */
 .collapsible {
     background-color: rgba(125, 189, 232, 1.0);
@@ -405,5 +411,17 @@ th {
 }
 
 td {
+    text-align: left;
+}
+
+/* --- Previews --- */
+.preview-container {
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: small;
     text-align: left;
 }

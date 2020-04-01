@@ -30,18 +30,28 @@
                 </label>
                 <label class="submitpanel">
                     <p>Inhoud van het kamerstuk:</p>
-                    <textarea maxlength="40000" th:field="*{content}" required></textarea>
+                    <textarea maxlength="40000" th:field="*{content}" id="motieContent" required onkeyup="doPreview()"></textarea>
+                </label>
+                <label class="submitpanel">
+                    <p>Live preview:</p>
+                    <div class="preview-container" id="preview"></div>
                 </label>
                 <label class="submitpanel">
                     <p>Gebruikersnaam indiener:</p>
                     <input class="medium" type="text" th:field="*{submittedBy}" placeholder="th8" pattern="[A-Za-z0-9_-]+" title="Een valide reddit username, zonder /u/" required>
                 </label>
-                <label class="submitpanel">
+                <label class="fixHitbox">
                     <p>Spoed?</p>
                     <input type="checkbox" th:field="*{urgent}">
                 </label>
                 <input type="submit" value="Indienen">
             </form>
         </div>
+        <script>
+            function doPreview() {
+                document.getElementById('preview').innerHTML =
+                    SnuOwnd.getParser().render(document.getElementById('motieContent').value);
+            }
+        </script>
     </body>
 </html>
