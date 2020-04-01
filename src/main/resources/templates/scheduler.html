@@ -53,7 +53,7 @@
             </div>
             <div class="small-content middle">
                 <div th:each="kamerstuk: ${kamerstukken}">
-                    <button th:classappend="${kamerstuk.isUrgent()}? urgent" class="openBtn" th:text="${kamerstuk.title}">
+                    <button th:classappend="${kamerstuk.isUrgent()}? urgent" class="openBtn collapsible" th:text="${kamerstuk.title}">
                     </button>
                     <div class="modal">
                         <div th:classappend="${kamerstuk.isUrgent()}? urgent2" class="modal-content">
@@ -131,6 +131,42 @@
                     <div th:classappend="${kamerstuk.isUrgent()}? urgent2" class="collapsed-content">
                         <p th:text="'Ingepland op: ' + ${kamerstuk.getPostDateAsString()}"></p>
                         <p th:each="minister: ${kamerstuk.toCall}" th:text="'Opgeroepen: ' + ${minister}"></p>
+                        <button class="openBtn">Preview</button>
+                        <div class="modal">
+                            <div th:classappend="${kamerstuk.isUrgent()}? urgent2" class="modal-content">
+                                <span class="close">&times;</span>
+                                <form th:object="${kamerstuk}" th:action="@{/scheduler/plan}" th:method="post">
+                                    <label>
+                                        <p>Kamerstuknummer:</p>
+                                        <input class="submitpanel small" type="text" th:name="callsign" th:value="*{callsign}" th:placeholder="${kamerstuk.type.getCall()} + '0000'" readonly>
+                                    </label>
+                                    <label>
+                                        <p>Titel:</p>
+                                        <input class="submitpanel big"  type="text" th:name="title" th:value="*{title}" readonly>
+                                    </label>
+                                    <label>
+                                        <p>Inhoud:</p>
+                                        <textarea class="submitpanel" th:name="content" th:text="*{content}" readonly></textarea>
+                                    </label>
+                                    <label>
+                                        <p>Indiener:</p>
+                                        <input class="medium" type="text" th:name="submittedBy" th:value="*{submittedBy}" readonly>
+                                    </label>
+                                    <label>
+                                        <p>Postdatum:</p>
+                                        <input class="submitpanel medium" type='text' th:name="postDate" readonly autocomplete="off"/>
+                                    </label>
+                                    <label>
+                                        <p>Lengte van de lezing:</p>
+                                        <input class="small" type="number" th:name="readingLength" th:value="*{readingLength}" value="3" min="1" max="14" readonly>
+                                    </label>
+                                    <label>
+                                        <p>Stemdatum:</p>
+                                        <input class="submitpanel medium" type='text' th:name="voteDate" readonly autocomplete="off"/>
+                                    </label>
+                                </form>
+                            </div>
+                        </div>
                         <hr>
                         <form th:object="${kamerstuk}" th:action="@{scheduler/reschedule}" th:method="post">
                             <input type="hidden" th:name="id" th:value="*{id}">
