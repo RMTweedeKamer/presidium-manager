@@ -21,6 +21,9 @@ public class Constants {
     public static final String QUEUED_TITLE = "Kamerstuk met nummer: %s is in de wachtrij gezet.";
     public static final String QUEUED_TEXT = "Ingepland op: %s door %s";
 
+    public static final String EDIT_TITLE = "Kamerstuk met nummer: %s is aangepast";
+    public static final String EDIT_TEXT = "Aangepast door %s";
+
     public static final String REQUEUED_TITLE = "Kamerstuk met nummer: %s is verzet.";
     public static final String REQUEUED_TEXT = "Verzet door %s";
 

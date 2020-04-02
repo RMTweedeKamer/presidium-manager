@@ -55,6 +55,18 @@ public class SchedulerController {
         return "redirect:/scheduler?planned";
     }
 
+    @PostMapping("/edit")
+    public String editKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
+        try {
+            kamerstukkenService.editKamerstuk(kamerstuk.getId(), kamerstuk.getTitle(), kamerstuk.getContent(), kamerstuk.getToCallString(), principal.getName());
+        } catch (KamerstukNotFoundException e) {
+            return "redirect:/scheduler?notfound";
+        }
+        logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());
+
+        return "redirect:/scheduler?planned";
+    }
+
     @PostMapping("/plan/api")
     public ResponseEntity planKamerstukAPI(@RequestBody @Valid Kamerstuk kamerstuk) {
         String id;

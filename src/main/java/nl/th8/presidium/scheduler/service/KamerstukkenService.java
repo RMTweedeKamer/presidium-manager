@@ -139,6 +139,27 @@ public class KamerstukkenService {
         return kamerstukSaved.getId();
     }
 
+    public void editKamerstuk(String id, String title, String content, String toCallString, String mod) throws KamerstukNotFoundException {
+        Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(id);
+        Kamerstuk kamerstuk;
+        if(possibleKamerstuk.isPresent()) {
+            kamerstuk = possibleKamerstuk.get();
+        }
+        else {
+            throw new KamerstukNotFoundException();
+        }
+
+        kamerstuk.setTitle(title);
+        kamerstuk.setContent(content);
+        kamerstuk.setToCallString(toCallString);
+        kamerstuk.processToCallString();
+        kamerstukRepository.save(kamerstuk);
+
+        //Notify
+        notificationService.addNotification(new Notification(String.format(Constants.EDIT_TITLE, kamerstuk.getCallsign()),
+                String.format(Constants.EDIT_TEXT, mod)));
+    }
+
     public void rescheduleKamerstuk(String id, Date postDate, Date voteDate, String mod) throws KamerstukNotFoundException, InvalidUsernameException {
         Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(id);
         Kamerstuk kamerstuk;
