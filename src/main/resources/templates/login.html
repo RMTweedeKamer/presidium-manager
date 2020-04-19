@@ -1,28 +1,44 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org" lang="en_US">
-    <head th:replace="fragments.html :: head ('Login')">
-    </head>
-    <body>
-        <div th:replace="fragments.html :: menu(false)">
+  <head th:replace="fragments.html :: head ('Login')"> </head>
+  <body>
+    <header th:replace="fragments.html :: menu(false)"></header>
+    <div class="alert" th:if="${param.error}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';"
+        >&times;</span
+      >
+      Invalid email or password.
+    </div>
+    <div class="info" th:if="${param.logout}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';"
+        >&times;</span
+      >
+      You have been logged out.
+    </div>
 
+    <main class="middle">
+      <h1>Login voor het presidium</h1>
+      <form th:action="@{/login}" th:method="post">
+        <div>
+          <label class="login">
+            <p>Username:</p>
+            <input type="text" name="username" required />
+          </label>
         </div>
-        <div class="alert" th:if="${param.error}">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            Invalid email or password.
+        <div>
+          <label class="login">
+            <p>Password:</p>
+            <input type="password" name="password" required />
+          </label>
         </div>
-        <div class="info" th:if="${param.logout}">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            You have been logged out.
+        <div>
+          <label class="login"
+            ><p>Remember me:</p>
+            <input type="checkbox" name="remember-me"
+          /></label>
         </div>
-
-        <div class="middle">
-            <h1>Login voor het presidium</h1>
-            <form th:action="@{/login}" th:method="post">
-                <div><label class="login"> <p>Username:</p> <input type="text" name="username" required/> </label></div>
-                <div><label class="login"> <p>Password:</p> <input type="password" name="password" required/> </label></div>
-                <div><label class="login"><p>Remember me:</p><input type="checkbox" name="remember-me"></label></div>
-                <div><input type="submit" value="Sign In"/></div>
-            </form>
-        </div>
-    </body>
+        <div><input type="submit" value="Sign In" /></div>
+      </form>
+    </main>
+  </body>
 </html>

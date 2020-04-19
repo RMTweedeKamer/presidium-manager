@@ -1,73 +1,92 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments.html :: head (info='Archief')">
+  <head th:replace="fragments.html :: head (info='Archief')"> </head>
+  <body>
+    <header th:replace="fragments.html :: menu (${loggedIn})"></header>
 
-</head>
-<body>
-<div th:replace="fragments.html :: menu (${loggedIn})">
+    <div class="alert" th:if="${param.notfound}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';"
+        >&times;</span
+      >
+      Geen resultaten gevonden!
+    </div>
 
-</div>
-
-<div class="alert" th:if="${param.notfound}">
-    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-    Geen resultaten gevonden!
-</div>
-
-<div class="normal-container middle">
-    <div class="menu">
+    <main class="normal-container middle">
+      <nav class="menu">
         <ul>
-            <li>Gevonden kamerstukken</li>
+          <li>Gevonden kamerstukken</li>
         </ul>
-    </div>
-    <div class="normal-content middle">
+      </nav>
+      <section class="normal-content middle">
         <h1>Zoeken</h1>
-        <form th:action="@{'/archive/' + ${current}}" th:method="POST" th:object="${filterDTO}">
-            <input class="submitpanel big"  type="text" name="filterString" th:field="*{filterString}" placeholder="Zoeken...">
-            <input type="submit" th:value="Zoeken">
+        <form
+          th:action="@{'/archive/' + ${current}}"
+          th:method="POST"
+          th:object="${filterDTO}"
+        >
+          <input
+            class="submitpanel big"
+            type="text"
+            name="filterString"
+            th:field="*{filterString}"
+            placeholder="Zoeken..."
+          />
+          <input type="submit" th:value="Zoeken" />
         </form>
-        <hr>
+        <hr />
         <div th:each="kamerstuk: ${kamerstukken}">
-            <form th:id="${kamerstuk.getId()}" th:action="@{'/archive/' + ${kamerstuk.getType().getCall()} + '/' + ${kamerstuk.getCallnumber()}}" th:method="GET">
-                <button th:if="${kamerstuk.callsign} != null" class="collapsible" th:text="${kamerstuk.callsign} + ': ' + ${kamerstuk.title}" th:onclick="document.getElementById(${kamerstuk.getId()}).submit()">
-                </button>
-                <button th:if="${kamerstuk.callsign} == null" class="collapsible" th:text="${kamerstuk.title}" th:onclick="document.getElementById(${kamerstuk.getId()}).submit()">
-                </button>
-            </form>
+          <form
+            th:id="${kamerstuk.getId()}"
+            th:action="@{'/archive/' + ${kamerstuk.getType().getCall()} + '/' + ${kamerstuk.getCallnumber()}}"
+            th:method="GET"
+          >
+            <button
+              th:if="${kamerstuk.callsign} != null"
+              class="collapsible"
+              th:text="${kamerstuk.callsign} + ': ' + ${kamerstuk.title}"
+              th:onclick="document.getElementById(${kamerstuk.getId()}).submit()"
+            ></button>
+            <button
+              th:if="${kamerstuk.callsign} == null"
+              class="collapsible"
+              th:text="${kamerstuk.title}"
+              th:onclick="document.getElementById(${kamerstuk.getId()}).submit()"
+            ></button>
+          </form>
         </div>
-    </div>
+      </section>
+    </main>
 
-</div>
+    <script>
+      var coll = document.getElementsByClassName("collapsible");
 
-<script>
-    var coll = document.getElementsByClassName("collapsible");
-
-    for (var i = 0; i < coll.length; i++) {
+      for (var i = 0; i < coll.length; i++) {
         coll[i].addEventListener("click", function () {
-            this.classList.toggle("active");
-            var content = this.nextElementSibling;
-            if (content.style.display === "block") {
-                content.style.display = "none";
-            } else {
-                content.style.display = "block";
-            }
-        });
-    }
-
-    var modals = document.getElementsByClassName("openBtn");
-    var span = document.getElementsByClassName("close");
-
-    for (i = 0; i < modals.length; i++) {
-        modals[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            var content = this.nextElementSibling;
-            content.style.display = "block";
-        });
-        span[i].addEventListener("click", function() {
-            this.classList.toggle("closed");
-            var content = this.parentElement.parentElement;
+          this.classList.toggle("active");
+          var content = this.nextElementSibling;
+          if (content.style.display === "block") {
             content.style.display = "none";
-        })
-    }
-</script>
-</body>
+          } else {
+            content.style.display = "block";
+          }
+        });
+      }
+
+      var modals = document.getElementsByClassName("openBtn");
+      var span = document.getElementsByClassName("close");
+
+      for (i = 0; i < modals.length; i++) {
+        modals[i].addEventListener("click", function () {
+          this.classList.toggle("active");
+          var content = this.nextElementSibling;
+          content.style.display = "block";
+        });
+        span[i].addEventListener("click", function () {
+          this.classList.toggle("closed");
+          var content = this.parentElement.parentElement;
+          content.style.display = "none";
+        });
+      }
+    </script>
+  </body>
 </html>

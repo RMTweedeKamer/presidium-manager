@@ -1,57 +1,84 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="fragments.html :: head (info='Indienpaneel')">
-
-    </head>
-    <body>
-        <div th:replace="fragments.html :: menu (${loggedIn})">
-
-        </div>
-        <div class="info" th:if="${param.submitted}">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            Uw kamerstuk is ingediend!
-        </div>
-        <div class="alert" th:if="${param.problem}">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            Er is helaas iets misgegaan, laat dit even weten aan /u/th8.
-        </div>
-        <div class="middle content">
-            <h1>Dien een kamerstuk in</h1>
-            <form th:action="@{/}" th:object="${kamerstuk}" th:method="post">
-                <label class="submitpanel">
-                    <p>Type kamerstuk:</p>
-                    <select th:field="*{type}">
-                        <option th:each="type : ${types}" th:value="${type}" th:text="${type.getName()}"></option>
-                    </select>
-                </label>
-                <label class="submitpanel">
-                    <p>Titel het kamerstuk:</p>
-                    <input class="big" type="text" th:field="*{title}" placeholder="Motie tot..." required>
-                </label>
-                <label class="submitpanel">
-                    <p>Inhoud van het kamerstuk:</p>
-                    <textarea maxlength="40000" th:field="*{content}" id="motieContent" required onkeyup="doPreview()"></textarea>
-                </label>
-                <label class="submitpanel">
-                    <p>Live preview:</p>
-                    <div class="preview-container" id="preview"></div>
-                </label>
-                <label class="submitpanel">
-                    <p>Gebruikersnaam indiener:</p>
-                    <input class="medium" type="text" th:field="*{submittedBy}" placeholder="th8" pattern="[A-Za-z0-9_-]+" title="Een valide reddit username, zonder /u/" required>
-                </label>
-                <label class="fixHitbox">
-                    <p>Spoed?</p>
-                    <input type="checkbox" th:field="*{urgent}">
-                </label>
-                <input type="submit" value="Indienen">
-            </form>
-        </div>
-        <script>
-            function doPreview() {
-                document.getElementById('preview').innerHTML =
-                    SnuOwnd.getParser().render(document.getElementById('motieContent').value);
-            }
-        </script>
-    </body>
+  <head th:replace="fragments.html :: head (info='Indienpaneel')"> </head>
+  <body>
+    <header th:replace="fragments.html :: menu (${loggedIn})"></header>
+    <div class="info" th:if="${param.submitted}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';"
+        >&times;</span
+      >
+      Uw kamerstuk is ingediend!
+    </div>
+    <div class="alert" th:if="${param.problem}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';"
+        >&times;</span
+      >
+      Er is helaas iets misgegaan, laat dit even weten aan /u/th8.
+    </div>
+    <main class="middle content">
+      <h1>Dien een kamerstuk in</h1>
+      <form th:action="@{/}" th:object="${kamerstuk}" th:method="post">
+        <label class="submitpanel">
+          <p>Type kamerstuk:</p>
+          <select th:field="*{type}">
+            <option
+              th:each="type : ${types}"
+              th:value="${type}"
+              th:text="${type.getName()}"
+            ></option>
+          </select>
+        </label>
+        <label class="submitpanel">
+          <p>Titel het kamerstuk:</p>
+          <input
+            class="big"
+            type="text"
+            th:field="*{title}"
+            placeholder="Motie tot..."
+            required
+          />
+        </label>
+        <label class="submitpanel">
+          <p>Inhoud van het kamerstuk:</p>
+          <textarea
+            maxlength="40000"
+            th:field="*{content}"
+            id="motieContent"
+            required
+            onkeyup="doPreview()"
+          ></textarea>
+        </label>
+        <label class="submitpanel">
+          <p>Live preview:</p>
+          <div class="preview-container" id="preview"></div>
+        </label>
+        <label class="submitpanel">
+          <p>Gebruikersnaam indiener:</p>
+          <input
+            class="medium"
+            type="text"
+            th:field="*{submittedBy}"
+            placeholder="th8"
+            pattern="[A-Za-z0-9_-]+"
+            title="Een valide reddit username, zonder /u/"
+            required
+          />
+        </label>
+        <label class="fixHitbox">
+          <p>Spoed?</p>
+          <input type="checkbox" th:field="*{urgent}" />
+        </label>
+        <input type="submit" value="Indienen" />
+      </form>
+    </main>
+    <script>
+      function doPreview() {
+        document.getElementById(
+          "preview"
+        ).innerHTML = SnuOwnd.getParser().render(
+          document.getElementById("motieContent").value
+        );
+      }
+    </script>
+  </body>
 </html>
