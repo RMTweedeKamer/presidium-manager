@@ -1,25 +1,27 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="fragments.html :: head (info='Klachten')">
-
-    </head>
-    <body>
-        <div th:replace="fragments.html :: menu (${loggedIn})">
-
-        </div>
-        <div class="info" th:if="${param.done}">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            Uw anonieme klacht is ingediend.
-        </div>
-        <div class="middle content">
-            <h1>Dien een anonieme klacht in</h1>
-            <form th:action="@{/klacht}" th:object="${complaint}" th:method="post">
-                <label class="submitpanel">
-                    <p>Uw klacht:</p>
-                    <textarea maxlength="40000" th:field="*{complaintText}" required></textarea>
-                </label>
-                <input type="submit" value="Versturen">
-            </form>
-        </div>
-    </body>
+  <head th:replace="fragments.html :: head (info='Klachten')"> </head>
+  <body>
+    <header th:replace="fragments.html :: menu (${loggedIn})"></header>
+    <div class="info" th:if="${param.done}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';"
+        >&times;</span
+      >
+      Uw anonieme klacht is ingediend.
+    </div>
+    <main class="middle content">
+      <h1>Dien een anonieme klacht in</h1>
+      <form th:action="@{/klacht}" th:object="${complaint}" th:method="post">
+        <label class="submitpanel">
+          <p>>Uw klacht:</p>
+          <textarea
+            maxlength="40000"
+            th:field="*{complaintText}"
+            required
+          ></textarea>
+        </label>
+        <input type="submit" value="Versturen" />
+      </form>
+    </main>
+  </body>
 </html>

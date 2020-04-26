@@ -1,101 +1,96 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments.html :: head (info='Stats')">
-
-</head>
-<body>
-<div th:replace="fragments.html :: menu (true)">
-
-</div>
-<div class="normal-container">
-    <div class="menu">
+  <head th:replace="fragments.html :: head (info='Stats')"> </head>
+  <body>
+    <header th:replace="fragments.html :: menu (true)"></header>
+    <main class="normal-container">
+      <div class="menu">
         <ul>
-            <li>Stats</li>
+          <li>Stats</li>
         </ul>
-    </div>
-    <div class="normal-content middle">
+      </div>
+      <div class="normal-content middle">
         <table class="stats">
-            <h1>Statistieken van het indienpaneel</h1>
-            <tr class="headerrow">
-                <th>Stat</th>
-                <th>Value</th>
-            </tr>
-            <tr>
-                <td>Java versie: </td>
-                <td th:text="${stats.getJavaVersion()}"></td>
-            </tr>
-            <tr>
-                <td>Startup tijd: </td>
-                <td th:text="${stats.getStartDate()}"></td>
-            </tr>
-            <tr>
-                <td>Laatste check voor het posten van kamerstukken: </td>
-                <td th:text="${stats.getLastToPostCheck()}"></td>
-            </tr>
-            <tr>
-                <td>Laatste check voor het posten van stemmingen: </td>
-                <td th:text="${stats.getLastToVoteCheck()}"></td>
-            </tr>
-            <tr></tr>
-            <tr class="headerrow">
-                <td>Totaal aantal kamerstukken: </td>
-                <td th:text="${stats.getKamerstukken()}"></td>
-            </tr>
-            <tr>
-                <td>Aantal kamerstukken dat succesvol gepost is: </td>
-                <td th:text="${stats.getSuccesfullyPosted()}"></td>
-            </tr>
-            <tr>
-                <td>Aantal kamerstukken in de wachtrij: </td>
-                <td th:text="${stats.getQueue()}"></td>
-            </tr>
-            <tr>
-                <td>Aantal kamerstukken in de stemwachtrij: </td>
-                <td th:text="${stats.getQueueVote()}"></td>
-            </tr>
-            <tr>
-                <td>Aantal kamerstukken dat is afgewezen: </td>
-                <td th:text="${stats.getDenied()}"></td>
-            </tr>
-            <tr>
-                <td>Aantal kamerstukken dat is ingetrokken: </td>
-                <td th:text="${stats.getWithdrawn()}"></td>
-            </tr>
+          <h1>Statistieken van het indienpaneel</h1>
+          <tr class="headerrow">
+            <th>Stat</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>Java versie:</td>
+            <td th:text="${stats.getJavaVersion()}"></td>
+          </tr>
+          <tr>
+            <td>Startup tijd:</td>
+            <td th:text="${stats.getStartDate()}"></td>
+          </tr>
+          <tr>
+            <td>Laatste check voor het posten van kamerstukken:</td>
+            <td th:text="${stats.getLastToPostCheck()}"></td>
+          </tr>
+          <tr>
+            <td>Laatste check voor het posten van stemmingen:</td>
+            <td th:text="${stats.getLastToVoteCheck()}"></td>
+          </tr>
+          <tr></tr>
+          <tr class="headerrow">
+            <td>Totaal aantal kamerstukken:</td>
+            <td th:text="${stats.getKamerstukken()}"></td>
+          </tr>
+          <tr>
+            <td>Aantal kamerstukken dat succesvol gepost is:</td>
+            <td th:text="${stats.getSuccesfullyPosted()}"></td>
+          </tr>
+          <tr>
+            <td>Aantal kamerstukken in de wachtrij:</td>
+            <td th:text="${stats.getQueue()}"></td>
+          </tr>
+          <tr>
+            <td>Aantal kamerstukken in de stemwachtrij:</td>
+            <td th:text="${stats.getQueueVote()}"></td>
+          </tr>
+          <tr>
+            <td>Aantal kamerstukken dat is afgewezen:</td>
+            <td th:text="${stats.getDenied()}"></td>
+          </tr>
+          <tr>
+            <td>Aantal kamerstukken dat is ingetrokken:</td>
+            <td th:text="${stats.getWithdrawn()}"></td>
+          </tr>
         </table>
-    </div>
+      </div>
+    </main>
 
-</div>
+    <script>
+      var coll = document.getElementsByClassName("collapsible");
 
-<script>
-    var coll = document.getElementsByClassName("collapsible");
-
-    for (var i = 0; i < coll.length; i++) {
+      for (var i = 0; i < coll.length; i++) {
         coll[i].addEventListener("click", function () {
-            this.classList.toggle("active");
-            var content = this.nextElementSibling;
-            if (content.style.display === "block") {
-                content.style.display = "none";
-            } else {
-                content.style.display = "block";
-            }
-        });
-    }
-
-    var modals = document.getElementsByClassName("openBtn");
-    var span = document.getElementsByClassName("close");
-
-    for (i = 0; i < modals.length; i++) {
-        modals[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            var content = this.nextElementSibling;
-            content.style.display = "block";
-        });
-        span[i].addEventListener("click", function() {
-            this.classList.toggle("closed");
-            var content = this.parentElement.parentElement;
+          this.classList.toggle("active");
+          var content = this.nextElementSibling;
+          if (content.style.display === "block") {
             content.style.display = "none";
-        })
-    }
-</script>
-</body>
+          } else {
+            content.style.display = "block";
+          }
+        });
+      }
+
+      var modals = document.getElementsByClassName("openBtn");
+      var span = document.getElementsByClassName("close");
+
+      for (i = 0; i < modals.length; i++) {
+        modals[i].addEventListener("click", function () {
+          this.classList.toggle("active");
+          var content = this.nextElementSibling;
+          content.style.display = "block";
+        });
+        span[i].addEventListener("click", function () {
+          this.classList.toggle("closed");
+          var content = this.parentElement.parentElement;
+          content.style.display = "none";
+        });
+      }
+    </script>
+  </body>
 </html>

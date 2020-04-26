@@ -1,32 +1,51 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en_US">
-<head th:replace="fragments.html :: head ('Sign up')">
-</head>
-    <body>
-    <div th:replace="fragments.html :: menu(false)">
-
-    </div>
+  <head th:replace="fragments.html :: head ('Sign up')"> </head>
+  <body>
+    <header th:replace="fragments.html :: menu(false)"></header>
     <div class="alert" th:if="${param.nameerror}">
-        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-        An account with that username already exists.
+      <span class="closebtn" onclick="this.parentElement.style.display='none';"
+        >&times;</span
+      >
+      An account with that username already exists.
     </div>
     <div class="alert" th:if="${param.invalidsecret}">
-        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-        The entered secret is invalid.
+      <span class="closebtn" onclick="this.parentElement.style.display='none';"
+        >&times;</span
+      >
+      The entered secret is invalid.
     </div>
-    <div class="middle">
-        <h1>
-            Maak een account als presidiumlid
-        </h1>
-        <p>
-            Voer om een account aan te maken je reddit username (zonder /u/) en een wachtwoord in.
-        </p>
-        <form class="middle" th:action="@{/signup}" th:object="${newUser}" th:method="post">
-            <div><label class="login"> Reddit username: <input type="text" name="username" required/></label></div>
-            <div><label class="login"> Password: <input type="password" name="password" required/></label></div>
-            <div><label class="login"> Secret: <input type="text" name="secret" required></label></div>
-            <div><input type="submit" value="Sign Up"/></div>
-        </form>
-    </div>
-    </body>
+    <main class="middle">
+      <h1>
+        Maak een account als presidiumlid
+      </h1>
+      <p>
+        Voer om een account aan te maken je reddit username (zonder /u/) en een
+        wachtwoord in.
+      </p>
+      <form
+        class="middle"
+        th:action="@{/signup}"
+        th:object="${newUser}"
+        th:method="post"
+      >
+        <div>
+          <label class="login">
+            Reddit username: <input type="text" name="username" required
+          /></label>
+        </div>
+        <div>
+          <label class="login">
+            Password: <input type="password" name="password" required
+          /></label>
+        </div>
+        <div>
+          <label class="login">
+            Secret: <input type="text" name="secret" required
+          /></label>
+        </div>
+        <div><input type="submit" value="Sign Up" /></div>
+      </form>
+    </main>
+  </body>
 </html>
