@@ -4,9 +4,9 @@
 
     </head>
     <body>
-        <div th:replace="fragments.html :: menu(true)">
+        <header th:replace="fragments.html :: menu(true)">
 
-        </div>
+        </h>
         <div class="info" th:if="${param.planned}">
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
             Kamerstuk ingepland.
@@ -45,7 +45,7 @@
         </div>
 
         <!--Info-->
-        <div class="small-container">
+        <section class="small-container">
             <div class="menu">
                 <ul>
                     <li>Ingekomen stukken</li>
@@ -114,9 +114,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="small-container">
+        <section class="small-container">
             <div class="menu">
                 <ul>
                     <li>Ingeplande stukken</li>
@@ -197,9 +197,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="small-container">
+        <section class="small-container">
             <div class="menu">
                 <ul>
                     <li>Stemming uitgesteld</li>
@@ -229,9 +229,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="small-container">
+        <section class="small-container">
             <div class="menu">
                 <ul>
                     <li>Stukken voor stemming</li>
@@ -269,9 +269,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="small-container">
+        <section class="small-container">
             <div class="menu">
                 <ul>
                     <li th:text="Notificaties"></li>
@@ -286,7 +286,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <script>
             var coll = document.getElementsByClassName("collapsible");

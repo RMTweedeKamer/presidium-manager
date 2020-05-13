@@ -1,21 +1,17 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments.html :: head (info=${callsign})">
-
-</head>
-<body>
-<div th:replace="fragments.html :: menu (false)">
-
-</div>
-<div class="normal-container">
-    <div class="menu extra-padding">
+  <head th:replace="fragments.html :: head (info=${callsign})"> </head>
+  <body>
+    <header th:replace="fragments.html :: menu (false)"></header>
+    <main class="normal-container">
+      <div class="menu extra-padding">
         <ul>
-            <li th:text="${callsign}"></li>
+          <li th:text="${callsign}"></li>
         </ul>
-    </div>
-    <div class="normal-content extra-padding">
+      </div>
+      <div class="normal-content extra-padding">
         <div th:remove="tag" th:utext="${content}"></div>
-    </div>
-</div>
-</body>
+      </div>
+    </main>
+  </body>
 </html>
