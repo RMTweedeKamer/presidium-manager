@@ -17,6 +17,14 @@ a {
 }
 
 /*--- Navbar ---*/
+nav.menu {
+    display: flex;
+    align-items: center;
+    width:100%;
+    height: 10%;
+    background-color: rgba(41, 128, 185,1.0);
+}
+
 div.menu {
     display: flex;
     align-items: center;
@@ -102,7 +110,7 @@ th {
 /*--- Game containers ---*/
 
 @media only screen and (min-width: 1000px) {
-    div.small-container {
+    section.small-container {
         margin-left: 5%;
         margin-right: 5%;
         margin-top: 30px;
@@ -114,7 +122,17 @@ th {
     }
 }
 
-div.normal-container {
+main.normal-container {
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-top: 30px;
+    display:inline-block;
+    width: 60%;
+    height: 720px;
+    min-width: 400px;
+}
+
+main.normal-container {
     margin-left: 20%;
     margin-right: 20%;
     margin-top: 30px;
@@ -125,7 +143,7 @@ div.normal-container {
 }
 
 @media only screen and (max-width: 999px) {
-    div.small-container {
+    section.small-container {
         margin-left: 10%;
         margin-right: 10%;
         margin-top: 30px;
@@ -138,7 +156,7 @@ div.normal-container {
 }
 
 
-div.small-container div.menu {
+section.small-container div.menu {
     display: block;
     align-items: center;
     width:100%;
@@ -146,7 +164,7 @@ div.small-container div.menu {
     background-color: rgba(41, 128, 185,1.0);
 }
 
-div.normal-container > div.menu {
+main.normal-container > div.menu {
     display: block;
     align-items: center;
     width:100%;
@@ -154,21 +172,21 @@ div.normal-container > div.menu {
     background-color: rgba(41, 128, 185,1.0);
 }
 
-div.small-container ul {
+section.small-container ul {
     padding: 0;
     display: list-item;
     list-style: none;
     text-align: center;
 }
 
-div.normal-container > div.menu > ul {
+main.normal-container > div.menu > ul {
     padding: 0;
     display: list-item;
     list-style: none;
     text-align: center;
 }
 
-div.small-container li {
+section.small-container li {
     height:100%;
     padding:12px 20px;
     text-align:center;
@@ -177,7 +195,7 @@ div.small-container li {
     color: white;
 }
 
-div.normal-container > div.menu  li {
+main.normal-container > div.menu  li {
     height:100%;
     padding:16px 20px;
     text-align:center;

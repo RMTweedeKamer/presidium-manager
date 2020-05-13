@@ -5,8 +5,7 @@
     </head>
     <body>
         <header th:replace="fragments.html :: menu(true)">
-
-        </h>
+        </header>
         <div class="info" th:if="${param.planned}">
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
             Kamerstuk ingepland.
