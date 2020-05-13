@@ -6,6 +6,7 @@ import nl.th8.presidium.user.UsernameExistsException;
 import nl.th8.presidium.user.controller.dto.User;
 import nl.th8.presidium.user.data.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +29,15 @@ public class UserService implements UserDetailsService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    private String secret;
+
+    @Autowired
+    public UserService(
+            @Value("${manager.user-secret}") String secret
+    ) {
+        this.secret = secret;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println(username);
@@ -46,7 +56,7 @@ public class UserService implements UserDetailsService {
         if(usernameExists(newUser.getUsername())) {
             throw new UsernameExistsException("There is an account with that username: " +  newUser.getUsername());
         }
-        if(!newUser.getSecret().equals(Constants.SECRET)) {
+        if(!newUser.getSecret().equals(this.secret)) {
             throw new InvalidSecretException("The entered secret is incorrect");
         }
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));

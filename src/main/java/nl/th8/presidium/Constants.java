@@ -11,10 +11,6 @@ public class Constants {
     public static final String DATE_FORMAT = "EEEE, dd-MMMM";
     public static final int CALLSIGN_LENGTH = 4;
 
-    /* --- For API calls --- */
-    @Value("${manager.user-secret}")
-    public static String SECRET;
-
     /* --- Notifications --- */
     public static final String NO_TEXT = "Geen extra informatie beschikbaar.";
 
