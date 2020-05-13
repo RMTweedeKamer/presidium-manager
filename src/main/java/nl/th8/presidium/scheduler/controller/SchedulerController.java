@@ -67,23 +67,23 @@ public class SchedulerController {
         return "redirect:/scheduler?planned";
     }
 
-    @PostMapping("/plan/api")
-    public ResponseEntity planKamerstukAPI(@RequestBody @Valid Kamerstuk kamerstuk) {
-        String id;
-        if(kamerstuk.getSecret().equals(Constants.SECRET)) {
-            kamerstuk.processToCallString();
-            try {
-                id = kamerstukkenService.queueKamerstuk(kamerstuk, "API");
-            } catch (InvalidUsernameException | DuplicateCallsignException e) {
-                return ResponseEntity.status(400).build();
-            }
-            logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());
-        }
-        else {
-            return ResponseEntity.status(401).build();
-        }
-        return ResponseEntity.status(201).body(id);
-    }
+//    @PostMapping("/plan/api")
+//    public ResponseEntity planKamerstukAPI(@RequestBody @Valid Kamerstuk kamerstuk) {
+//        String id;
+//        if(kamerstuk.getSecret().equals()) {
+//            kamerstuk.processToCallString();
+//            try {
+//                id = kamerstukkenService.queueKamerstuk(kamerstuk, "API");
+//            } catch (InvalidUsernameException | DuplicateCallsignException e) {
+//                return ResponseEntity.status(400).build();
+//            }
+//            logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());
+//        }
+//        else {
+//            return ResponseEntity.status(401).build();
+//        }
+//        return ResponseEntity.status(201).body(id);
+//    }
 
     @PostMapping("/reschedule")
     public String rescheduleKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
