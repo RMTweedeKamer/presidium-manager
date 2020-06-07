@@ -8,7 +8,7 @@ public class Constants {
 
     /* Properties */
     public static final int MAX_NOTIFICATIONS = 50;
-    public static final String DATE_FORMAT = "EEEE, dd-MMMM";
+    public static final String DATE_FORMAT = "EEEE, d MMMM";
     public static final int CALLSIGN_LENGTH = 4;
 
     /* --- Notifications --- */
