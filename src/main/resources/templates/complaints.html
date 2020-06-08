@@ -13,12 +13,16 @@
       <h1>Dien een anonieme klacht in</h1>
       <form th:action="@{/klacht}" th:object="${complaint}" th:method="post">
         <label class="submitpanel">
-          <p>>Uw klacht:</p>
+          <p>Uw klacht:</p>
           <textarea
             maxlength="40000"
             th:field="*{complaintText}"
             required
           ></textarea>
+        </label>
+        <label class="submitpanel">
+          <p>Link naar bericht: </p>
+          <input class="big" type="text" th:field="*{messageLink}">
         </label>
         <input type="submit" value="Versturen" />
       </form>

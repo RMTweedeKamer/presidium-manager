@@ -31,8 +31,13 @@
       "description": "User secret used to validate created accounts and API calls"
     },
     {
-      "name": "manager.discord-webhook-url",
+      "name": "manager.discord-scheduler-webhook",
       "type": "java.lang.String",
-      "description": "Discord webhook url."
+      "description": "Discord webhook url for scheduler notifications"
+    },
+    {
+      "name": "manager.discord-complaint-webhook",
+      "type": "java.lang.String",
+      "description": "Discord webhook url for complaint notifications"
     }
   ] }

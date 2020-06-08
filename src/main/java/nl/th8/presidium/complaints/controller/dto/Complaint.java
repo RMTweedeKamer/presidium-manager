@@ -3,6 +3,7 @@ package nl.th8.presidium.complaints.controller.dto;
 public class Complaint {
 
     private String complaintText;
+    private String messageLink;
 
     public String getComplaintText() {
         return complaintText;
@@ -10,5 +11,13 @@ public class Complaint {
 
     public void setComplaintText(String complaintText) {
         this.complaintText = complaintText;
+    }
+
+    public String getMessageLink() {
+        return messageLink;
+    }
+
+    public void setMessageLink(String messageLink) {
+        this.messageLink = messageLink;
     }
 }

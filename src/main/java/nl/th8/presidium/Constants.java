@@ -51,4 +51,5 @@ public class Constants {
     public static final String DENIED_BODY = "Beste %s, \n \n Jouw kamerstuk met de titel \"%s\" is afgewezen om de volgende reden: \"%s\".";
 
     public static final String COMPLAINT_SUBJECT = "Er is een anonieme klacht ingediend";
+    public static final String COMPLAINT_BODY = "Klacht: %s \n \n Berichtlink: %s";
 }

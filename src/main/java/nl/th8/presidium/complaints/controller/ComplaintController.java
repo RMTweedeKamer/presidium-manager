@@ -36,7 +36,7 @@ public class ComplaintController {
 
     @PostMapping
     public String submitComplaint(@ModelAttribute Complaint complaint) {
-        complaintService.sendComplaint(complaint.getComplaintText());
+        complaintService.sendComplaint(complaint.getComplaintText(), complaint.getMessageLink());
 
         return "redirect:/klacht?done";
     }
