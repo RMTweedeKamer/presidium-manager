@@ -3,6 +3,7 @@ package nl.th8.presidium.scheduler.controller;
 import nl.th8.presidium.Constants;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import nl.th8.presidium.scheduler.DuplicateCallsignException;
+import nl.th8.presidium.scheduler.InvalidCallsignException;
 import nl.th8.presidium.scheduler.InvalidUsernameException;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
 import nl.th8.presidium.scheduler.service.KamerstukkenService;
@@ -49,6 +50,8 @@ public class SchedulerController {
             return "redirect:/scheduler?invalidUsername";
         } catch (DuplicateCallsignException e) {
             return "redirect:/scheduler?duplicateCallsign";
+        } catch (InvalidCallsignException e) {
+            return "redirect:/scheduler?invalidCallsign";
         }
         logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());
 

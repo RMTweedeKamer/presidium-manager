@@ -12,6 +12,7 @@ import nl.th8.presidium.home.controller.dto.KamerstukType;
 import nl.th8.presidium.home.controller.dto.StatDTO;
 import nl.th8.presidium.home.data.KamerstukRepository;
 import nl.th8.presidium.scheduler.DuplicateCallsignException;
+import nl.th8.presidium.scheduler.InvalidCallsignException;
 import nl.th8.presidium.scheduler.InvalidUsernameException;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
 import nl.th8.presidium.scheduler.controller.dto.Notification;
@@ -113,11 +114,16 @@ public class KamerstukkenService {
                 .collect(Collectors.toList());
     }
 
-    public String queueKamerstuk(Kamerstuk kamerstuk, String mod) throws InvalidUsernameException, DuplicateCallsignException {
+    public String queueKamerstuk(Kamerstuk kamerstuk, String mod) throws InvalidUsernameException, DuplicateCallsignException, InvalidCallsignException {
         //Check callsign
         if(kamerstukRepository.existsByCallsignAndIdIsNot(kamerstuk.getCallsign(), kamerstuk.getId())) {
             throw new DuplicateCallsignException();
         }
+        if(!checkCallsignFormat(kamerstuk.getType(), kamerstuk.getCallsign())) {
+            throw new InvalidCallsignException();
+        }
+
+
         //Process kamerstuk data
         kamerstuk.processToCallString();
         kamerstuk.processCallsigns();
@@ -137,6 +143,26 @@ public class KamerstukkenService {
             }
         }
         return kamerstukSaved.getId();
+    }
+
+    private boolean checkCallsignFormat(KamerstukType type, String callsign) {
+        boolean isAllowed = false;
+        switch (type) {
+            case WET:
+            case MOTIE:
+                isAllowed = callsign.matches("[MW][0-9]{4}");
+                break;
+            case BRIEF:
+            case DEBAT:
+            case VRAGEN:
+            case BESLUIT:
+                isAllowed = callsign.matches("[KD][SBV][0-9]{4}");
+                break;
+            case AMENDEMENT:
+                isAllowed = callsign.matches("[W][0-9]{4}-[IV]{1,3}");
+                break;
+        }
+        return isAllowed;
     }
 
     public void editKamerstuk(String id, String title, String content, String toCallString, String mod) throws KamerstukNotFoundException {

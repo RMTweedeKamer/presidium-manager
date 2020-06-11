@@ -42,6 +42,10 @@
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
             De identificator van het kamerstuk is al in gebruik, voer een andere identificator in.
         </div>
+        <div class="alert" th:if="${param.invalidCallsign}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            De identificator van het kamerstuk is niet correct. Zorg dat je een juiste letter combinatie met 4 cijfers hebt gebruikt.
+        </div>
 
         <!--Info-->
         <section class="small-container">
