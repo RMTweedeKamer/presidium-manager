@@ -21,7 +21,7 @@ public class ComplaintService {
 
     public void sendComplaint(String complaint, String link) throws InvalidComplaintException {
         UrlValidator validator = new UrlValidator();
-        if(validator.isValid(link) && complaint.length() < discordFieldMaxLength) {
+        if((validator.isValid(link) || link.isBlank()) && complaint.length() < discordFieldMaxLength) {
             redditSupplier.inbox.compose("/r/" + RedditSupplier.SUBREDDIT, Constants.COMPLAINT_SUBJECT, String.format(Constants.COMPLAINT_BODY, complaint, link));
             temmieSupplier.complaintEmbeddedMessage(complaint, link);
         }
