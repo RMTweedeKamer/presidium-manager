@@ -9,13 +9,19 @@
       >
       Uw anonieme klacht is ingediend.
     </div>
+    <div class="alert" th:if="${param.invalid}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';"
+      >&times;</span
+      >
+      Er zit een fout in uw klacht, zorg dat de link naar het bericht een valide URL is en dat de klacht niet langer is dan 1024 karakters.
+    </div>
     <main class="middle content">
       <h1>Dien een anonieme klacht in</h1>
       <form th:action="@{/klacht}" th:object="${complaint}" th:method="post">
         <label class="submitpanel">
           <p>Uw klacht:</p>
           <textarea
-            maxlength="40000"
+            maxlength="1024"
             th:field="*{complaintText}"
             required
           ></textarea>

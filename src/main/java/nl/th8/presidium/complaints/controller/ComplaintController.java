@@ -1,5 +1,6 @@
 package nl.th8.presidium.complaints.controller;
 
+import nl.th8.presidium.complaints.InvalidComplaintException;
 import nl.th8.presidium.complaints.controller.dto.Complaint;
 import nl.th8.presidium.complaints.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,11 @@ public class ComplaintController {
 
     @PostMapping
     public String submitComplaint(@ModelAttribute Complaint complaint) {
-        complaintService.sendComplaint(complaint.getComplaintText(), complaint.getMessageLink());
+        try {
+            complaintService.sendComplaint(complaint.getComplaintText(), complaint.getMessageLink());
+        } catch (InvalidComplaintException e) {
+            return "redirect:/klacht?invalid";
+        }
 
         return "redirect:/klacht?done";
     }
