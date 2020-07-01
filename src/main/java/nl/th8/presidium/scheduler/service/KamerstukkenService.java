@@ -67,7 +67,7 @@ public class KamerstukkenService {
         }
     }
 
-    @Scheduled(cron = "0 0 12 ? * FRI")
+    @Scheduled(cron = "0 0 12 ? * SAT")
     public void postVote() {
         List<Kamerstuk> kamerstukkenToCheck = kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull();
 
@@ -111,6 +111,18 @@ public class KamerstukkenService {
     public List<Kamerstuk> getKamerstukkenVoteQueue() {
         return kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull().stream()
                 .sorted(Comparator.comparing(Kamerstuk::getVoteDate))
+                .collect(Collectors.toList());
+    }
+
+    public List<Kamerstuk> getToukieQueue() {
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        c.add(Calendar.DATE, -15);
+        Date date1 = c.getTime();
+        c.add(Calendar.DATE, 30);
+        Date date2 = c.getTime();
+        return kamerstukRepository.findAllByPostDateIsBetweenAndCallsignIsNotNull(date1, date2).stream()
+                .sorted(Comparator.comparing(Kamerstuk::getType).thenComparing(Kamerstuk::getCallsign))
                 .collect(Collectors.toList());
     }
 

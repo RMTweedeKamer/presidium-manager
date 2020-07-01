@@ -56,7 +56,7 @@
             </div>
             <div class="small-content middle">
                 <div th:each="kamerstuk: ${kamerstukken}">
-                    <button th:classappend="${kamerstuk.isUrgent()}? urgent" class="openBtn collapsible" th:text="${kamerstuk.title}">
+                    <button th:classappend="${kamerstuk.isUrgent()}? urgent" class="openBtn collapsible" th:text="${kamerstuk.title} + ' | ' + ${kamerstuk.submittedBy}">
                     </button>
                     <div class="modal">
                         <div th:classappend="${kamerstuk.isUrgent()}? urgent2" class="modal-content">

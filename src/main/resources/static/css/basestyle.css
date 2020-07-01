@@ -23,6 +23,7 @@ nav.menu {
     width:100%;
     height: 10%;
     background-color: rgba(41, 128, 185,1.0);
+    min-width: max-content;
 }
 
 div.menu {
@@ -93,9 +94,11 @@ ul.navigation > li a {
 
 /*--- Lobby tables ---*/
 table.lobby {
-    margin-left: auto;
+    margin-left: 5%;
     margin-right: auto;
+    margin-bottom: 40px;
     border-collapse: collapse;
+    min-width: 1000px;
 }
 
 tr.headerrow {
@@ -429,7 +432,7 @@ th {
 }
 
 td {
-    text-align: left;
+    padding: 5px 15px;
 }
 
 /* --- Previews --- */

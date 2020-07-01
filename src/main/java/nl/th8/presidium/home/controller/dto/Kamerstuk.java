@@ -217,6 +217,14 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
         }
     }
 
+    public String getToCallAsText() {
+        StringBuilder builder = new StringBuilder();
+        for(String callee : this.toCall) {
+            builder.append(callee).append("</br>");
+        }
+        return builder.toString();
+    }
+
     public String getSecret() {
         return secret;
     }

@@ -28,6 +28,8 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
 
     List<Kamerstuk> findAllByPostDateIsNullAndDeniedIsFalse();
 
+    List<Kamerstuk> findAllByPostDateIsBetweenAndCallsignIsNotNull(Date date1, Date date2);
+
     long countAllByPostDateIsNullAndDeniedIsFalse();
 
     long countAllByPostDateIsNotNullAndPostedIsFalse();
