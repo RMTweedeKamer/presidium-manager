@@ -110,7 +110,7 @@ public class KamerstukkenService {
 
     public List<Kamerstuk> getKamerstukkenVoteQueue() {
         return kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull().stream()
-                .sorted(Comparator.comparing(Kamerstuk::getVoteDate))
+                .sorted(Comparator.comparing(Kamerstuk::getVoteDate).thenComparing(Kamerstuk::getCallsign))
                 .collect(Collectors.toList());
     }
 
