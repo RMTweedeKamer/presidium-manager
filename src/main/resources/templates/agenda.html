@@ -43,7 +43,7 @@
           <td th:text="${kamerstuk.getVoteDateAsString()}">Stemmingsdatum</td>
           <td th:text="${kamerstuk.getCallsign()}">Kenmerk</td>
           <td th:text="${kamerstuk.getSubmittedBy()}">Indiener</td>
-          <td th:text="${kamerstuk.getTitle()}">Titel</td>
+          <td><a th:text="${kamerstuk.getTitle()}" th:href="${kamerstuk.getUrl()}">Titel</a></td>
         </tr>
       </table>
     </main>

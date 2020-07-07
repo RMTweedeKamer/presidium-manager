@@ -155,8 +155,11 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
     }
 
     public String getVoteDateAsString() {
-        DateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT, new Locale("nl", "NL"));
-        return format.format(this.voteDate);
+        if(this.voteDate != null) {
+            DateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT, new Locale("nl", "NL"));
+            return format.format(this.voteDate);
+        }
+        return "N.v.t.";
     }
 
     public void setVoteDate(String datetime) throws ParseException {
@@ -268,6 +271,10 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     public String getUrl() {
         return url;
+    }
+
+    public boolean hasUrl() {
+        return this.url != null && !this.url.isBlank();
     }
 
     public void setUrl(String url) {

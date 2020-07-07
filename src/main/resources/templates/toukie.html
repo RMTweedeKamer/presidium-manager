@@ -7,7 +7,7 @@
       <h1>
         Voor Toukie
       </h1>
-      <table class="lobby">
+      <table class="lobby toukie">
         <tr class="headerrow">
           <th>Soort</th>
           <th>Kenmerk</th>
@@ -19,7 +19,8 @@
           <td th:text="${kamerstuk.getType().getName()}">Soort</td>
           <td th:text="${kamerstuk.getCallsign()}">Kenmerk</td>
           <td th:text="${kamerstuk.getSubmittedBy()}">Indiener</td>
-          <td th:text="${kamerstuk.getTitle()}">Titel</td>
+          <td th:if="${!kamerstuk.hasUrl()}" th:text="${kamerstuk.getTitle()}">Titel</td>
+          <td th:if="${kamerstuk.hasUrl()}"><a th:text="${kamerstuk.getTitle()}" th:href="${kamerstuk.getUrl()}">Titel</a></td>
           <td th:utext="${kamerstuk.getToCallAsText()}">Opgeroepen</td>
         </tr>
       </table>
