@@ -99,6 +99,7 @@ table.lobby {
     margin-bottom: 40px;
     border-collapse: collapse;
     min-width: 1000px!important;
+    width: 90%;
 }
 
 table.toukie {
