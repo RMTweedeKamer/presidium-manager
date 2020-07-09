@@ -10,6 +10,10 @@
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
             Kamerstuk ingepland.
         </div>
+        <div class="info" th:if="${param.edited}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Kamerstuk is aangepast.
+        </div>
         <div class="info" th:if="${param.unplanned}">
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
             Kamerstuk uit de wachtrij gehaald.

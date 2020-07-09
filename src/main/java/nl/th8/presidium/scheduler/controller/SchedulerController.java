@@ -65,9 +65,9 @@ public class SchedulerController {
         } catch (KamerstukNotFoundException e) {
             return "redirect:/scheduler?notfound";
         }
-        logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());
+        logger.info("Edited kamerstuk: " + kamerstuk.getCallsign() + " scheduled for " + kamerstuk.getPostDate());
 
-        return "redirect:/scheduler?planned";
+        return "redirect:/scheduler?edited";
     }
 
 //    @PostMapping("/plan/api")
