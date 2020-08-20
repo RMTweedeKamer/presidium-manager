@@ -23,7 +23,7 @@
             </div>
             <div class="normal-content middle">
                 <div th:each="kamerstuk: ${queue}">
-                    <button th:classappend="${kamerstuk.isUrgent()}? urgent" class="collapsible" th:text="${kamerstuk.callsign} + ': '${kamerstuk.title} + ' | ' + ${kamerstuk.submittedBy}">
+                    <button th:classappend="${kamerstuk.isUrgent()}? urgent" class="collapsible" th:text="${kamerstuk.callsign} + ': ' + ${kamerstuk.title} + ' | ' + ${kamerstuk.submittedBy}">
                     </button>
                     <div class="collapsed-content">
                         <section th:object="${kamerstuk}">
