@@ -47,4 +47,19 @@ public class AgendaController {
 
         return "toukie";
     }
+
+    @GetMapping("/th8")
+    public String showForTh8(Model model, Principal principal) {
+        boolean loggedIn;
+        try {
+            loggedIn = principal.getName().length() > 0;
+        } catch (NullPointerException e) {
+            loggedIn = false;
+        }
+
+        model.addAttribute("loggedIn", loggedIn);
+        model.addAttribute("queue", kamerstukkenService.getTh8Queue());
+
+        return "th8";
+    }
 }

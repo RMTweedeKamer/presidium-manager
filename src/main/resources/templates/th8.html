@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="fragments.html :: head (info='Agenda')"> </head>
+  <body>
+    <header th:replace="fragments.html :: menu (${loggedIn})"></header>
+    <main class="middle">
+      <h1>
+        Voor Toukie
+      </h1>
+      <table class="lobby toukie">
+        <tr class="headerrow">
+          <th>Postdatum</th>
+          <th>Kenmerk</th>
+          <th>Indiener</th>
+          <th>Titel</th>
+        </tr>
+        <tr th:each="kamerstuk : ${queue}">
+          <td th:text="${kamerstuk.getPostDateAsString()}"></td>
+          <td th:text="${kamerstuk.getCallsign()}">Kenmerk</td>
+          <td th:text="${kamerstuk.getSubmittedBy()}">Indiener</td>
+          <td th:text="${kamerstuk.getTitle()}">Titel</td>
+        </tr>
+      </table>
+    </main>
+  </body>
+</html>

@@ -27,10 +27,11 @@ public class User {
     private boolean verified;
 
 
-    public User(List<GrantedAuthority> authorityList) {
+    public User() {
         this.authorityList = new ArrayList<>();
         this.verified = false;
     }
+
 
     public String getUsername() {
         return username;

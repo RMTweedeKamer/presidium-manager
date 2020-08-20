@@ -18,11 +18,11 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
-        logger.info(e.getMessage());
-        logger.info(String.valueOf(e.getCause()));
-        logger.info(Arrays.toString(e.getStackTrace()));
-        logger.info(httpServletRequest.getQueryString());
+//        logger.info(e.getMessage());
+//        logger.info(String.valueOf(e.getCause()));
+//        logger.info(Arrays.toString(e.getStackTrace()));
+//        logger.info(httpServletRequest.getQueryString());
 
-        httpServletResponse.sendRedirect("/?problem");
+        httpServletResponse.sendRedirect("/?accessdenied");
     }
 }

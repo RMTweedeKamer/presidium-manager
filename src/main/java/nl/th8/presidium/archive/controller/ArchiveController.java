@@ -4,13 +4,16 @@ import nl.th8.presidium.archive.TypeNotFoundException;
 import nl.th8.presidium.archive.controller.dto.FilterDTO;
 import nl.th8.presidium.archive.service.ArchiveService;
 import nl.th8.presidium.home.controller.dto.KamerstukType;
+import nl.th8.presidium.scheduler.InvalidCallsignException;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
+import nl.th8.presidium.scheduler.service.KamerstukkenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.text.ParseException;
 import java.util.List;
 
 @Controller
@@ -19,6 +22,9 @@ public class ArchiveController {
 
     @Autowired
     ArchiveService archiveService;
+
+    @Autowired
+    KamerstukkenService kamerstukkenService;
 
     @GetMapping
     String showArchive(Model model, Principal principal) {
@@ -33,6 +39,20 @@ public class ArchiveController {
         model.addAttribute("loggedIn", loggedIn);
         return "select-archive";
     }
+
+//    @GetMapping("/import")
+//    String showImportFromReddit(Model model, Principal principal) throws ParseException, InvalidCallsignException {
+//        boolean loggedIn;
+//        try {
+//            loggedIn = principal.getName().length() > 0;
+//        } catch (NullPointerException e) {
+//            loggedIn = false;
+//        }
+//
+//        model.addAttribute("kamerstukken", kamerstukkenService.importFromReddit());
+//        model.addAttribute("loggedIn", loggedIn);
+//        return "import";
+//    }
 
     @GetMapping("/{type}")
     String showArchiveForType(Model model, @PathVariable String type, Principal principal) {

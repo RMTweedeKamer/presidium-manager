@@ -39,5 +39,10 @@
       "name": "manager.discord-complaint-webhook",
       "type": "java.lang.String",
       "description": "Discord webhook url for complaint notifications"
+    },
+    {
+      "name": "manager.rvs-secret",
+      "type": "java.lang.String",
+      "description": "User secret used to validate accounts for RvS members"
     }
   ] }

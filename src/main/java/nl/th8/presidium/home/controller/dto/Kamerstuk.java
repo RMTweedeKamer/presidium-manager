@@ -55,6 +55,8 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     private int readingLength;
 
+    private String advice;
+
     public Kamerstuk() {
         this.toCall = new ArrayList<>();
         this.posted = false;
@@ -274,7 +276,7 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
     }
 
     public boolean hasUrl() {
-        return this.url != null && !this.url.isBlank();
+        return this.url != null && !this.url.isEmpty();
     }
 
     public void setUrl(String url) {
@@ -298,5 +300,13 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
         DateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT, new Locale("nl", "NL"));
 
         return String.format("Deze lezing loopt tot en met %s", format.format(endReading));
+    }
+
+    public String getAdvice() {
+        return advice;
+    }
+
+    public void setAdvice(String advice) {
+        this.advice = advice;
     }
 }

@@ -1,12 +1,10 @@
 package nl.th8.presidium.scheduler.service;
 
-import net.dean.jraw.models.Comment;
-import net.dean.jraw.models.DistinguishedStatus;
-import net.dean.jraw.models.SubmissionKind;
+import net.dean.jraw.models.*;
+import net.dean.jraw.pagination.DefaultPaginator;
 import net.dean.jraw.references.SubmissionReference;
 import nl.th8.presidium.Constants;
 import nl.th8.presidium.RedditSupplier;
-import nl.th8.presidium.TemmieSupplier;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import nl.th8.presidium.home.controller.dto.KamerstukType;
 import nl.th8.presidium.home.controller.dto.StatDTO;
@@ -23,6 +21,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.time.DateUtils;
 
+import javax.annotation.PostConstruct;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -42,6 +47,72 @@ public class KamerstukkenService {
 
     @Autowired
     NotificationService notificationService;
+
+    //One time function to export all kamerstukken to md files
+//    @PostConstruct
+//    public void exportToMarkdown() throws IOException {
+//        List<Kamerstuk> toOut = kamerstukRepository.findAllByPostedIsTrue();
+//        for(Kamerstuk kamerstuk : toOut) {
+//            File newFile = new File(kamerstuk.getType().getName(), kamerstuk.getCallsign() + ".md");
+//            new File(kamerstuk.getType().getName()).mkdirs();
+//            newFile.createNewFile();
+//            BufferedWriter writer = new BufferedWriter(new FileWriter(newFile));
+//            writer.write(String.format("##%s \n \n%s", kamerstuk.getTitle(), kamerstuk.getContent()));
+//            writer.close();
+//        }
+//    }
+
+    //One time function to get all old legislation from reddit.
+    public void importFromReddit() throws ParseException, InvalidCallsignException {
+        boolean pastTheLimit = false;
+        DefaultPaginator<Submission> paginator = redditSupplier.redditClient.subreddit(RedditSupplier.SUBREDDIT)
+                .posts()
+                .timePeriod(TimePeriod.ALL)
+                .sorting(SubredditSort.NEW)
+                .build();
+
+        Iterator<Listing<Submission>> it = paginator.iterator();
+
+        List<Kamerstuk> kamerstukken = new ArrayList<>();
+
+        while (it.hasNext()) {
+            Listing<Submission> nextPage = it.next();
+            for (Submission post : nextPage) {
+                if (!post.getCreated().before(new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2018"))) {
+
+                    String substring = post.getTitle().substring(0, 7);
+                    int callsignlength = checkCallsignFormat(substring);
+
+                    if (post.getTitle().equals("Wet aanpak uitval en probleemjongeren beroepsonderwijs"))
+                        callsignlength = 5;
+
+                    if (callsignlength > 0) {
+                        String callsign = post.getTitle().substring(0, callsignlength);
+
+                        if (!kamerstukRepository.existsByCallsign(callsign)) {
+                            Kamerstuk nieuw = new Kamerstuk();
+                            int letterlength;
+                            if (callsignlength < 7)
+                                letterlength = callsignlength - 4;
+                            else
+                                letterlength = 1;
+                            nieuw.setType(KamerstukType.getByLetters(callsign.substring(0, letterlength)));
+                            nieuw.setCallsign(callsign);
+                            nieuw.setTitle(post.getTitle().substring(callsignlength + 1));
+                            nieuw.setContent(post.getSelfText());
+                            nieuw.setPostDateFromDate(post.getCreated());
+                            nieuw.setSubmittedBy("GERDI-RMTK");
+                            nieuw.setPosted(true);
+                            nieuw.setVotePosted(true);
+                            nieuw.setUrl(post.getUrl());
+
+                            kamerstukRepository.save(nieuw);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     @Scheduled(fixedRate = 300000)
     public void postQueuedKamerstukken() {
@@ -126,6 +197,21 @@ public class KamerstukkenService {
                 .collect(Collectors.toList());
     }
 
+    public List<Kamerstuk> getTh8Queue() {
+        return kamerstukRepository.findAllByPostDateIsBeforeAndCallsignIsNotNull(new Date()).stream()
+                .sorted(Comparator.comparing(Kamerstuk::getType).thenComparing(Kamerstuk::getCallsign))
+                .collect(Collectors.toList());
+    }
+
+    public List<Kamerstuk> getRvSQueue() {
+        Predicate<Kamerstuk> isRelevant = kamerstuk -> kamerstuk.getType().forRvS();
+
+        return kamerstukRepository.findAllByPostDateIsAfterAndDeniedIsFalse(new Date()).stream()
+                .filter(isRelevant)
+                .sorted(Comparator.comparing(Kamerstuk::getCallsign))
+                .collect(Collectors.toList());
+    }
+
     public String queueKamerstuk(Kamerstuk kamerstuk, String mod) throws InvalidUsernameException, DuplicateCallsignException, InvalidCallsignException {
         //Check callsign
         if(kamerstukRepository.existsByCallsignAndIdIsNot(kamerstuk.getCallsign(), kamerstuk.getId())) {
@@ -175,6 +261,20 @@ public class KamerstukkenService {
                 break;
         }
         return isAllowed;
+    }
+
+    private int checkCallsignFormat(String callsign) {
+        if(callsign.matches("[W][0-9]{4}-[IV]{1,3}")) {
+            return 7;
+        }
+        else if(callsign.substring(0, 5).matches("[MW][0-9]{4}")) {
+            return 5;
+        }
+        else if(callsign.substring(0, 6).matches("[KD][SBV][0-9]{4}")) {
+            return 6;
+        }
+        else
+            return 0;
     }
 
     public void editKamerstuk(String id, String title, String content, String toCallString, String mod) throws KamerstukNotFoundException {
@@ -349,6 +449,10 @@ public class KamerstukkenService {
             Comment comment = submission.reply(replyBuilder.toString());
             comment.toReference(redditSupplier.redditClient).distinguish(DistinguishedStatus.MODERATOR, true);
         }
+
+        if(!kamerstuk.getAdvice().isBlank()) {
+            submission.reply(kamerstuk.getAdvice());
+        }
     }
 
     private void constructVotePost(List<Kamerstuk> votesToPost) {
@@ -389,5 +493,19 @@ public class KamerstukkenService {
         newVote.setPostDateFromDate(new Date());
         newVote.setVotePosted(true);
         kamerstukRepository.save(newVote);
+    }
+
+    public void saveAdvice(String id, String advice) throws KamerstukNotFoundException {
+        Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(id);
+        Kamerstuk kamerstuk;
+        if(possibleKamerstuk.isPresent()) {
+            kamerstuk = possibleKamerstuk.get();
+        }
+        else {
+            throw new KamerstukNotFoundException();
+        }
+
+        kamerstuk.setAdvice(advice);
+        kamerstukRepository.save(kamerstuk);
     }
 }

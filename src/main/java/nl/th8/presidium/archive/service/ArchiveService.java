@@ -64,7 +64,7 @@ public class ArchiveService {
         return type+id;
     }
 
-    Predicate<Kamerstuk> isAmendement = kamerstuk -> kamerstuk.getCallsign().length() > callsignWithCharLength;
+    Predicate<Kamerstuk> isAmendement = kamerstuk -> kamerstuk.getCallsign().contains("-");
 
     public List<Kamerstuk> getKamerstukkenForType(String type) throws TypeNotFoundException {
         if (KamerstukType.isPublicByCall(type)) {

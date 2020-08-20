@@ -29,13 +29,13 @@ public class UserService implements UserDetailsService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    private String secret;
+    private final String secret;
+    private final String rvsSecret;
 
     @Autowired
-    public UserService(
-            @Value("${manager.user-secret}") String secret
-    ) {
+    public UserService(@Value("${manager.user-secret}") String secret, @Value("${manager.rvs-secret}") String rvsSecret) {
         this.secret = secret;
+        this.rvsSecret = rvsSecret;
     }
 
     @Override
@@ -43,9 +43,8 @@ public class UserService implements UserDetailsService {
         Optional<User> user = repository.findById(username);
 
         if(user.isPresent()) {
-            List<GrantedAuthority> authorityList = Arrays.asList();
-
-            return new org.springframework.security.core.userdetails.User(user.get().getUsername(), user.get().getPassword(), authorityList);
+            System.out.println(user.get().getAuthorityList().toString());
+            return new org.springframework.security.core.userdetails.User(user.get().getUsername(), user.get().getPassword(), user.get().getAuthorityList());
         } else {
             throw new UsernameNotFoundException("User not found");
         }
@@ -55,7 +54,13 @@ public class UserService implements UserDetailsService {
         if(usernameExists(newUser.getUsername())) {
             throw new UsernameExistsException("There is an account with that username: " +  newUser.getUsername());
         }
-        if(!newUser.getSecret().equals(this.secret)) {
+        if(newUser.getSecret().equals(this.secret)) {
+            newUser.getAuthorityList().add(new SimpleGrantedAuthority("ADMIN"));
+        }
+        else if(newUser.getSecret().equals(this.rvsSecret)) {
+            newUser.getAuthorityList().add(new SimpleGrantedAuthority("RVS"));
+        }
+        else {
             throw new InvalidSecretException("The entered secret is incorrect");
         }
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));

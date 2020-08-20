@@ -18,6 +18,8 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
 
     PriorityQueue<Kamerstuk> findAllByPostDateIsBeforeAndPostedIsFalseAndDeniedIsFalse(Date date);
 
+    List<Kamerstuk> findAllByPostedIsTrue();
+
     PriorityQueue<Kamerstuk> findAllByVoteDateAfterAndPostedIsTrue(Date date);
 
     List<Kamerstuk> findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull();
@@ -29,6 +31,8 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
     List<Kamerstuk> findAllByPostDateIsNullAndDeniedIsFalse();
 
     List<Kamerstuk> findAllByPostDateIsBetweenAndCallsignIsNotNull(Date date1, Date date2);
+
+    List<Kamerstuk> findAllByPostDateIsBeforeAndCallsignIsNotNull(Date date1);
 
     long countAllByPostDateIsNullAndDeniedIsFalse();
 
@@ -43,4 +47,6 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
     long countAllByPostedIsTrueAndVotePostedIsTrue();
 
     boolean existsByCallsignAndIdIsNot(String callsign, String id);
+
+    boolean existsByCallsign(String callsign);
 }
