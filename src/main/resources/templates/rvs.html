@@ -39,7 +39,7 @@
                             </label>
                             <label>
                                 <p>Inhoud:</p>
-                                <div class="preview-container" id="preview" th:value="*{content}"></div>
+                                <div class="preview-container preview-wet" id="preview" th:value="*{content}"></div>
                             </label>
                             <label>
                                 <p>Indiener:</p>
@@ -47,27 +47,46 @@
                             </label>
                         </section>
                         <hr>
-                        <form th:object="${kamerstuk}" th:action="@{/rvs/save}" th:method="post">
+                        <form class="advice-form" th:object="${kamerstuk}" th:action="@{/rvs/save}" th:method="post">
                             <input type="hidden" th:name="id" th:value="*{id}">
                             <label>
                                 <p>Advies: </p>
-                                <textarea class="submitpanel" th:name="advice" th:text="*{advice}"></textarea>
+                                <textarea class="submitpanel" th:name="advice" th:text="*{advice}" onkeyup="doPreview()"></textarea>
+                            </label>
+                            <label>
+                                <p>Preview:</p>
+                                <div class="preview-container preview-advice" th:value="*{content}"></div>
                             </label>
                             <input type="submit" th:value="Opslaan">
                         </form>
                         </div>
                     </div>
                 </div>
-            </div>
         </main>
         <script>
-            var previews = document.getElementsByClassName("preview-container")
+            function doPreview() {
+                var advices = document.getElementsByClassName("advice-form");
+
+                for(var i = 0; i < advices.length; i++) {
+                    var toProcess = advices[i].getElementsByClassName("submitpanel");
+                    var previewer = advices[i].getElementsByClassName("preview-advice");
+
+                    previewer[0].innerHTML = SnuOwnd.getParser().render(
+                        toProcess[0].value
+                    );
+                }
+            }
+            doPreview();
+
+            var previews = document.getElementsByClassName("preview-wet");
 
             for(var i = 0; i < previews.length; i++) {
                 previews[i].innerHTML = SnuOwnd.getParser().render(
                     previews[i].getAttribute("value")
                 );
             }
+
+
         </script>
         <script>
             var coll = document.getElementsByClassName("collapsible");

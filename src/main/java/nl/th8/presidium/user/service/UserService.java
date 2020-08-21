@@ -43,7 +43,6 @@ public class UserService implements UserDetailsService {
         Optional<User> user = repository.findById(username);
 
         if(user.isPresent()) {
-            System.out.println(user.get().getAuthorityList().toString());
             return new org.springframework.security.core.userdetails.User(user.get().getUsername(), user.get().getPassword(), user.get().getAuthorityList());
         } else {
             throw new UsernameNotFoundException("User not found");

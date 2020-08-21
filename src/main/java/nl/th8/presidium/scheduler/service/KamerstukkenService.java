@@ -450,7 +450,7 @@ public class KamerstukkenService {
             comment.toReference(redditSupplier.redditClient).distinguish(DistinguishedStatus.MODERATOR, true);
         }
 
-        if(!kamerstuk.getAdvice().isBlank()) {
+        if(!kamerstuk.getAdvice().isEmpty()) {
             submission.reply(kamerstuk.getAdvice());
         }
     }
