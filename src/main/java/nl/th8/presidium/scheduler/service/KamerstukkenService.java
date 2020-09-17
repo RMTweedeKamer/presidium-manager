@@ -208,7 +208,7 @@ public class KamerstukkenService {
 
         return kamerstukRepository.findAllByPostDateIsAfterAndDeniedIsFalse(new Date()).stream()
                 .filter(isRelevant)
-                .sorted(Comparator.comparing(Kamerstuk::getCallsign))
+                .sorted(Comparator.comparing(Kamerstuk::getPostDate))
                 .collect(Collectors.toList());
     }
 
