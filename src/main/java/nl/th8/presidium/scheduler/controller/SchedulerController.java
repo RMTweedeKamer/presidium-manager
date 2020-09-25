@@ -1,6 +1,5 @@
 package nl.th8.presidium.scheduler.controller;
 
-import nl.th8.presidium.Constants;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import nl.th8.presidium.scheduler.DuplicateCallsignException;
 import nl.th8.presidium.scheduler.InvalidCallsignException;
@@ -11,25 +10,28 @@ import nl.th8.presidium.scheduler.service.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.security.Principal;
 
+@SuppressWarnings({"SameReturnValue", "SpringMVCViewInspection"})
 @Controller
 @RequestMapping("/scheduler")
 public class SchedulerController {
 
-    private Logger logger = LoggerFactory.getLogger(SchedulerController.class);
+    private final Logger logger = LoggerFactory.getLogger(SchedulerController.class);
+
+    private final KamerstukkenService kamerstukkenService;
+
+    private final NotificationService notificationService;
 
     @Autowired
-    KamerstukkenService kamerstukkenService;
-
-    @Autowired
-    NotificationService notificationService;
+    public SchedulerController(KamerstukkenService kamerstukkenService, NotificationService notificationService) {
+        this.kamerstukkenService = kamerstukkenService;
+        this.notificationService = notificationService;
+    }
 
     @GetMapping
     public String showScheduler(Model model) {

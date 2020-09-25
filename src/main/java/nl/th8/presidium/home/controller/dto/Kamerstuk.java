@@ -1,6 +1,5 @@
 package nl.th8.presidium.home.controller.dto;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import nl.th8.presidium.Constants;
 import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.Id;
@@ -11,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@SuppressWarnings("unused")
 public class Kamerstuk implements Comparable<Kamerstuk> {
 
     @Id

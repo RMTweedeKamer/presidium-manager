@@ -13,12 +13,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
 
+@SuppressWarnings({"SameReturnValue", "SpringMVCViewInspection"})
 @Controller
 @RequestMapping("/klacht")
 public class ComplaintController {
 
+    private final ComplaintService complaintService;
+
     @Autowired
-    ComplaintService complaintService;
+    public ComplaintController(ComplaintService complaintService) {
+        this.complaintService = complaintService;
+    }
 
     @GetMapping
     public String showComplaints(Model model, Principal principal) {

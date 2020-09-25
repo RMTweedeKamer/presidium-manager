@@ -8,8 +8,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class StatsService {
 
+    private final KamerstukRepository repository;
+
     @Autowired
-    KamerstukRepository repository;
+    public StatsService(KamerstukRepository repository) {
+        this.repository = repository;
+    }
 
     public StatDTO getStats() {
         long kamerstukken = repository.count();

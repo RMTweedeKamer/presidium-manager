@@ -1582,13 +1582,13 @@
         dateUTC.setMilliseconds(0);
         return dateUTC;
       }
-      if (/^\d{4}\-\d{1,2}\-\d{1,2}$/.test(date)) {
+      if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(date)) {
         format = this.parseFormat('yyyy-mm-dd', type);
       }
-      if (/^\d{4}\-\d{1,2}\-\d{1,2}[T ]\d{1,2}\:\d{1,2}$/.test(date)) {
+      if (/^\d{4}-\d{1,2}-\d{1,2}[T ]\d{1,2}:\d{1,2}$/.test(date)) {
         format = this.parseFormat('yyyy-mm-dd hh:ii', type);
       }
-      if (/^\d{4}\-\d{1,2}\-\d{1,2}[T ]\d{1,2}\:\d{1,2}\:\d{1,2}[Z]{0,1}$/.test(date)) {
+      if (/^\d{4}-\d{1,2}-\d{1,2}[T ]\d{1,2}:\d{1,2}:\d{1,2}[Z]?$/.test(date)) {
         format = this.parseFormat('yyyy-mm-dd hh:ii:ss', type);
       }
       if (/^[-+]\d+[dmwy]([\s,]+[-+]\d+[dmwy])*$/.test(date)) {

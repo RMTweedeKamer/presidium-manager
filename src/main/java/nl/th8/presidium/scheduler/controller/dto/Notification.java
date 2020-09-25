@@ -1,5 +1,6 @@
 package nl.th8.presidium.scheduler.controller.dto;
 
+@SuppressWarnings("unused")
 public class Notification {
 
     private String title;

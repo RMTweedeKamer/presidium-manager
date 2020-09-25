@@ -1,5 +1,6 @@
 package nl.th8.presidium.raadvanstate.controller.dto;
 
+@SuppressWarnings("unused")
 public class AdviceDTO {
 
     private String kamerstukId;

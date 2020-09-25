@@ -9,13 +9,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
 
+@SuppressWarnings("SameReturnValue")
 @Controller
 @RequestMapping("/agenda")
 public class AgendaController {
 
 
+    private final KamerstukkenService kamerstukkenService;
+
     @Autowired
-    KamerstukkenService kamerstukkenService;
+    public AgendaController(KamerstukkenService kamerstukkenService) {
+        this.kamerstukkenService = kamerstukkenService;
+    }
 
     @GetMapping
     public String showAgenda(Model model, Principal principal) {

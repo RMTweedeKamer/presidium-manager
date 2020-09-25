@@ -13,18 +13,22 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.validation.constraints.Null;
 import java.security.Principal;
 
+@SuppressWarnings({"SameReturnValue", "SpringMVCViewInspection"})
 @Controller
 @RequestMapping("/")
 public class HomeController {
 
-    @Autowired
-    SubmitService submitService;
+    private final SubmitService submitService;
+
+    private final StatsService statsService;
 
     @Autowired
-    StatsService statsService;
+    public HomeController(SubmitService submitService, StatsService statsService) {
+        this.submitService = submitService;
+        this.statsService = statsService;
+    }
 
     @GetMapping
     public String showHome(Model model, Principal principal) {

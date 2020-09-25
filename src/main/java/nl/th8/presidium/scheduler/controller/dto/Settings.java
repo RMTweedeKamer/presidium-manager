@@ -4,13 +4,12 @@ import nl.th8.presidium.Constants;
 
 import java.util.ArrayDeque;
 
+@SuppressWarnings("unused")
 public class Settings {
 
-    private String id;
     private ArrayDeque<Notification> notifications;
 
     public Settings() {
-        this.id = "Settings";
         this.notifications = new ArrayDeque<>();
     }
 

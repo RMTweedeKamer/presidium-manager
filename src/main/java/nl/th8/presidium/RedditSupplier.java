@@ -16,14 +16,10 @@ import org.springframework.stereotype.Service;
 public class RedditSupplier {
 
     public static String SUBREDDIT;
-    public String username;
-    public String password;
-    public String redditClientId;
-    public String redditClientSecret;
 
-    public UserAgent userAgent;
-    public RedditClient redditClient;
-    public InboxReference inbox;
+    public final UserAgent userAgent;
+    public final RedditClient redditClient;
+    public final InboxReference inbox;
 
     @Autowired
     public RedditSupplier(@Value("${manager.subreddit}") String subreddit,
@@ -33,10 +29,6 @@ public class RedditSupplier {
                           @Value("${manager.reddit-client-secret}") String redditClientSecret)
     {
         SUBREDDIT = subreddit;
-        this.username = username;
-        this.password = password;
-        this.redditClientId = redditClientId;
-        this.redditClientSecret = redditClientSecret;
 
         this.userAgent = new UserAgent("GERDI-RMTK", "nl.th8.presidium", "v1.1", username);
         Credentials credentials = Credentials.script(username, password, redditClientId, redditClientSecret);

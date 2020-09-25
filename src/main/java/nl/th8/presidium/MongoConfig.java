@@ -13,14 +13,18 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 @Configuration
 public class MongoConfig {
 
-    @Autowired
-    private MongoDbFactory mongoFactory;
+    private final MongoDbFactory mongoFactory;
+
+    private final MongoMappingContext mongoMappingContext;
 
     @Autowired
-    private MongoMappingContext mongoMappingContext;
+    public MongoConfig(MongoDbFactory mongoFactory, MongoMappingContext mongoMappingContext) {
+        this.mongoFactory = mongoFactory;
+        this.mongoMappingContext = mongoMappingContext;
+    }
 
     @Bean
-    public MappingMongoConverter mongoConverter() throws Exception {
+    public MappingMongoConverter mongoConverter() {
         DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoFactory);
         MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
         //this is my customization

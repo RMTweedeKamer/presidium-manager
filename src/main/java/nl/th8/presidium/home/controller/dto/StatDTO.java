@@ -2,6 +2,7 @@ package nl.th8.presidium.home.controller.dto;
 
 import java.util.Date;
 
+@SuppressWarnings("unused")
 public class StatDTO {
 
     private static Date startDate;

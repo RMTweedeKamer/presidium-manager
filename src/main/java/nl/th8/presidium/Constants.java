@@ -1,6 +1,5 @@
 package nl.th8.presidium;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,8 +11,6 @@ public class Constants {
     public static final int CALLSIGN_LENGTH = 4;
 
     /* --- Notifications --- */
-    public static final String NO_TEXT = "Geen extra informatie beschikbaar.";
-
     public static final String QUEUED_TITLE = "Kamerstuk met nummer: %s is in de wachtrij gezet.";
     public static final String QUEUED_TEXT = "Ingepland op: %s door %s";
 
@@ -54,4 +51,11 @@ public class Constants {
     public static final String COMPLAINT_BODY = "Klacht: %s \n \n Berichtlink: %s";
 
     public static final String RVS_SUBJECT = "De Raad van State heeft advies uitgebracht op: %s";
+    public static final String RVS_BODY = "Hallo, je hebt laatst een kamerstuk ingediend waarop de MRvS een advies uit moet brengen. Daarom krijg je hierbij je advies. \n \n " +
+            "%s \n \n"+
+            "Mocht je vragen hebben over het advies, geef dit aan. Dan kunnen we deze misschien wegnemen. \n \n" +
+            "Als je naar aanleiding van het advies je kamerstuk wil aanpassen geef dit dan door aan het presidium. We raden aan in de toelichting op te nemen wat je veranderd hebt op basis van het advies. \n \n" +
+            "Als je je kamerstuk niet wilt aanpassen, maar wel antwoord kan geven op de vragen verzoeken we je dit te doen. Op basis daarvan kunnen we eventueel alsnog het advies aanpassen. Ook als je je kamerstuk erg aanpast kan je om een aangepast advies vragen. Je moet hier dus wel zelf om vragen! \n \n" +
+            "[Geef vooral ook feedback!](https://docs.google.com/forms/d/e/1FAIpQLSeXxAnYg9fsqLuPYHzzPhJg-JooihYGaVEZgKtmoz6n6DVAnw/viewform?usp=sf_link ) \n \n" +
+            "**Let op, je kan op dit bericht geen reactie geven. Spreek hiervoor op discord een MRvS-lid aan.**";
 }

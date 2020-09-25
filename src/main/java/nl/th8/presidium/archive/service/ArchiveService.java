@@ -14,27 +14,29 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils.*;
 
 @Service
 public class ArchiveService {
 
-    private int callsignLength = Constants.CALLSIGN_LENGTH;
-    private int callsignWithCharLength = Constants.CALLSIGN_LENGTH + 2;
+    private final int callsignLength = Constants.CALLSIGN_LENGTH;
+    private final int callsignWithCharLength = Constants.CALLSIGN_LENGTH + 2;
+
+    private final KamerstukRepository repository;
 
     @Autowired
-    KamerstukRepository repository;
+    public ArchiveService(KamerstukRepository repository) {
+        this.repository = repository;
+    }
 
     public String getKamerstukHtml(String type, String id) throws KamerstukNotFoundException {
         if(id.length() < callsignLength) {
-            id = padLeftZeros(id, callsignLength);
+            id = padLeftZeros(id);
         }
         type = type.toUpperCase();
 
@@ -58,13 +60,13 @@ public class ArchiveService {
 
     public String getNiceCallsign(String type, String id) {
         if(id.length() < callsignLength) {
-            id = padLeftZeros(id, callsignLength);
+            id = padLeftZeros(id);
         }
         type = type.toUpperCase();
         return type+id;
     }
 
-    Predicate<Kamerstuk> isAmendement = kamerstuk -> kamerstuk.getCallsign().contains("-");
+    final Predicate<Kamerstuk> isAmendement = kamerstuk -> kamerstuk.getCallsign().contains("-");
 
     public List<Kamerstuk> getKamerstukkenForType(String type) throws TypeNotFoundException {
         if (KamerstukType.isPublicByCall(type)) {
@@ -118,12 +120,12 @@ public class ArchiveService {
         }
     }
 
-    private String padLeftZeros(String inputString, int length) {
-        if (inputString.length() >= length) {
+    private String padLeftZeros(String inputString) {
+        if (inputString.length() >= 4) {
             return inputString;
         }
         StringBuilder sb = new StringBuilder();
-        while (sb.length() < length - inputString.length()) {
+        while (sb.length() < 4 - inputString.length()) {
             sb.append('0');
         }
         sb.append(inputString);

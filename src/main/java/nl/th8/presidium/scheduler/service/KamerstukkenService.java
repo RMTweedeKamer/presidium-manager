@@ -31,21 +31,23 @@ import java.util.stream.Collectors;
 @Service
 public class KamerstukkenService {
 
-    PriorityQueue<Kamerstuk> postList;
+    private final Logger logger = LoggerFactory.getLogger(KamerstukkenService.class);
 
-    private Logger logger = LoggerFactory.getLogger(KamerstukkenService.class);
+    private final KamerstukRepository kamerstukRepository;
 
-    @Autowired
-    KamerstukRepository kamerstukRepository;
+    private final RedditSupplier redditSupplier;
 
-    @Autowired
-    RedditSupplier redditSupplier;
+    private final NotificationService notificationService;
 
-    @Autowired
-    NotificationService notificationService;
+    private final TemmieSupplier discordWebhooks;
 
     @Autowired
-    TemmieSupplier discordWebhooks;
+    public KamerstukkenService(KamerstukRepository kamerstukRepository, RedditSupplier redditSupplier, NotificationService notificationService, TemmieSupplier discordWebhooks) {
+        this.kamerstukRepository = kamerstukRepository;
+        this.redditSupplier = redditSupplier;
+        this.notificationService = notificationService;
+        this.discordWebhooks = discordWebhooks;
+    }
 
     //One time function to export all kamerstukken to md files
 //    @PostConstruct
@@ -62,20 +64,15 @@ public class KamerstukkenService {
 //    }
 
     //One time function to get all old legislation from reddit.
+    @SuppressWarnings("unused")
     public void importFromReddit() throws ParseException, InvalidCallsignException {
-        boolean pastTheLimit = false;
         DefaultPaginator<Submission> paginator = redditSupplier.redditClient.subreddit(RedditSupplier.SUBREDDIT)
                 .posts()
                 .timePeriod(TimePeriod.ALL)
                 .sorting(SubredditSort.NEW)
                 .build();
 
-        Iterator<Listing<Submission>> it = paginator.iterator();
-
-        List<Kamerstuk> kamerstukken = new ArrayList<>();
-
-        while (it.hasNext()) {
-            Listing<Submission> nextPage = it.next();
+        for (Listing<Submission> nextPage : paginator) {
             for (Submission post : nextPage) {
                 if (!post.getCreated().before(new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2018"))) {
 
@@ -211,7 +208,7 @@ public class KamerstukkenService {
                 .collect(Collectors.toList());
     }
 
-    public String queueKamerstuk(Kamerstuk kamerstuk, String mod) throws InvalidUsernameException, DuplicateCallsignException, InvalidCallsignException {
+    public void queueKamerstuk(Kamerstuk kamerstuk, String mod) throws InvalidUsernameException, DuplicateCallsignException, InvalidCallsignException {
         //Check callsign
         if(kamerstukRepository.existsByCallsignAndIdIsNot(kamerstuk.getCallsign(), kamerstuk.getId())) {
             throw new DuplicateCallsignException();
@@ -226,7 +223,7 @@ public class KamerstukkenService {
         kamerstuk.processCallsigns();
 
         //Save kamerstuk to MongoDB
-        Kamerstuk kamerstukSaved = kamerstukRepository.save(kamerstuk);
+        kamerstukRepository.save(kamerstuk);
 
         //Log to scheduler notifications
         notificationService.addNotification(new Notification(String.format(Constants.QUEUED_TITLE, kamerstuk.getCallsign()),
@@ -245,53 +242,10 @@ public class KamerstukkenService {
         if(kamerstuk.getType().forRvS()) {
             discordWebhooks.rvsEmbeddedMessage(kamerstuk);
         }
-
-        return kamerstukSaved.getId();
     }
 
-    private boolean checkCallsignFormat(KamerstukType type, String callsign) {
-        boolean isAllowed = false;
-        switch (type) {
-            case WET:
-            case MOTIE:
-                isAllowed = callsign.matches("[MW][0-9]{4}");
-                break;
-            case BRIEF:
-            case DEBAT:
-            case VRAGEN:
-            case BESLUIT:
-                isAllowed = callsign.matches("[KD][SBV][0-9]{4}");
-                break;
-            case AMENDEMENT:
-                isAllowed = callsign.matches("[W][0-9]{4}-[IV]{1,3}");
-                break;
-        }
-        return isAllowed;
-    }
-
-    private int checkCallsignFormat(String callsign) {
-        if(callsign.matches("[W][0-9]{4}-[IV]{1,3}")) {
-            return 7;
-        }
-        else if(callsign.substring(0, 5).matches("[MW][0-9]{4}")) {
-            return 5;
-        }
-        else if(callsign.substring(0, 6).matches("[KD][SBV][0-9]{4}")) {
-            return 6;
-        }
-        else
-            return 0;
-    }
-
-    public void editKamerstuk(String id, String title, String content, String toCallString, String mod) throws KamerstukNotFoundException {
-        Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(id);
-        Kamerstuk kamerstuk;
-        if(possibleKamerstuk.isPresent()) {
-            kamerstuk = possibleKamerstuk.get();
-        }
-        else {
-            throw new KamerstukNotFoundException();
-        }
+    public void editKamerstuk(String kamerstukId, String title, String content, String toCallString, String mod) throws KamerstukNotFoundException {
+        Kamerstuk kamerstuk = getKamerstukForId(kamerstukId);
 
         kamerstuk.setTitle(title);
         kamerstuk.setContent(content);
@@ -304,15 +258,8 @@ public class KamerstukkenService {
                 String.format(Constants.EDIT_TEXT, mod)));
     }
 
-    public void rescheduleKamerstuk(String id, Date postDate, Date voteDate, String mod) throws KamerstukNotFoundException, InvalidUsernameException {
-        Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(id);
-        Kamerstuk kamerstuk;
-        if(possibleKamerstuk.isPresent()) {
-            kamerstuk = possibleKamerstuk.get();
-        }
-        else {
-            throw new KamerstukNotFoundException();
-        }
+    public void rescheduleKamerstuk(String kamerstukId, Date postDate, Date voteDate, String mod) throws KamerstukNotFoundException, InvalidUsernameException {
+        Kamerstuk kamerstuk = getKamerstukForId(kamerstukId);
 
         kamerstuk.setPostDateFromDate(postDate);
         kamerstuk.setVoteDateFromDate(voteDate);
@@ -327,15 +274,8 @@ public class KamerstukkenService {
         }
     }
 
-    public void rescheduleVote(String id, Date voteDate, String mod) throws KamerstukNotFoundException {
-        Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(id);
-        Kamerstuk kamerstuk;
-        if(possibleKamerstuk.isPresent()) {
-            kamerstuk = possibleKamerstuk.get();
-        }
-        else {
-            throw new KamerstukNotFoundException();
-        }
+    public void rescheduleVote(String kamerstukId, Date voteDate, String mod) throws KamerstukNotFoundException {
+        Kamerstuk kamerstuk = getKamerstukForId(kamerstukId);
 
         kamerstuk.setVoteDateFromDate(voteDate);
         kamerstukRepository.save(kamerstuk);
@@ -343,14 +283,7 @@ public class KamerstukkenService {
     }
 
     public void dequeueKamerstuk(String kamerstukId, String reason, String mod) throws KamerstukNotFoundException, InvalidUsernameException {
-        Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(kamerstukId);
-        Kamerstuk kamerstuk;
-        if(possibleKamerstuk.isPresent()) {
-            kamerstuk = possibleKamerstuk.get();
-        }
-        else {
-            throw new KamerstukNotFoundException();
-        }
+        Kamerstuk kamerstuk = getKamerstukForId(kamerstukId);
 
         kamerstuk.setReason(reason);
         notificationService.addNotification(new Notification(String.format(Constants.DEQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.DEQUEUED_TEXT, mod)));
@@ -368,14 +301,7 @@ public class KamerstukkenService {
     }
 
     public void denyKamerstuk(String kamerstukId, String reason, String mod) throws KamerstukNotFoundException, InvalidUsernameException {
-        Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(kamerstukId);
-        Kamerstuk kamerstuk;
-        if(possibleKamerstuk.isPresent()) {
-            kamerstuk = possibleKamerstuk.get();
-        }
-        else {
-            throw new KamerstukNotFoundException();
-        }
+        Kamerstuk kamerstuk = getKamerstukForId(kamerstukId);
 
         kamerstuk.setDenied(true);
         kamerstukRepository.save(kamerstuk);
@@ -390,14 +316,7 @@ public class KamerstukkenService {
     }
 
     public void withdrawKamerstuk(String kamerstukId, String mod) throws KamerstukNotFoundException {
-        Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(kamerstukId);
-        Kamerstuk kamerstuk;
-        if(possibleKamerstuk.isPresent()) {
-            kamerstuk = possibleKamerstuk.get();
-        }
-        else {
-            throw new KamerstukNotFoundException();
-        }
+        Kamerstuk kamerstuk = getKamerstukForId(kamerstukId);
 
         kamerstuk.setDenied(true);
         kamerstukRepository.save(kamerstuk);
@@ -405,18 +324,22 @@ public class KamerstukkenService {
     }
 
     public void delayKamerstuk(String kamerstukId, String mod) throws KamerstukNotFoundException {
-        Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(kamerstukId);
-        Kamerstuk kamerstuk;
-        if(possibleKamerstuk.isPresent()) {
-            kamerstuk = possibleKamerstuk.get();
-        }
-        else {
-            throw new KamerstukNotFoundException();
-        }
+        Kamerstuk kamerstuk = getKamerstukForId(kamerstukId);
 
         kamerstuk.setVoteDateFromDate(null);
         kamerstukRepository.save(kamerstuk);
         notificationService.addNotification(new Notification(String.format(Constants.DELAY_TITLE, kamerstuk.getTitle()), String.format(Constants.DELAY_TEXT, mod)));
+    }
+
+    public void saveAdvice(String id, String advice, boolean sendNotification) throws KamerstukNotFoundException {
+        Kamerstuk kamerstuk = getKamerstukForId(id);
+
+        kamerstuk.setAdvice(advice);
+        kamerstukRepository.save(kamerstuk);
+
+        if(sendNotification) {
+            redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), String.format(Constants.RVS_SUBJECT, kamerstuk.getTitle()), String.format(Constants.RVS_BODY, advice));
+        }
     }
 
     private void postKamerstuk(Kamerstuk kamerstuk) {
@@ -503,21 +426,47 @@ public class KamerstukkenService {
         kamerstukRepository.save(newVote);
     }
 
-    public void saveAdvice(String id, String advice, boolean sendNotification) throws KamerstukNotFoundException {
+    private Kamerstuk getKamerstukForId(String id) throws KamerstukNotFoundException {
         Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(id);
-        Kamerstuk kamerstuk;
         if(possibleKamerstuk.isPresent()) {
-            kamerstuk = possibleKamerstuk.get();
+            return possibleKamerstuk.get();
         }
         else {
             throw new KamerstukNotFoundException();
         }
+    }
 
-        kamerstuk.setAdvice(advice);
-        kamerstukRepository.save(kamerstuk);
-
-        if(sendNotification) {
-            redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), String.format(Constants.RVS_SUBJECT, kamerstuk.getTitle()), advice);
+    private boolean checkCallsignFormat(KamerstukType type, String callsign) {
+        boolean isAllowed = false;
+        switch (type) {
+            case WET:
+            case MOTIE:
+                isAllowed = callsign.matches("[MW][0-9]{4}");
+                break;
+            case BRIEF:
+            case DEBAT:
+            case VRAGEN:
+            case BESLUIT:
+                isAllowed = callsign.matches("[KD][SBV][0-9]{4}");
+                break;
+            case AMENDEMENT:
+                isAllowed = callsign.matches("[W][0-9]{4}-[IV]{1,3}");
+                break;
         }
+        return isAllowed;
+    }
+
+    private int checkCallsignFormat(String callsign) {
+        if(callsign.matches("[W][0-9]{4}-[IV]{1,3}")) {
+            return 7;
+        }
+        else if(callsign.substring(0, 5).matches("[MW][0-9]{4}")) {
+            return 5;
+        }
+        else if(callsign.substring(0, 6).matches("[KD][SBV][0-9]{4}")) {
+            return 6;
+        }
+        else
+            return 0;
     }
 }

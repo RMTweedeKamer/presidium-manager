@@ -6,15 +6,18 @@ import nl.th8.presidium.scheduler.data.SettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayDeque;
 import java.util.Optional;
 
 
 @Service
 public class NotificationService {
 
+    private final SettingsRepository settingsRepository;
+
     @Autowired
-    SettingsRepository settingsRepository;
+    public NotificationService(SettingsRepository settingsRepository) {
+        this.settingsRepository = settingsRepository;
+    }
 
     public Settings getAllSettings() {
         Optional<Settings> settings = settingsRepository.findById("Settings");

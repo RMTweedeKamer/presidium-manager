@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class User {
 
     @Id
@@ -22,7 +23,7 @@ public class User {
 
     private String secret;
 
-    private List<GrantedAuthority> authorityList;
+    private final List<GrantedAuthority> authorityList;
 
     private boolean verified;
 

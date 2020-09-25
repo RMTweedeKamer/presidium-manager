@@ -11,13 +11,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class ComplaintService {
 
-    @Autowired
-    RedditSupplier redditSupplier;
+    private final RedditSupplier redditSupplier;
 
-    @Autowired
-    TemmieSupplier temmieSupplier;
+    private final TemmieSupplier temmieSupplier;
 
+    @SuppressWarnings("FieldCanBeLocal")
     private final int discordFieldMaxLength = 1024;
+
+    @Autowired
+    public ComplaintService(RedditSupplier redditSupplier, TemmieSupplier temmieSupplier) {
+        this.redditSupplier = redditSupplier;
+        this.temmieSupplier = temmieSupplier;
+    }
 
     public void sendComplaint(String complaint, String link) throws InvalidComplaintException {
         UrlValidator validator = new UrlValidator();

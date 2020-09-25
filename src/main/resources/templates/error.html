@@ -1,6 +1,8 @@
 <!DOCTYPE html>
+<!--suppress HtmlRequiredTitleElement -->
 <html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="fragments.html :: head (info=${status})"> </head>
+  <!--/*@thymesVar id="status" type="java.lang.String"*/-->
+  <head th:replace="fragments.html :: head (info=${status})"></head>
   <body>
     <header th:replace="fragments.html :: menu (false)"></header>
     <main class="normal-container">
@@ -11,6 +13,8 @@
       </div>
       <div class="normal-content middle">
         <div class="middle content">
+          <!--/*@thymesVar id="error" type="java.lang.String"*/-->
+          <!--/*@thymesVar id="status" type="java.lang.String"*/-->
           <h1 th:text="${status} + ' - ' + ${error}"></h1>
           <p>
             Er is iets fout gegaan tijdens het ophalen van deze pagina. Als je
@@ -20,10 +24,15 @@
           <button class="collapsible">
             Klik hier voor error informatie!
           </button>
+          <!--/*@thymesVar id="exception" type="java.lang.String"*/-->
           <div th:if="${exception}" class="collapsed-content">
+            <!--/*@thymesVar id="exception" type="java.lang.String"*/-->
             <h1 th:text="${exception}"></h1>
+            <!--/*@thymesVar id="st" type="java.lang.String"*/-->
+            <!--/*@thymesVar id="trace" type="java.lang.String"*/-->
             <p class="error" th:each="st : ${trace}" th:text="${st}"></p>
           </div>
+          <!--/*@thymesVar id="exception" type="java.lang.String"*/-->
           <div th:if="!${exception}" class="collapsed-content">
             <h1>Geen extra informatie</h1>
             <p>

@@ -1,10 +1,6 @@
 package nl.th8.presidium.raadvanstate.controller;
 
-import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import nl.th8.presidium.raadvanstate.controller.dto.AdviceDTO;
-import nl.th8.presidium.scheduler.DuplicateCallsignException;
-import nl.th8.presidium.scheduler.InvalidCallsignException;
-import nl.th8.presidium.scheduler.InvalidUsernameException;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
 import nl.th8.presidium.scheduler.service.KamerstukkenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +13,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
 
+@SuppressWarnings({"SameReturnValue", "SpringMVCViewInspection"})
 @Controller
 @RequestMapping("/rvs")
 public class RvSController {
 
 
+    private final KamerstukkenService kamerstukkenService;
+
     @Autowired
-    KamerstukkenService kamerstukkenService;
+    public RvSController(KamerstukkenService kamerstukkenService) {
+        this.kamerstukkenService = kamerstukkenService;
+    }
 
     @GetMapping
     public String showRvS(Model model, Principal principal) {

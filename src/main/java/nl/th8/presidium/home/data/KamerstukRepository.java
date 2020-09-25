@@ -12,15 +12,9 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
 
     Optional<Kamerstuk> findByCallsignEqualsAndPostedIsTrue(String callsign);
 
-    List<Kamerstuk> findAllByPostDateIsNull();
-
     List<Kamerstuk> findAllByPostDateIsAfterAndDeniedIsFalse(Date date);
 
     PriorityQueue<Kamerstuk> findAllByPostDateIsBeforeAndPostedIsFalseAndDeniedIsFalse(Date date);
-
-    List<Kamerstuk> findAllByPostedIsTrue();
-
-    PriorityQueue<Kamerstuk> findAllByVoteDateAfterAndPostedIsTrue(Date date);
 
     List<Kamerstuk> findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull();
 

@@ -1,5 +1,6 @@
 package nl.th8.presidium.complaints.controller.dto;
 
+@SuppressWarnings("unused")
 public class Complaint {
 
     private String complaintText;

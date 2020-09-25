@@ -9,11 +9,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class SubmitService {
 
-    @Autowired
-    private KamerstukRepository kamerstukRepository;
+    private final KamerstukRepository kamerstukRepository;
+
+    private final TemmieSupplier discordSupplier;
 
     @Autowired
-    private TemmieSupplier discordSupplier;
+    public SubmitService(KamerstukRepository kamerstukRepository, TemmieSupplier discordSupplier) {
+        this.kamerstukRepository = kamerstukRepository;
+        this.discordSupplier = discordSupplier;
+    }
 
     public void processKamerstuk(Kamerstuk kamerstuk) throws IllegalArgumentException {
         if (kamerstuk.getTitle().isEmpty() ||
