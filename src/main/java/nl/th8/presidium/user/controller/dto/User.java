@@ -23,7 +23,7 @@ public class User {
 
     private String secret;
 
-    private final List<GrantedAuthority> authorityList;
+    private List<GrantedAuthority> authorityList;
 
     private boolean verified;
 
