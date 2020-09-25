@@ -52,4 +52,6 @@ public class Constants {
 
     public static final String COMPLAINT_SUBJECT = "Er is een anonieme klacht ingediend";
     public static final String COMPLAINT_BODY = "Klacht: %s \n \n Berichtlink: %s";
+
+    public static final String RVS_SUBJECT = "De Raad van State heeft advies uitgebracht op: %s";
 }

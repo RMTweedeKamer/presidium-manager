@@ -41,8 +41,14 @@
       "description": "Discord webhook url for complaint notifications"
     },
     {
+      "name": "manager.discord-rvs-webhook",
+      "type": "java.lang.String",
+      "description": "Discord webhook url for raad van state notifications."
+    },
+    {
       "name": "manager.rvs-secret",
       "type": "java.lang.String",
       "description": "User secret used to validate accounts for RvS members"
     }
+
   ] }

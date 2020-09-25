@@ -47,15 +47,19 @@
                             </label>
                         </section>
                         <hr>
-                        <form class="advice-form" th:object="${kamerstuk}" th:action="@{/rvs/save}" th:method="post">
-                            <input type="hidden" th:name="id" th:value="*{id}">
+                        <form class="advice-form" th:object="${adviceDTO}" th:action="@{/rvs/save}" th:method="post">
+                            <input type="hidden" th:name="kamerstukId" th:value="${kamerstuk.getId()}">
                             <label>
                                 <p>Advies: </p>
-                                <textarea class="submitpanel" th:name="advice" th:text="*{advice}" onkeyup="doPreview()"></textarea>
+                                <textarea class="submitpanel" th:name="advice" th:text="${kamerstuk.getAdvice()}" onkeyup="doPreview()"></textarea>
                             </label>
                             <label>
                                 <p>Preview:</p>
-                                <div class="preview-container preview-advice" th:value="*{content}"></div>
+                                <div class="preview-container preview-advice" th:value="${kamerstuk.getAdvice()}"></div>
+                            </label>
+                            <label>
+                                <p>Stuur naar gebruiker:</p>
+                                <input class="submitpanel" type="checkbox" th:name="sendNotification">
                             </label>
                             <input type="submit" th:value="Opslaan">
                         </form>

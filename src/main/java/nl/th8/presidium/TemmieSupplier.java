@@ -9,19 +9,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 
 @Service
 public class TemmieSupplier {
 
-    private TemmieWebhook schedulerWebhook;
-    private TemmieWebhook complaintWebhook;
+    private final TemmieWebhook schedulerWebhook;
+    private final TemmieWebhook complaintWebhook;
+    private final TemmieWebhook rvsWebhook;
 
     @Autowired
-    public TemmieSupplier(@Value("${manager.discord-scheduler-webhook}") String schedulerUrl, @Value("${manager.discord-complaint-webhook}") String complaintUrl) {
+    public TemmieSupplier(@Value("${manager.discord-scheduler-webhook}") String schedulerUrl,
+                          @Value("${manager.discord-complaint-webhook}") String complaintUrl,
+                          @Value("${manager.discord-rvs-webhook}") String rvsUrl) {
         schedulerWebhook = new TemmieWebhook(schedulerUrl);
         complaintWebhook = new TemmieWebhook(complaintUrl);
+        rvsWebhook = new TemmieWebhook(rvsUrl);
     }
 
     public void schedulerEmbeddedMessage(Kamerstuk kamerstuk) {
@@ -55,6 +60,39 @@ public class TemmieSupplier {
                 .build();
 
         schedulerWebhook.sendMessage(message);
+    }
+
+    public void rvsEmbeddedMessage(Kamerstuk kamerstuk) {
+        int color = 8240616;
+
+        DiscordEmbed embed = DiscordEmbed.builder()
+                .title(kamerstuk.getTitle())
+                .description("Er is een nieuw kamerstuk ter beoordeling voor de Raad van State.")
+                .url("https://indienen.th8.nl/rvs")
+                .fields(Arrays.asList(
+                        FieldEmbed.builder()
+                                .name("Type")
+                                .value(kamerstuk.getType().getName())
+                                .build(),
+                        FieldEmbed.builder()
+                                .name("Indiener")
+                                .value(kamerstuk.getSubmittedBy())
+                                .build(),
+                        FieldEmbed.builder()
+                                .name("Link")
+                                .value("[Ga naar de RvS tool](https://indienen.th8.nl/rvs)")
+                                .build()
+                ))
+                .color(color)
+                .build();
+
+        DiscordMessage message = DiscordMessage.builder()
+                .username("GERDI-RMTK")
+                .content("")
+                .embed(embed)
+                .build();
+
+        rvsWebhook.sendMessage(message);
     }
 
     public void complaintEmbeddedMessage(String complaint, String url) {

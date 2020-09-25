@@ -1,6 +1,7 @@
 package nl.th8.presidium.raadvanstate.controller;
 
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
+import nl.th8.presidium.raadvanstate.controller.dto.AdviceDTO;
 import nl.th8.presidium.scheduler.DuplicateCallsignException;
 import nl.th8.presidium.scheduler.InvalidCallsignException;
 import nl.th8.presidium.scheduler.InvalidUsernameException;
@@ -35,14 +36,16 @@ public class RvSController {
 
         model.addAttribute("loggedIn", loggedIn);
         model.addAttribute("queue", kamerstukkenService.getRvSQueue());
+        model.addAttribute("adviceDTO", new AdviceDTO());
+
 
         return "rvs";
     }
 
     @PostMapping("/save")
-    public String saveAdvice(@ModelAttribute Kamerstuk kamerstuk, String secret, Principal principal) {
+    public String saveAdvice(@ModelAttribute AdviceDTO advice) {
         try {
-            kamerstukkenService.saveAdvice(kamerstuk.getId(), kamerstuk.getAdvice());
+            kamerstukkenService.saveAdvice(advice.getKamerstukId(), advice.getAdvice(), advice.sendNotification());
         } catch (KamerstukNotFoundException e) {
             return "redirect:/rvs?notfound";
         }

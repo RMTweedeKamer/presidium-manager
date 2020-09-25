@@ -5,6 +5,7 @@ import net.dean.jraw.pagination.DefaultPaginator;
 import net.dean.jraw.references.SubmissionReference;
 import nl.th8.presidium.Constants;
 import nl.th8.presidium.RedditSupplier;
+import nl.th8.presidium.TemmieSupplier;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import nl.th8.presidium.home.controller.dto.KamerstukType;
 import nl.th8.presidium.home.controller.dto.StatDTO;
@@ -21,11 +22,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.time.DateUtils;
 
-import javax.annotation.PostConstruct;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -47,6 +43,9 @@ public class KamerstukkenService {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    TemmieSupplier discordWebhooks;
 
     //One time function to export all kamerstukken to md files
 //    @PostConstruct
@@ -229,10 +228,11 @@ public class KamerstukkenService {
         //Save kamerstuk to MongoDB
         Kamerstuk kamerstukSaved = kamerstukRepository.save(kamerstuk);
 
-        //Notify
+        //Log to scheduler notifications
         notificationService.addNotification(new Notification(String.format(Constants.QUEUED_TITLE, kamerstuk.getCallsign()),
                 String.format(Constants.QUEUED_TEXT, kamerstuk.getPostDateAsString(), mod)));
 
+        //Notify submitter via reddit
         if(kamerstuk.getSubmittedBy() != null) {
             try {
                 redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.QUEUED_SUBJECT, String.format(Constants.QUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
@@ -240,6 +240,12 @@ public class KamerstukkenService {
                 throw new InvalidUsernameException();
             }
         }
+
+        //Notify RvS if necessary
+        if(kamerstuk.getType().forRvS()) {
+            discordWebhooks.rvsEmbeddedMessage(kamerstuk);
+        }
+
         return kamerstukSaved.getId();
     }
 
@@ -347,8 +353,6 @@ public class KamerstukkenService {
         }
 
         kamerstuk.setReason(reason);
-        kamerstuk.unsetPostDate();
-        kamerstukRepository.save(kamerstuk);
         notificationService.addNotification(new Notification(String.format(Constants.DEQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.DEQUEUED_TEXT, mod)));
         if(kamerstuk.getSubmittedBy() != null) {
             try {
@@ -357,6 +361,10 @@ public class KamerstukkenService {
                 throw new InvalidUsernameException();
             }
         }
+
+        kamerstuk.unsetPostDate();
+        kamerstuk.setCallsign(null);
+        kamerstukRepository.save(kamerstuk);
     }
 
     public void denyKamerstuk(String kamerstukId, String reason, String mod) throws KamerstukNotFoundException, InvalidUsernameException {
@@ -495,7 +503,7 @@ public class KamerstukkenService {
         kamerstukRepository.save(newVote);
     }
 
-    public void saveAdvice(String id, String advice) throws KamerstukNotFoundException {
+    public void saveAdvice(String id, String advice, boolean sendNotification) throws KamerstukNotFoundException {
         Optional<Kamerstuk> possibleKamerstuk = kamerstukRepository.findById(id);
         Kamerstuk kamerstuk;
         if(possibleKamerstuk.isPresent()) {
@@ -507,5 +515,9 @@ public class KamerstukkenService {
 
         kamerstuk.setAdvice(advice);
         kamerstukRepository.save(kamerstuk);
+
+        if(sendNotification) {
+            redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), String.format(Constants.RVS_SUBJECT, kamerstuk.getTitle()), advice);
+        }
     }
 }
