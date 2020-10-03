@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<!--suppress HtmlRequiredTitleElement -->
+<html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
+  <!--/*@thymesVar id="status" type="java.lang.String"*/-->
+  <head th:replace="fragments.html :: head (error)"></head>
+  <body>
+    <header th:replace="fragments.html :: menu (false)"></header>
+    <main class="normal-container">
+      <div class="menu">
+        <ul>
+          <li>Error</li>
+        </ul>
+      </div>
+      <div class="normal-content middle">
+        <div class="middle content">
+          <h1>Reddit is momenteel niet beschikbaar</h1>
+          <p>
+            Momenteel is het niet gelukt om een koppeling te maken met reddit. Hierdoor kan de door jou gevraagde pagina niet gebruikt worden.<br/><br/>
+            Het indienpaneel zal automatisch proberen opnieuw te verbinden met reddit, maar dit kan even duren.<br/><br/>
+            Denk je dat deze fout niet bij reddit ligt, dan kun je <a href="mailto:bug@th8.nl">th8</a> een mailtje sturen.
+          </p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

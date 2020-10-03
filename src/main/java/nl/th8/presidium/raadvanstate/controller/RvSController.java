@@ -1,5 +1,7 @@
 package nl.th8.presidium.raadvanstate.controller;
 
+import nl.th8.presidium.ControllerUtils;
+import nl.th8.presidium.RedditSupplier;
 import nl.th8.presidium.raadvanstate.controller.dto.AdviceDTO;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
 import nl.th8.presidium.scheduler.service.KamerstukkenService;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @SuppressWarnings({"SameReturnValue", "SpringMVCViewInspection"})
 @Controller
@@ -21,19 +24,21 @@ public class RvSController {
 
     private final KamerstukkenService kamerstukkenService;
 
+    private final ControllerUtils controllerUtils;
+
     @Autowired
-    public RvSController(KamerstukkenService kamerstukkenService) {
+    public RvSController(KamerstukkenService kamerstukkenService, ControllerUtils controllerUtils) {
         this.kamerstukkenService = kamerstukkenService;
+        this.controllerUtils = controllerUtils;
     }
 
     @GetMapping
     public String showRvS(Model model, Principal principal) {
-        boolean loggedIn;
-        try {
-            loggedIn = principal.getName().length() > 0;
-        } catch (NullPointerException e) {
-            loggedIn = false;
-        }
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
+        boolean loggedIn = controllerUtils.checkLoggedIn(principal);
 
         model.addAttribute("loggedIn", loggedIn);
         model.addAttribute("queue", kamerstukkenService.getRvSQueue());
@@ -45,6 +50,10 @@ public class RvSController {
 
     @PostMapping("/save")
     public String saveAdvice(@ModelAttribute AdviceDTO advice) {
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
         try {
             kamerstukkenService.saveAdvice(advice.getKamerstukId(), advice.getAdvice(), advice.sendNotification());
         } catch (KamerstukNotFoundException e) {

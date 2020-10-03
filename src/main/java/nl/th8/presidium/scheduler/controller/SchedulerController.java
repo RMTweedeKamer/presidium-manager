@@ -1,5 +1,6 @@
 package nl.th8.presidium.scheduler.controller;
 
+import nl.th8.presidium.ControllerUtils;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import nl.th8.presidium.scheduler.DuplicateCallsignException;
 import nl.th8.presidium.scheduler.InvalidCallsignException;
@@ -15,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @SuppressWarnings({"SameReturnValue", "SpringMVCViewInspection"})
 @Controller
@@ -27,14 +29,21 @@ public class SchedulerController {
 
     private final NotificationService notificationService;
 
+    private final ControllerUtils controllerUtils;
+
     @Autowired
-    public SchedulerController(KamerstukkenService kamerstukkenService, NotificationService notificationService) {
+    public SchedulerController(KamerstukkenService kamerstukkenService, NotificationService notificationService, ControllerUtils controllerUtils) {
         this.kamerstukkenService = kamerstukkenService;
         this.notificationService = notificationService;
+        this.controllerUtils = controllerUtils;
     }
 
     @GetMapping
     public String showScheduler(Model model) {
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
         model.addAttribute("kamerstukken", kamerstukkenService.getNonScheduledKamerstukken());
         model.addAttribute("queue", kamerstukkenService.getKamerstukkenQueue());
         model.addAttribute("notifications", notificationService.getAllSettings().getNotifications());
@@ -46,6 +55,10 @@ public class SchedulerController {
 
     @PostMapping("/plan")
     public String planKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
         try {
             kamerstukkenService.queueKamerstuk(kamerstuk, principal.getName());
         } catch (InvalidUsernameException e) {
@@ -92,6 +105,10 @@ public class SchedulerController {
 
     @PostMapping("/reschedule")
     public String rescheduleKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
         try {
             kamerstukkenService.rescheduleKamerstuk(kamerstuk.getId(), kamerstuk.getPostDate(), kamerstuk.getVoteDate(), principal.getName());
         }
@@ -116,6 +133,10 @@ public class SchedulerController {
 
     @PostMapping("/unplan")
     public String unplanKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
         try {
             kamerstukkenService.dequeueKamerstuk(kamerstuk.getId(), kamerstuk.getReason(), principal.getName());
         } catch (KamerstukNotFoundException e) {
@@ -131,6 +152,10 @@ public class SchedulerController {
 
     @PostMapping("/deny")
     public String denyKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
         try {
             kamerstukkenService.denyKamerstuk(kamerstuk.getId(), kamerstuk.getReason(), principal.getName());
         } catch (KamerstukNotFoundException e) {
@@ -145,6 +170,10 @@ public class SchedulerController {
 
     @PostMapping("/withdraw")
     public String withdrawKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
         try {
             kamerstukkenService.withdrawKamerstuk(kamerstuk.getId(), principal.getName());
         } catch (KamerstukNotFoundException e) {

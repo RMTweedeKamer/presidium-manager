@@ -12,14 +12,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
+
 @Service
 public class RedditSupplier {
 
     public static String SUBREDDIT;
 
     public final UserAgent userAgent;
-    public final RedditClient redditClient;
-    public final InboxReference inbox;
+    private final Credentials credentials;
+    public RedditClient redditClient;
+    public InboxReference inbox;
+    public boolean redditDown = false;
 
     @Autowired
     public RedditSupplier(@Value("${manager.subreddit}") String subreddit,
@@ -29,11 +32,27 @@ public class RedditSupplier {
                           @Value("${manager.reddit-client-secret}") String redditClientSecret)
     {
         SUBREDDIT = subreddit;
-
         this.userAgent = new UserAgent("GERDI-RMTK", "nl.th8.presidium", "v1.1", username);
-        Credentials credentials = Credentials.script(username, password, redditClientId, redditClientSecret);
+        this.credentials = Credentials.script(username, password, redditClientId, redditClientSecret);
         NetworkAdapter adapter = new OkHttpNetworkAdapter(this.userAgent);
-        this.redditClient = OAuthHelper.automatic(adapter, credentials);
-        this.inbox = redditClient.me().inbox();
+        try {
+            this.redditClient = OAuthHelper.automatic(adapter, this.credentials);
+            this.inbox = redditClient.me().inbox();
+        }
+        catch (Exception e) {
+            this.redditDown = true;
+        }
+    }
+
+    public void retryGetReddit() {
+        if(redditDown) {
+            try {
+                NetworkAdapter adapter = new OkHttpNetworkAdapter(this.userAgent);
+                this.redditClient = OAuthHelper.automatic(adapter, this.credentials);
+                this.inbox = redditClient.me().inbox();
+                redditDown = false;
+            }
+            catch (Exception ignore) {/*Ignore failures when trying to reconnect */}
+        }
     }
 }

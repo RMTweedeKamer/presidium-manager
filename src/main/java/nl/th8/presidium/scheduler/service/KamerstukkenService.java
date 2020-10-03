@@ -112,9 +112,14 @@ public class KamerstukkenService {
 
     @Scheduled(fixedRate = 300000)
     public void postQueuedKamerstukken() {
+        Date checktime = new Date();
+        if(redditSupplier.redditDown) {
+            logger.info("Couldn't check for kamerstukken to post at {}, reddit connection failed.", checktime.toString());
+            redditSupplier.retryGetReddit();
+            return;
+        }
         PriorityQueue<Kamerstuk> queueToPost = kamerstukRepository.findAllByPostDateIsBeforeAndPostedIsFalseAndDeniedIsFalse(new Date());
 
-        Date checktime = new Date();
         logger.info("Checking for kamerstukken to post at {}", checktime.toString());
         StatDTO.setLastToPostCheck(checktime);
 
