@@ -1,7 +1,7 @@
-package nl.th8.presidium.home.service;
+package nl.rmtk.presidium.home.service;
 
-import nl.th8.presidium.home.controller.dto.StatDTO;
-import nl.th8.presidium.home.data.KamerstukRepository;
+import nl.rmtk.presidium.home.controller.dto.StatDTO;
+import nl.rmtk.presidium.home.data.KamerstukRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

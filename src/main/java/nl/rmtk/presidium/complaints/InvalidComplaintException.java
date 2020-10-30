@@ -1,4 +1,4 @@
-package nl.th8.presidium.complaints;
+package nl.rmtk.presidium.complaints;
 
 public class InvalidComplaintException extends Throwable {
 }

@@ -1,6 +1,6 @@
-package nl.th8.presidium.scheduler.controller.dto;
+package nl.rmtk.presidium.scheduler.controller.dto;
 
-import nl.th8.presidium.Constants;
+import nl.rmtk.presidium.Constants;
 
 import java.util.ArrayDeque;
 

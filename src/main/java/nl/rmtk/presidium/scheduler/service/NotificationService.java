@@ -1,8 +1,8 @@
-package nl.th8.presidium.scheduler.service;
+package nl.rmtk.presidium.scheduler.service;
 
-import nl.th8.presidium.scheduler.controller.dto.Notification;
-import nl.th8.presidium.scheduler.controller.dto.Settings;
-import nl.th8.presidium.scheduler.data.SettingsRepository;
+import nl.rmtk.presidium.scheduler.controller.dto.Notification;
+import nl.rmtk.presidium.scheduler.controller.dto.Settings;
+import nl.rmtk.presidium.scheduler.data.SettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

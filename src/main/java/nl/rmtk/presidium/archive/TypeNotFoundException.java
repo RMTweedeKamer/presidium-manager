@@ -1,4 +1,4 @@
-package nl.th8.presidium.archive;
+package nl.rmtk.presidium.archive;
 
 public class TypeNotFoundException extends Throwable {
 }

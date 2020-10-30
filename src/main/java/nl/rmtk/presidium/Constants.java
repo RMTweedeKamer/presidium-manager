@@ -1,4 +1,4 @@
-package nl.th8.presidium;
+package nl.rmtk.presidium;
 
 import org.springframework.stereotype.Component;
 

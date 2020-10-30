@@ -11,12 +11,13 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
-  <groupId>nl.th8.presidium</groupId>
+  <groupId>nl.rmtk.presidium</groupId>
   <artifactId>manager</artifactId>
   <version>1.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
   <name>manager</name>
-  <url>http://www.indienen.th8.nl</url>
+  <url>http://www.indienen.rmkt.nl</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,12 +39,11 @@
       <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>net.dean.jraw</groupId>
-      <artifactId>JRAW</artifactId>
-      <version>1.1.0</version>
-      <type>pom</type>
-    </dependency>
+	  <dependency>
+	    <groupId>com.github.ThatJavaNerd</groupId>
+	    <artifactId>JRAW</artifactId>
+	    <version>1.1.0</version>
+	  </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -104,14 +104,9 @@
       <version>2.9.7</version>
     </dependency>
     <dependency>
-      <groupId>net.dean.jraw</groupId>
-      <artifactId>JRAW</artifactId>
-      <version>1.1.0</version>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>3.9</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.9</version>
     </dependency>
     <dependency>
       <groupId>commons-validator</groupId>
@@ -202,15 +197,5 @@
         </plugin>
       </plugins>
     </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>8</source>
-          <target>8</target>
-        </configuration>
-      </plugin>
-    </plugins>
   </build>
 </project>

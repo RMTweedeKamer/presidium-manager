@@ -1,9 +1,9 @@
-package nl.th8.presidium.complaints.controller;
+package nl.rmtk.presidium.complaints.controller;
 
-import nl.th8.presidium.ControllerUtils;
-import nl.th8.presidium.complaints.InvalidComplaintException;
-import nl.th8.presidium.complaints.controller.dto.Complaint;
-import nl.th8.presidium.complaints.service.ComplaintService;
+import nl.rmtk.presidium.ControllerUtils;
+import nl.rmtk.presidium.complaints.InvalidComplaintException;
+import nl.rmtk.presidium.complaints.controller.dto.Complaint;
+import nl.rmtk.presidium.complaints.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

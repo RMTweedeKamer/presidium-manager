@@ -1,13 +1,13 @@
-package nl.th8.presidium.scheduler.controller;
+package nl.rmtk.presidium.scheduler.controller;
 
-import nl.th8.presidium.ControllerUtils;
-import nl.th8.presidium.home.controller.dto.Kamerstuk;
-import nl.th8.presidium.scheduler.DuplicateCallsignException;
-import nl.th8.presidium.scheduler.InvalidCallsignException;
-import nl.th8.presidium.scheduler.InvalidUsernameException;
-import nl.th8.presidium.scheduler.KamerstukNotFoundException;
-import nl.th8.presidium.scheduler.service.KamerstukkenService;
-import nl.th8.presidium.scheduler.service.NotificationService;
+import nl.rmtk.presidium.ControllerUtils;
+import nl.rmtk.presidium.home.controller.dto.Kamerstuk;
+import nl.rmtk.presidium.scheduler.DuplicateCallsignException;
+import nl.rmtk.presidium.scheduler.InvalidCallsignException;
+import nl.rmtk.presidium.scheduler.InvalidUsernameException;
+import nl.rmtk.presidium.scheduler.KamerstukNotFoundException;
+import nl.rmtk.presidium.scheduler.service.KamerstukkenService;
+import nl.rmtk.presidium.scheduler.service.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

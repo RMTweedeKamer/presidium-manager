@@ -1,4 +1,4 @@
-package nl.th8.presidium.user;
+package nl.rmtk.presidium.user;
 
 public class InvalidSecretException extends Throwable {
 }

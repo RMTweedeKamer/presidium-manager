@@ -1,10 +1,10 @@
-package nl.th8.presidium.raadvanstate.controller;
+package nl.rmtk.presidium.raadvanstate.controller;
 
-import nl.th8.presidium.ControllerUtils;
-import nl.th8.presidium.RedditSupplier;
-import nl.th8.presidium.raadvanstate.controller.dto.AdviceDTO;
-import nl.th8.presidium.scheduler.KamerstukNotFoundException;
-import nl.th8.presidium.scheduler.service.KamerstukkenService;
+import nl.rmtk.presidium.ControllerUtils;
+import nl.rmtk.presidium.RedditSupplier;
+import nl.rmtk.presidium.raadvanstate.controller.dto.AdviceDTO;
+import nl.rmtk.presidium.scheduler.KamerstukNotFoundException;
+import nl.rmtk.presidium.scheduler.service.KamerstukkenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

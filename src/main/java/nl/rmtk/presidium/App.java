@@ -1,6 +1,6 @@
-package nl.th8.presidium;
+package nl.rmtk.presidium;
 
-import nl.th8.presidium.home.controller.dto.StatDTO;
+import nl.rmtk.presidium.home.controller.dto.StatDTO;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

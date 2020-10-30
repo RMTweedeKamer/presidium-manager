@@ -1,4 +1,4 @@
-package nl.th8.presidium;
+package nl.rmtk.presidium;
 
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.http.NetworkAdapter;
@@ -32,7 +32,7 @@ public class RedditSupplier {
                           @Value("${manager.reddit-client-secret}") String redditClientSecret)
     {
         SUBREDDIT = subreddit;
-        this.userAgent = new UserAgent("GERDI-RMTK", "nl.th8.presidium", "v1.1", username);
+        this.userAgent = new UserAgent("GERDI-RMTK", "nl.rmtk.presidium", "v1.1", username);
         this.credentials = Credentials.script(username, password, redditClientId, redditClientSecret);
         NetworkAdapter adapter = new OkHttpNetworkAdapter(this.userAgent);
         try {

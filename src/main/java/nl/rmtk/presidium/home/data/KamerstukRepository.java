@@ -1,6 +1,6 @@
-package nl.th8.presidium.home.data;
+package nl.rmtk.presidium.home.data;
 
-import nl.th8.presidium.home.controller.dto.Kamerstuk;
+import nl.rmtk.presidium.home.controller.dto.Kamerstuk;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Date;

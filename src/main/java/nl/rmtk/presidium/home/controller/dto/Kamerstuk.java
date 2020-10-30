@@ -1,6 +1,6 @@
-package nl.th8.presidium.home.controller.dto;
+package nl.rmtk.presidium.home.controller.dto;
 
-import nl.th8.presidium.Constants;
+import nl.rmtk.presidium.Constants;
 import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.Id;
 

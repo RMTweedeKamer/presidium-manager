@@ -1,4 +1,4 @@
-package nl.th8.presidium.archive.controller.dto;
+package nl.rmtk.presidium.archive.controller.dto;
 
 @SuppressWarnings("unused")
 public class FilterDTO {

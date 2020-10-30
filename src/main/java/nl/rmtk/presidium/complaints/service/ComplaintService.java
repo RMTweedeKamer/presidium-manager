@@ -1,9 +1,9 @@
-package nl.th8.presidium.complaints.service;
+package nl.rmtk.presidium.complaints.service;
 
-import nl.th8.presidium.Constants;
-import nl.th8.presidium.RedditSupplier;
-import nl.th8.presidium.TemmieSupplier;
-import nl.th8.presidium.complaints.InvalidComplaintException;
+import nl.rmtk.presidium.Constants;
+import nl.rmtk.presidium.RedditSupplier;
+import nl.rmtk.presidium.TemmieSupplier;
+import nl.rmtk.presidium.complaints.InvalidComplaintException;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

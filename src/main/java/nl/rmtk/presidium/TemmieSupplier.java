@@ -1,10 +1,10 @@
-package nl.th8.presidium;
+package nl.rmtk.presidium;
 
 import com.mrpowergamerbr.temmiewebhook.DiscordEmbed;
 import com.mrpowergamerbr.temmiewebhook.DiscordMessage;
 import com.mrpowergamerbr.temmiewebhook.TemmieWebhook;
 import com.mrpowergamerbr.temmiewebhook.embed.FieldEmbed;
-import nl.th8.presidium.home.controller.dto.Kamerstuk;
+import nl.rmtk.presidium.home.controller.dto.Kamerstuk;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class TemmieSupplier {
         DiscordEmbed embed = DiscordEmbed.builder()
                 .title(kamerstuk.getTitle())
                 .description("Er is een nieuw kamerstuk ingediend in het indienpaneel.")
-                .url("https://indienen.th8.nl/scheduler")
+                .url("https://indienen.rmtk.nl/scheduler")
                 .fields(Arrays.asList(
                         FieldEmbed.builder()
                                 .name("Type")
@@ -66,7 +66,7 @@ public class TemmieSupplier {
         DiscordEmbed embed = DiscordEmbed.builder()
                 .title(kamerstuk.getTitle())
                 .description("Er is een nieuw kamerstuk ter beoordeling voor de Raad van State.")
-                .url("https://indienen.th8.nl/rvs")
+                .url("https://indienen.rmtk.nl/rvs")
                 .fields(Arrays.asList(
                         FieldEmbed.builder()
                                 .name("Type")
@@ -78,7 +78,7 @@ public class TemmieSupplier {
                                 .build(),
                         FieldEmbed.builder()
                                 .name("Link")
-                                .value("[Ga naar de RvS tool](https://indienen.th8.nl/rvs)")
+                                .value("[Ga naar de RvS tool](https://indienen.rmtk.nl/rvs)")
                                 .build()
                 ))
                 .color(color)

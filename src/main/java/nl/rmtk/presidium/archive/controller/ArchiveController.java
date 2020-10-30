@@ -1,10 +1,10 @@
-package nl.th8.presidium.archive.controller;
+package nl.rmtk.presidium.archive.controller;
 
-import nl.th8.presidium.archive.TypeNotFoundException;
-import nl.th8.presidium.archive.controller.dto.FilterDTO;
-import nl.th8.presidium.archive.service.ArchiveService;
-import nl.th8.presidium.home.controller.dto.KamerstukType;
-import nl.th8.presidium.scheduler.KamerstukNotFoundException;
+import nl.rmtk.presidium.archive.TypeNotFoundException;
+import nl.rmtk.presidium.archive.controller.dto.FilterDTO;
+import nl.rmtk.presidium.archive.service.ArchiveService;
+import nl.rmtk.presidium.home.controller.dto.KamerstukType;
+import nl.rmtk.presidium.scheduler.KamerstukNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

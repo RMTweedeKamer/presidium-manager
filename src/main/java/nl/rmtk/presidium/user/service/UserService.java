@@ -1,9 +1,9 @@
-package nl.th8.presidium.user.service;
+package nl.rmtk.presidium.user.service;
 
-import nl.th8.presidium.user.InvalidSecretException;
-import nl.th8.presidium.user.UsernameExistsException;
-import nl.th8.presidium.user.controller.dto.User;
-import nl.th8.presidium.user.data.UserRepository;
+import nl.rmtk.presidium.user.InvalidSecretException;
+import nl.rmtk.presidium.user.UsernameExistsException;
+import nl.rmtk.presidium.user.controller.dto.User;
+import nl.rmtk.presidium.user.data.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,6 +20,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
 
+    @Autowired
     private final PasswordEncoder passwordEncoder;
 
     private final String secret;

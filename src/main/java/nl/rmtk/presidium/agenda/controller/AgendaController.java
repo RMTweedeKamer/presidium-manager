@@ -1,6 +1,6 @@
-package nl.th8.presidium.agenda.controller;
+package nl.rmtk.presidium.agenda.controller;
 
-import nl.th8.presidium.scheduler.service.KamerstukkenService;
+import nl.rmtk.presidium.scheduler.service.KamerstukkenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

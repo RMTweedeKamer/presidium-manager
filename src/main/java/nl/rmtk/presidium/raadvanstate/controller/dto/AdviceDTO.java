@@ -1,4 +1,4 @@
-package nl.th8.presidium.raadvanstate.controller.dto;
+package nl.rmtk.presidium.raadvanstate.controller.dto;
 
 @SuppressWarnings("unused")
 public class AdviceDTO {

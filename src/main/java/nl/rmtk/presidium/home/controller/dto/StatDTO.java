@@ -1,4 +1,4 @@
-package nl.th8.presidium.home.controller.dto;
+package nl.rmtk.presidium.home.controller.dto;
 
 import java.util.Date;
 

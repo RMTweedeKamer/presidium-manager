@@ -1,4 +1,4 @@
-package nl.th8.presidium.scheduler;
+package nl.rmtk.presidium.scheduler;
 
 public class DuplicateCallsignException extends Throwable {
 }

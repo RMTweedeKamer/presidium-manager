@@ -1,10 +1,10 @@
-package nl.th8.presidium.home.controller;
+package nl.rmtk.presidium.home.controller;
 
-import nl.th8.presidium.home.controller.dto.Kamerstuk;
-import nl.th8.presidium.home.controller.dto.KamerstukType;
-import nl.th8.presidium.home.controller.dto.StatDTO;
-import nl.th8.presidium.home.service.StatsService;
-import nl.th8.presidium.home.service.SubmitService;
+import nl.rmtk.presidium.home.controller.dto.Kamerstuk;
+import nl.rmtk.presidium.home.controller.dto.KamerstukType;
+import nl.rmtk.presidium.home.controller.dto.StatDTO;
+import nl.rmtk.presidium.home.service.StatsService;
+import nl.rmtk.presidium.home.service.SubmitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -1,7 +1,7 @@
-package nl.th8.presidium.home.controller.dto;
+package nl.rmtk.presidium.home.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import nl.th8.presidium.scheduler.InvalidCallsignException;
+import nl.rmtk.presidium.scheduler.InvalidCallsignException;
 
 import java.util.Arrays;
 import java.util.List;

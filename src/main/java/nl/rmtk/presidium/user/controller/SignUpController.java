@@ -1,9 +1,9 @@
-package nl.th8.presidium.user.controller;
+package nl.rmtk.presidium.user.controller;
 
-import nl.th8.presidium.user.InvalidSecretException;
-import nl.th8.presidium.user.UsernameExistsException;
-import nl.th8.presidium.user.controller.dto.User;
-import nl.th8.presidium.user.service.UserService;
+import nl.rmtk.presidium.user.InvalidSecretException;
+import nl.rmtk.presidium.user.UsernameExistsException;
+import nl.rmtk.presidium.user.controller.dto.User;
+import nl.rmtk.presidium.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

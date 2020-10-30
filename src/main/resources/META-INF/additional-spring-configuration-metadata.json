@@ -51,4 +51,5 @@
       "description": "User secret used to validate accounts for RvS members."
     }
 
-  ] }
+  ]
+}

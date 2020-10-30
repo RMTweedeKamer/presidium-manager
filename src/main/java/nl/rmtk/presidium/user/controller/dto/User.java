@@ -1,4 +1,4 @@
-package nl.th8.presidium.user.controller.dto;
+package nl.rmtk.presidium.user.controller.dto;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.security.core.GrantedAuthority;
