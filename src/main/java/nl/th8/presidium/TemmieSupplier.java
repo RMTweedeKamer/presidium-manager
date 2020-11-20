@@ -37,7 +37,7 @@ public class TemmieSupplier {
         DiscordEmbed embed = DiscordEmbed.builder()
                 .title(kamerstuk.getTitle())
                 .description("Er is een nieuw kamerstuk ingediend in het indienpaneel.")
-                .url("https://indienen.th8.nl/scheduler")
+                .url("https://indienen.rmtk.nl/scheduler")
                 .fields(Arrays.asList(
                         FieldEmbed.builder()
                                 .name("Type")
@@ -66,7 +66,7 @@ public class TemmieSupplier {
         DiscordEmbed embed = DiscordEmbed.builder()
                 .title(kamerstuk.getTitle())
                 .description("Er is een nieuw kamerstuk ter beoordeling voor de Raad van State.")
-                .url("https://indienen.th8.nl/rvs")
+                .url("https://indienen.rmtk.nl/rvs")
                 .fields(Arrays.asList(
                         FieldEmbed.builder()
                                 .name("Type")
