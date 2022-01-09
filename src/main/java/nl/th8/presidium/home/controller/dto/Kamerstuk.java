@@ -27,6 +27,8 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
     @NotNull
     private String title;
 
+    private String bundleTitle;
+
     @NotNull
     private String content;
 
@@ -96,6 +98,14 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     public String getTitle() {
         return title;
+    }
+
+    public void setBundleTitle(String bundleTitle) {
+        this.bundleTitle = bundleTitle;
+    }
+
+    public String getBundleTitle() {
+        return bundleTitle;
     }
 
     public void setTitle(String title) {

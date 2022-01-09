@@ -5,6 +5,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class Constants {
 
+    private Constants() {
+        //Hide public constructor
+    }
+
     /* Properties */
     public static final int MAX_NOTIFICATIONS = 50;
     public static final String DATE_FORMAT = "EEEE, d MMMM";

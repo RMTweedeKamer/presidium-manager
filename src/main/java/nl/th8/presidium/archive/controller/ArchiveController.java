@@ -25,7 +25,7 @@ public class ArchiveController {
     }
 
     @GetMapping
-    String showArchive(Model model, Principal principal) {
+    public String showArchive(Model model, Principal principal) {
         boolean loggedIn;
         try {
             loggedIn = principal.getName().length() > 0;
@@ -39,7 +39,7 @@ public class ArchiveController {
     }
 
     @GetMapping("/{type}")
-    String showArchiveForType(Model model, @PathVariable String type, Principal principal) {
+    public String showArchiveForType(Model model, @PathVariable String type, Principal principal) {
         boolean loggedIn;
         try {
             loggedIn = principal.getName().length() > 0;
@@ -60,15 +60,13 @@ public class ArchiveController {
     }
 
     @PostMapping("/{type}")
-    String showFilteredArchiveForType(Model model, @PathVariable String type, @ModelAttribute FilterDTO filterDTO, Principal principal) {
+    public String showFilteredArchiveForType(Model model, @PathVariable String type, @ModelAttribute FilterDTO filterDTO, Principal principal) {
         boolean loggedIn;
         try {
             loggedIn = principal.getName().length() > 0;
         } catch (NullPointerException e) {
             loggedIn = false;
         }
-
-        System.out.println(filterDTO.getFilterString());
 
         try {
             model.addAttribute("kamerstukken", archiveService.getKamerstukkenForTypeFiltered(type, filterDTO.getFilterString()));
@@ -83,7 +81,7 @@ public class ArchiveController {
     }
 
     @GetMapping(value = "/{type}/{id}", produces = "text/plain;charset=UTF-8")
-    String getMotion(Model model, @PathVariable String type, @PathVariable String id) {
+    public String getMotion(Model model, @PathVariable String type, @PathVariable String id) {
         try {
             model.addAttribute("content", archiveService.getKamerstukHtml(type, id));
             model.addAttribute("callsign", archiveService.getNiceCallsign(type, id));

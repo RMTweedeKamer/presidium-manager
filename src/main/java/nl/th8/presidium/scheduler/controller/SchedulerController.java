@@ -76,11 +76,10 @@ public class SchedulerController {
     @PostMapping("/edit")
     public String editKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
         try {
-            kamerstukkenService.editKamerstuk(kamerstuk.getId(), kamerstuk.getTitle(), kamerstuk.getContent(), kamerstuk.getToCallString(), principal.getName());
+            kamerstukkenService.editKamerstuk(kamerstuk.getId(), kamerstuk.getTitle(), kamerstuk.getBundleTitle(), kamerstuk.getContent(), kamerstuk.getToCallString(), principal.getName());
         } catch (KamerstukNotFoundException e) {
             return "redirect:/scheduler?notfound";
         }
-        logger.info("Edited kamerstuk: " + kamerstuk.getCallsign() + " scheduled for " + kamerstuk.getPostDate());
 
         return "redirect:/scheduler?edited";
     }

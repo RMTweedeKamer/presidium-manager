@@ -114,26 +114,40 @@ public class KamerstukkenService {
     public void postQueuedKamerstukken() {
         Date checktime = new Date();
         if(redditSupplier.redditDown) {
-            logger.info("Couldn't check for kamerstukken to post at {}, reddit connection failed.", checktime.toString());
+            logger.info("Couldn't check for kamerstukken to post at {}, reddit connection failed.", checktime);
             redditSupplier.retryGetReddit();
             return;
         }
         PriorityQueue<Kamerstuk> queueToPost = kamerstukRepository.findAllByPostDateIsBeforeAndPostedIsFalseAndDeniedIsFalse(new Date());
+        List<Kamerstuk> batchPost = queueToPost.stream()
+                                .filter(kamerstuk -> kamerstuk.getType() == KamerstukType.MOTIE)
+                                .filter(kamerstuk -> DateUtils.isSameDay(kamerstuk.getPostDate(), new Date()))
+                                .collect(Collectors.toList());
 
-        logger.info("Checking for kamerstukken to post at {}", checktime.toString());
+        logger.info("Checking for kamerstukken to post at {}", checktime);
         StatDTO.setLastToPostCheck(checktime);
 
-        while(queueToPost.size() > 0) {
+        if(batchPost.size() > 1) {
+            String identifiers = postKamerstukkenAsBatch(batchPost);
+            queueToPost.removeAll(batchPost);
+
+
+            logger.info("Posting batched kamerstukken with identifier: {}", identifiers);
+            notificationService.addNotification(new Notification(String.format("Kamerstukken met identificator: %s zijn samen gepost.", identifiers),
+                    String.format("Gepost op: %s", new Date())));
+        }
+
+        while(!queueToPost.isEmpty()) {
             Kamerstuk toPost = queueToPost.poll();
             postKamerstuk(toPost);
             if(toPost.getCallsign() != null) {
                 logger.info("Posting kamerstuk with identifier: {}", toPost.getCallsign());
                 notificationService.addNotification(new Notification(String.format("Kamerstuk met identificator: %s is gepost.", toPost.getCallsign()),
-                        String.format("Gepost op: %s", new Date().toString())));
+                        String.format("Gepost op: %s", new Date())));
             } else {
                 logger.info("Posting kamerstuk of type: {}", toPost.getType().getName());
                 notificationService.addNotification(new Notification(String.format("Kamerstuk van het type: %s is gepost.", toPost.getType().getName()),
-                        String.format("Gepost op: %s", new Date().toString())));
+                        String.format("Gepost op: %s", new Date())));
             }
 
         }
@@ -144,7 +158,7 @@ public class KamerstukkenService {
         List<Kamerstuk> kamerstukkenToCheck = kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull();
 
         Date currentDate = new Date();
-        logger.info("Checking for vote to post at {}", currentDate.toString());
+        logger.info("Checking for vote to post at {}", currentDate);
         StatDTO.setLastToVoteCheck(currentDate);
 
         Predicate<Kamerstuk> onSameDay = kamerstuk -> DateUtils.isSameDay(kamerstuk.getVoteDate(), currentDate);
@@ -159,7 +173,7 @@ public class KamerstukkenService {
                     kamerstukRepository.save(kamerstuk);
                 });
 
-        if(kamerstukkenToCheck.size() > 0) {
+        if(!kamerstukkenToCheck.isEmpty()) {
             constructVotePost(kamerstukkenToCheck);
         }
     }
@@ -249,10 +263,11 @@ public class KamerstukkenService {
         }
     }
 
-    public void editKamerstuk(String kamerstukId, String title, String content, String toCallString, String mod) throws KamerstukNotFoundException {
+    public void editKamerstuk(String kamerstukId, String title, String bundleTitle, String content, String toCallString, String mod) throws KamerstukNotFoundException {
         Kamerstuk kamerstuk = getKamerstukForId(kamerstukId);
 
         kamerstuk.setTitle(title);
+        kamerstuk.setBundleTitle(bundleTitle);
         kamerstuk.setContent(content);
         kamerstuk.setToCallString(toCallString);
         kamerstuk.processToCallString();
@@ -261,6 +276,7 @@ public class KamerstukkenService {
         //Notify
         notificationService.addNotification(new Notification(String.format(Constants.EDIT_TITLE, kamerstuk.getCallsign()),
                 String.format(Constants.EDIT_TEXT, mod)));
+        logger.info("Edited kamerstuk: {} scheduled for {}", kamerstuk.getCallsign(), kamerstuk.getPostDate());
     }
 
     public void rescheduleKamerstuk(String kamerstukId, Date postDate, Date voteDate, String mod) throws KamerstukNotFoundException, InvalidUsernameException {
@@ -348,7 +364,6 @@ public class KamerstukkenService {
     }
 
     private void postKamerstuk(Kamerstuk kamerstuk) {
-
         //Set title
         String title;
         if(kamerstuk.getCallsign() != null) {
@@ -389,6 +404,59 @@ public class KamerstukkenService {
         if(!kamerstuk.getAdvice().isEmpty()) {
             submission.reply(kamerstuk.getAdvice());
         }
+    }
+
+    private String postKamerstukkenAsBatch(List<Kamerstuk> kamerstukken) {
+        //Set title
+        StringBuilder title = new StringBuilder();
+        StringBuilder content = new StringBuilder();
+        Kamerstuk first = kamerstukken.get(0);
+        Kamerstuk last = kamerstukken.get(kamerstukken.size()-1);
+
+        if(first.getBundleTitle() == null)
+            first.setBundleTitle("Motiebundel zonder naam.");
+
+        //Construct title
+        title.append(first.getCallsign())
+                .append("-")
+                .append(last.getCallsign())
+                .append(": ")
+                .append(first.getBundleTitle());
+
+        //Construct content
+        content.append("##").append(first.getBundleTitle()).append("\n\n --- \n\n");
+        for(Kamerstuk kamerstuk : kamerstukken) {
+            content.append("##").append(kamerstuk.getTitle()).append("\n \n");
+            content.append(kamerstuk.getContent()).append("\n\n --- \n\n");
+        }
+        content.append("###").append(first.getReadLengthString());
+
+
+        //Post to reddit
+        SubmissionReference submission = redditSupplier.redditClient.subreddit(RedditSupplier.SUBREDDIT).submit(SubmissionKind.SELF, title.toString(), content.toString(), false);
+
+        //Update kamerstukken and get all users to call
+        Set<String> toCallList = new HashSet<>();
+        for(Kamerstuk kamerstuk : kamerstukken) {
+            kamerstuk.setUrl("https://reddit.com/r/" + RedditSupplier.SUBREDDIT + "/comments/" + submission.getId());
+            kamerstuk.setPosted(true);
+            kamerstukRepository.save(kamerstuk);
+
+            toCallList.addAll(kamerstuk.getToCall());
+        }
+
+        //Call relevant users
+        if(!toCallList.isEmpty()) {
+            StringBuilder replyBuilder = new StringBuilder();
+            replyBuilder.append("###Voor een reactie op dit kamerstuk wordt opgeroepen:  ").append("\n");
+            for (String minister : toCallList) {
+                replyBuilder.append("* ").append(minister).append("  ").append("\n");
+            }
+            Comment comment = submission.reply(replyBuilder.toString());
+            comment.toReference(redditSupplier.redditClient).distinguish(DistinguishedStatus.MODERATOR, true);
+        }
+
+        return String.format("%s-%s", first.getCallsign(), last.getCallsign());
     }
 
     private void constructVotePost(List<Kamerstuk> votesToPost) {

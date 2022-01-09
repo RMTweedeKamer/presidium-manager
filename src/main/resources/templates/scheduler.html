@@ -78,6 +78,10 @@
                                     <input class="submitpanel big"  type="text" th:name="title" th:value="*{title}" required>
                                 </label>
                                 <label>
+                                    <p>Bundeltitel:</p>
+                                    <input class="submitpanel big"  type="text" th:name="bundleTitle" th:value="*{bundleTitle}" placeholder="Alleen invullen indien dit de eerste motie in een bundel is">
+                                </label>
+                                <label>
                                     <p>Inhoud:</p>
                                     <textarea class="submitpanel" th:name="content" th:text="*{content}" required></textarea>
                                 </label>
@@ -103,7 +107,7 @@
                                 </div>
                                 <label>
                                     <p>Oproepen:</p>
-                                    <input class="submitpanel big" type="text" th:name="toCallString" th:value="*{toCallString}">
+                                    <input class="submitpanel big" type="text" th:name="toCallString" th:value="*{toCallString}" placeholder="Bijvoorbeeld: De Minister van ICT, /u/th8">
                                 </label>
                                 <input type="submit" th:value="Inplannen">
                             </form>
@@ -131,9 +135,9 @@
             </div>
             <div class="small-content middle">
                 <div th:each="kamerstuk: ${queue}">
-                    <button th:if="${kamerstuk.callsign} != null" th:classappend="${kamerstuk.isUrgent()}? urgent" class="collapsible" th:text="${kamerstuk.callsign} + ': ' + ${kamerstuk.title}">
+                    <button th:if="${kamerstuk.callsign} != null" th:classappend="${kamerstuk.isUrgent()}? urgent" class="collapsible" th:text="${kamerstuk.callsign} + ': ' + ${kamerstuk.getTitle()}">
                     </button>
-                    <button th:if="${kamerstuk.callsign} == null" th:classappend="${kamerstuk.isUrgent()}? urgent" class="collapsible" th:text="${kamerstuk.title}">
+                    <button th:if="${kamerstuk.callsign} == null" th:classappend="${kamerstuk.isUrgent()}? urgent" class="collapsible" th:text="${kamerstuk.getTitle()}">
                     </button>
                     <div th:classappend="${kamerstuk.isUrgent()}? urgent2" class="collapsed-content">
                         <p th:text="'Ingepland op: ' + ${kamerstuk.getPostDateAsString()}"></p>
@@ -151,6 +155,10 @@
                                     <label>
                                         <p>Titel:</p>
                                         <input class="submitpanel big"  type="text" th:name="title" th:value="*{title}">
+                                    </label>
+                                    <label>
+                                        <p>Bundeltitel:</p>
+                                        <input class="submitpanel big"  type="text" th:name="bundleTitle" th:value="*{bundleTitle}" placeholder="Alleen van toepassing op de eerste motie in een bundel.">
                                     </label>
                                     <label>
                                         <p>Inhoud:</p>
