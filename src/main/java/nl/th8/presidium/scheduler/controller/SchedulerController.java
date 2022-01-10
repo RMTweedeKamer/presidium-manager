@@ -53,6 +53,73 @@ public class SchedulerController {
         return "scheduler";
     }
 
+    @GetMapping("sidebar")
+    public String getSidebar(Model model, @RequestParam(name = "page") String pageName) {
+        model.addAttribute("pageName", pageName);
+        model.addAttribute("inboxCount", kamerstukkenService.getNonScheduledCount());
+        model.addAttribute("plannedCount", kamerstukkenService.getQueuedCount());
+        model.addAttribute("voteCount", kamerstukkenService.getVoteCount());
+        model.addAttribute("delayedCount", kamerstukkenService.getDelayedCount());
+        model.addAttribute("deniedCount", kamerstukkenService.getDeniedCount());
+
+        return "scheduler/sidebar";
+    }
+
+    @GetMapping("/inbox")
+    public String showInbox(Model model) {
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
+        model.addAttribute("items", kamerstukkenService.getNonScheduledKamerstukken());
+
+        return "scheduler/inbox";
+    }
+
+    @GetMapping("/planned")
+    public String showPlannedList(Model model) {
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
+        model.addAttribute("items", kamerstukkenService.getKamerstukkenQueue());
+
+        return "scheduler/planned";
+    }
+
+    @GetMapping("/votequeue")
+    public String showVoteList(Model model) {
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
+        model.addAttribute("items", kamerstukkenService.getKamerstukkenVoteQueue());
+
+        return "scheduler/votequeue";
+    }
+
+    @GetMapping("/delayed")
+    public String showDelayedItems(Model model) {
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
+        model.addAttribute("items", kamerstukkenService.getDelayedKamerstukkenVoteQueue());
+
+        return "scheduler/delayed";
+    }
+
+    @GetMapping("/denied")
+    public String showDeniedItems(Model model) {
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
+        model.addAttribute("items", kamerstukkenService.getDeniedKamerstukken());
+
+        return "scheduler/denied";
+    }
+
     @PostMapping("/plan")
     public String planKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
         Optional<String> redditStatus = controllerUtils.checkRedditStatus();
@@ -62,15 +129,15 @@ public class SchedulerController {
         try {
             kamerstukkenService.queueKamerstuk(kamerstuk, principal.getName());
         } catch (InvalidUsernameException e) {
-            return "redirect:/scheduler?invalidUsername";
+            return "redirect:/scheduler/inbox?invalidUsername";
         } catch (DuplicateCallsignException e) {
-            return "redirect:/scheduler?duplicateCallsign";
+            return "redirect:/scheduler/inbox?duplicateCallsign";
         } catch (InvalidCallsignException e) {
-            return "redirect:/scheduler?invalidCallsign";
+            return "redirect:/scheduler/inbox?invalidCallsign";
         }
         logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());
 
-        return "redirect:/scheduler?planned";
+        return "redirect:/scheduler/inbox?planned";
     }
 
     @PostMapping("/edit")
@@ -78,10 +145,10 @@ public class SchedulerController {
         try {
             kamerstukkenService.editKamerstuk(kamerstuk.getId(), kamerstuk.getTitle(), kamerstuk.getBundleTitle(), kamerstuk.getContent(), kamerstuk.getToCallString(), principal.getName());
         } catch (KamerstukNotFoundException e) {
-            return "redirect:/scheduler?notfound";
+            return "redirect:/scheduler/planned?notfound";
         }
 
-        return "redirect:/scheduler?edited";
+        return "redirect:/scheduler/planned?edited";
     }
 
 //    @PostMapping("/plan/api")
@@ -112,11 +179,11 @@ public class SchedulerController {
             kamerstukkenService.rescheduleKamerstuk(kamerstuk.getId(), kamerstuk.getPostDate(), kamerstuk.getVoteDate(), principal.getName());
         }
         catch (KamerstukNotFoundException e) {
-            return "redirect:/scheduler?notfound";
+            return "redirect:/scheduler/planned?notfound";
         } catch (InvalidUsernameException e) {
-            return "redirect:/scheduler?invalidUsername";
+            return "redirect:/scheduler/planned?invalidUsername";
         }
-        return "redirect:/scheduler?rescheduled";
+        return "redirect:/scheduler/planned?rescheduled";
     }
 
     @PostMapping("/rescheduleVote")
@@ -125,9 +192,9 @@ public class SchedulerController {
             kamerstukkenService.rescheduleVote(kamerstuk.getId(), kamerstuk.getVoteDate(), principal.getName());
         }
         catch (KamerstukNotFoundException e) {
-            return "redirect:/scheduler?notfound";
+            return "redirect:/scheduler/votequeue?notfound";
         }
-        return "redirect:/scheduler?rescheduled";
+        return "redirect:/scheduler/votequeue?rescheduled";
     }
 
     @PostMapping("/unplan")
@@ -139,14 +206,14 @@ public class SchedulerController {
         try {
             kamerstukkenService.dequeueKamerstuk(kamerstuk.getId(), kamerstuk.getReason(), principal.getName());
         } catch (KamerstukNotFoundException e) {
-            return "redirect:/scheduler?notfound";
+            return "redirect:/scheduler/planned?notfound";
         } catch (InvalidUsernameException e) {
-            return "redirect:/scheduler?invalidUsername";
+            return "redirect:/scheduler/planned?invalidUsername";
         }
 
         logger.info("Removed kamerstuk " + kamerstuk.getCallsign() + " from queue");
 
-        return "redirect:/scheduler?unplanned";
+        return "redirect:/scheduler/planned?unplanned";
     }
 
     @PostMapping("/deny")
@@ -158,13 +225,13 @@ public class SchedulerController {
         try {
             kamerstukkenService.denyKamerstuk(kamerstuk.getId(), kamerstuk.getReason(), principal.getName());
         } catch (KamerstukNotFoundException e) {
-            return "redirect:/scheduler?notfound";
+            return "redirect:/scheduler/inbox?notfound";
         } catch (InvalidUsernameException e) {
-            return "redirect:/scheduler?invalidUsername";
+            return "redirect:/scheduler/inbox?invalidUsername";
         }
         logger.info("Denied kamerstuk " + kamerstuk.getTitle());
 
-        return "redirect:/scheduler?denied";
+        return "redirect:/scheduler/inbox?denied";
     }
 
     @PostMapping("/withdraw")
@@ -176,11 +243,11 @@ public class SchedulerController {
         try {
             kamerstukkenService.withdrawKamerstuk(kamerstuk.getId(), principal.getName());
         } catch (KamerstukNotFoundException e) {
-            return "redirect:/scheduler?notfound";
+            return "redirect:/scheduler/planned?notfound";
         }
         logger.info("Withdrew kamerstuk " + kamerstuk.getTitle());
 
-        return "redirect:/scheduler?withdrawn";
+        return "redirect:/scheduler/planned?withdrawn";
     }
 
     @PostMapping("/setDelay")
@@ -188,10 +255,10 @@ public class SchedulerController {
         try {
             kamerstukkenService.delayKamerstuk(kamerstuk.getId(), principal.getName());
         } catch (KamerstukNotFoundException e) {
-            return "redirect:/scheduler?notfound";
+            return "redirect:/scheduler/votequeue?notfound";
         }
         logger.info("Delayed voting on kamerstuk " + kamerstuk.getTitle());
 
-        return "redirect:/scheduler?delayed";
+        return "redirect:/scheduler/votequeue?delayed";
     }
 }

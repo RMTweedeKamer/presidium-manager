@@ -28,6 +28,8 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
 
     List<Kamerstuk> findAllByPostDateIsBeforeAndCallsignIsNotNull(Date date1);
 
+    List<Kamerstuk> findAllByDeniedIsTrueAndPostedIsFalse();
+
     long countAllByPostDateIsNullAndDeniedIsFalse();
 
     long countAllByPostDateIsNotNullAndPostedIsFalse();
@@ -39,6 +41,8 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
     long countAllByPostedIsTrueAndDeniedIsTrue();
 
     long countAllByPostedIsTrueAndVotePostedIsTrue();
+
+    long countAllByPostedIsTrueAndVotePostedIsFalseAndVoteDateIsNullAndDeniedIsFalse();
 
     boolean existsByCallsignAndIdIsNot(String callsign, String id);
 

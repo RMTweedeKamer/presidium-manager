@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments.html :: head ('Planner')">
+
+    </head>
+    <body>
+        <main class="new-container">
+            <aside id="sidebar-location"></aside>
+
+            <section class="new-content">
+                <nav th:replace="fragments.html :: menu (true)"></nav>
+
+                <h1 class="middle">Ingekomen stukken</h1>
+
+                <div class="new-list-item" th:each="item : ${items}" th:classappend="${item.isUrgent()}? urgent">
+                    <p th:text="${item.title}" class="title"></p>
+                    <p>|</p>
+                    <p th:text="'' + ${item.submittedBy}"></p>
+                    <div class="actions">
+                        <a th:href="'#view-' + ${itemStat.count}" rel="modal:open"><button>Bekijk</button></a>
+                    </div>
+
+
+                    <div th:id="'view-' + ${itemStat.count}" class="modal">
+                        <h2>Bekijken</h2>
+                        <p>Dit is een afgewezen kamerstuk, u kunt de inhoud niet meer wijzigen.</p>
+                        <label>
+                            <h3 th:text="${item.title}"></h3>
+                        </label>
+                        <textarea class="submitpanel" th:name="content" th:text="${item.content}" readonly></textarea>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <script>
+            $("#sidebar-location").load("/scheduler/sidebar?page=Afgewezen")
+        </script>
+    </body>
+</html>
