@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments.html :: head ('Planner')">
+
+    </head>
+    <body>
+        <div class="info" th:if="${param.edited}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Kamerstuk is aangepast.
+        </div>
+        <div class="info" th:if="${param.unplanned}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Kamerstuk uit de wachtrij gehaald.
+        </div>
+        <div class="info" th:if="${param.rescheduled}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Kamerstuk is verzet.
+        </div>
+        <div class="info" th:if="${param.withdrawn}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Kamerstuk is ingetrokken.
+        </div>
+        <div class="alert" th:if="${param.notfound}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Kamerstuk is niet gevonden.
+        </div>
+        <div class="alert" th:if="${param.invalidUsername}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            De gebruikersnaam van de indiener was incorrect, deze is dus niet op de hoogte gesteld. De rest van de operatie is wel succesvol uitgevoerd.
+        </div>
+        <div class="alert" th:if="${param.duplicateCallsign}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            De identificator van het kamerstuk is al in gebruik, voer een andere identificator in.
+        </div>
+        <div class="alert" th:if="${param.invalidCallsign}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            De identificator van het kamerstuk is niet correct. Zorg dat je een juiste letter combinatie met 4 cijfers hebt gebruikt.
+        </div>
+
+        <main class="new-container">
+            <aside id="sidebar-location"></aside>
+
+            <section class="new-content">
+                <nav th:replace="fragments.html :: menu (true)"></nav>
+
+                <h1 class="middle">Ingekomen stukken</h1>
+
+                <div class="new-list-item" th:each="item : ${items}" th:classappend="${item.isUrgent()}? urgent">
+                    <p th:text="${item.title}" class="title"></p>
+                    <p>|</p>
+                    <p th:text="'' + ${item.submittedBy}"></p>
+                    <div class="actions">
+                        <a th:href="'#plan-' + ${itemStat.count}" rel="modal:open"><button>Inplannen</button></a>
+                        <a th:href="'#withdraw-' + ${itemStat.count}" rel="modal:open"><button>Intrekken</button></a>
+                    </div>
+
+
+                    <div th:id="'plan-' + ${itemStat.count}" class="modal">
+                        <h2>Inplannen</h2>
+                        <form th:object="${item}" th:action="@{scheduler/rescheduleVote}" th:method="post">
+                            <input type="hidden" th:name="id" th:value="*{id}">
+                            <div class='input-group date' id='datetimepicker6'>
+                                <label>
+                                    <p>Stemdatum:</p>
+                                    <input class="submitpanel medium datetime" type='text' th:name="voteDate" th:placeholder="*{voteDate}" required autocomplete="off"/>
+                                </label>
+                            </div>
+                            <input type="submit" th:value="'Inplannen'">
+                        </form>
+                    </div>
+                    <div th:id="'withdraw-' + ${itemStat.count}" class="modal">
+                        <h2>Intrekken</h2>
+                        <p>Het kamerstuk wordt hiermee ingetrokken en niet meer behandeld.</p>
+                        <form th:object="${item}" th:action="@{/scheduler/withdraw}" th:method="post">
+                            <input type="hidden" th:name="id" th:value="*{id}">
+                            <input type="hidden" th:name="title" th:value="*{title}">
+                            <input type="submit" th:value="Intrekken">
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <script>
+            $("#sidebar-location").load("/scheduler/sidebar?page=Uitgesteld")
+        </script>
+        <script>
+            $(".datetime").datetimepicker({
+                format: "d-m-Y H:i"
+            })
+        </script>
+    </body>
+</html>

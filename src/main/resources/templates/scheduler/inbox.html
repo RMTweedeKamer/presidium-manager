@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html lang="nl_NL" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments.html :: head ('Planner')">
+
+    </head>
+    <body>
+        <div class="info" th:if="${param.planned}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Kamerstuk ingepland.
+        </div>
+        <div class="info" th:if="${param.denied}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Kamerstuk afgewezen.
+        </div>
+        <div class="info" th:if="${param.withdrawn}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Kamerstuk is ingetrokken.
+        </div>
+        <div class="alert" th:if="${param.notfound}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            Kamerstuk is niet gevonden.
+        </div>
+        <div class="alert" th:if="${param.invalidUsername}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            De gebruikersnaam van de indiener was incorrect, deze is dus niet op de hoogte gesteld. De rest van de operatie is wel succesvol uitgevoerd.
+        </div>
+        <div class="alert" th:if="${param.duplicateCallsign}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            De identificator van het kamerstuk is al in gebruik, voer een andere identificator in.
+        </div>
+        <div class="alert" th:if="${param.invalidCallsign}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            De identificator van het kamerstuk is niet correct. Zorg dat je een juiste letter combinatie met 4 cijfers hebt gebruikt.
+        </div>
+
+        <main class="new-container">
+            <aside id="sidebar-location"></aside>
+
+            <section class="new-content">
+                <nav th:replace="fragments.html :: menu (true)"></nav>
+
+                <h1 class="middle">Ingekomen stukken</h1>
+
+                <div class="new-list-item" th:each="item : ${items}" th:classappend="${item.isUrgent()}? urgent">
+                    <p th:text="${item.title}" class="title"></p>
+                    <p>|</p>
+                    <p th:text="'' + ${item.submittedBy}"></p>
+                    <div class="actions">
+                        <a th:href="'#plan-' + ${itemStat.count}" rel="modal:open"><button>Inplannen</button></a>
+                        <a th:href="'#deny-' + ${itemStat.count}" rel="modal:open"><button>Afwijzen</button></a>
+                    </div>
+
+
+                    <div th:id="'plan-' + ${itemStat.count}" class="modal">
+                        <h2>Inplannen</h2>
+                        <p>Plan hier het kamerstuk in. Let er op dat de formatting klopt en je de informatie over de indiener hebt toegevoegd aan de tekst.</p>
+                        <form th:object="${item}" th:action="@{/scheduler/plan}" th:method="post">
+                            <input type="hidden" th:name="id" th:value="*{id}">
+                            <input type="hidden" th:name="type" th:value="*{type}">
+                            <input type="hidden" th:name="urgent" th:value="*{urgent}">
+                            <label>
+                                <p>Kamerstuknummer:</p>
+                                <input class="submitpanel small" type="text" th:name="callsign" th:value="*{callsign}" th:placeholder="${item.type.getCall()} + '0000'" required>
+                            </label>
+                            <label>
+                                <p>Titel:</p>
+                                <input class="submitpanel big"  type="text" th:name="title" th:value="*{title}" required>
+                            </label>
+                            <label>
+                                <p>Bundeltitel:</p>
+                                <input class="submitpanel big"  type="text" th:name="bundleTitle" th:value="*{bundleTitle}" placeholder="Alleen invullen indien dit de eerste motie in een bundel is">
+                            </label>
+                            <label>
+                                <p>Inhoud:</p>
+                                <textarea class="submitpanel" th:name="content" th:text="*{content}" required></textarea>
+                            </label>
+                            <label>
+                                <p>Indiener:</p>
+                                <input class="medium" type="text" th:name="submittedBy" th:value="*{submittedBy}" readonly>
+                            </label>
+                            <div class='input-group date' id='datetimepicker1'>
+                                <label>
+                                    <p>Postdatum:</p>
+                                    <input class="submitpanel medium datetime" type='text' th:name="postDate" required autocomplete="off"/>
+                                </label>
+                            </div>
+                            <label>
+                                <p>Lengte van de lezing:</p>
+                                <input class="small" type="number" th:name="readingLength" th:value="*{readingLength}" value="3" min="1" max="14" required>
+                            </label>
+                            <div th:if="${item.type.needsVote()}" class='input-group date' id='datetimepicker2'>
+                                <label>
+                                    <p>Stemdatum:</p>
+                                    <input class="submitpanel medium datetime" type='text' th:name="voteDate" required autocomplete="off"/>
+                                </label>
+                            </div>
+                            <label>
+                                <p>Oproepen:</p>
+                                <input class="submitpanel big" type="text" th:name="toCallString" th:value="*{toCallString}" placeholder="Bijvoorbeeld: De Minister van ICT, /u/th8">
+                            </label>
+
+                            <input type="submit" th:value="Inplannen">
+                        </form>
+                    </div>
+                    <div th:id="'deny-' + ${itemStat.count}" class="modal">
+                        <form th:object="${item}" th:action="@{/scheduler/deny}" th:method="post">
+                            <input type="hidden" th:name="id" th:value="*{id}">
+                            <input type="hidden" th:name="title" th:value="*{title}">
+                            <label>
+                                <p>Reden voor afwijzing: </p>
+                                <input class="submitpanel big" type="text" th:name="reason" th:value="*{reason}" placeholder="Laat leeg om geen bericht te sturen aan de indiener">
+                            </label>
+
+                            <input type="submit" th:value="Afwijzen">
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <script>
+            $("#sidebar-location").load("/scheduler/sidebar?page=Inbox")
+        </script>
+        <script>
+            $(".datetime").datetimepicker({
+                format: "d-m-Y H:i"
+            })
+        </script>
+    </body>
+</html>

@@ -200,6 +200,12 @@ public class KamerstukkenService {
                 .collect(Collectors.toList());
     }
 
+    public List<Kamerstuk> getDeniedKamerstukken() {
+        return kamerstukRepository.findAllByDeniedIsTrueAndPostedIsFalse().stream()
+                .sorted(Comparator.comparing(Kamerstuk::getId))
+                .collect(Collectors.toList());
+    }
+
     public List<Kamerstuk> getToukieQueue() {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
@@ -327,7 +333,7 @@ public class KamerstukkenService {
         kamerstuk.setDenied(true);
         kamerstukRepository.save(kamerstuk);
         notificationService.addNotification(new Notification(String.format(Constants.DENIED_TITLE, kamerstuk.getTitle()), String.format(Constants.DENIED_TEXT, mod)));
-        if(kamerstuk.getSubmittedBy() != null) {
+        if(kamerstuk.getSubmittedBy() != null && !reason.isEmpty()) {
             try {
                 redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DENIED_SUBJECT, String.format(Constants.DENIED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), reason));
             } catch (Exception e) {
@@ -541,5 +547,25 @@ public class KamerstukkenService {
         }
         else
             return 0;
+    }
+
+    public long getNonScheduledCount() {
+        return kamerstukRepository.countAllByPostDateIsNullAndDeniedIsFalse();
+    }
+
+    public long getQueuedCount() {
+        return kamerstukRepository.countAllByPostDateIsNotNullAndPostedIsFalse();
+    }
+
+    public long getVoteCount() {
+        return kamerstukRepository.countAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse();
+    }
+
+    public long getDelayedCount() {
+        return kamerstukRepository.countAllByPostedIsTrueAndVotePostedIsFalseAndVoteDateIsNullAndDeniedIsFalse();
+    }
+
+    public long getDeniedCount() {
+        return kamerstukRepository.countAllByPostedIsFalseAndDeniedIsTrue();
     }
 }

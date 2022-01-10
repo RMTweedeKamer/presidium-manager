@@ -5,7 +5,7 @@
     <header th:replace="fragments.html :: menu (${loggedIn})"></header>
     <main class="middle">
       <h1>
-        Voor Toukie
+        Agenda van stukken 15 dagen terug en 30 dagen vooruit
       </h1>
       <table class="lobby toukie">
         <tr class="headerrow">
@@ -13,6 +13,7 @@
           <th>Kenmerk</th>
           <th>Indiener</th>
           <th>Titel</th>
+          <th>Postdatum</th>
           <th>Opgeroepen</th>
         </tr>
         <tr th:each="kamerstuk : ${queue}">
@@ -21,6 +22,7 @@
           <td th:text="${kamerstuk.getSubmittedBy()}">Indiener</td>
           <td th:if="${!kamerstuk.hasUrl()}" th:text="${kamerstuk.getTitle()}">Titel</td>
           <td th:if="${kamerstuk.hasUrl()}"><a th:text="${kamerstuk.getTitle()}" th:href="${kamerstuk.getUrl()}">Titel</a></td>
+          <td th:text="${kamerstuk.getPostDateAsString()}"></td>
           <td th:utext="${kamerstuk.getToCallAsText()}">Opgeroepen</td>
         </tr>
       </table>
