@@ -558,22 +558,28 @@ td {
     width: 85%;
     margin-left: auto;
     overflow: scroll;
+    background: #FAFAFA;
 }
 
 /* --- new tables --- */
 
 .new-list-item {
+    background: white;
+    box-shadow: 3px 3px lightgray;
     width: 75%;
     min-width: min-content;
+
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
+
     border: 1px solid lightgray;
     border-left: 8px solid rgba(52, 152, 219, 0.5);
     border-radius: 6px;
+
     padding: 10px 0 10px 0;
-    margin: 4px auto;
+    margin: 8px auto;
 }
 
 .new-list-item.urgent {
