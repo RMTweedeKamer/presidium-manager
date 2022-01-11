@@ -250,6 +250,10 @@ public class KamerstukkenService {
         //Save kamerstuk to MongoDB
         kamerstukRepository.save(kamerstuk);
 
+
+        //Proces bundling
+        doBundleChecking(kamerstuk);
+
         //Log to scheduler notifications
         notificationService.addNotification(new Notification(String.format(Constants.QUEUED_TITLE, kamerstuk.getCallsign()),
                 String.format(Constants.QUEUED_TEXT, kamerstuk.getPostDateAsString(), mod)));
@@ -287,10 +291,14 @@ public class KamerstukkenService {
 
     public void rescheduleKamerstuk(String kamerstukId, Date postDate, Date voteDate, String mod) throws KamerstukNotFoundException, InvalidUsernameException {
         Kamerstuk kamerstuk = getKamerstukForId(kamerstukId);
+        Date oldDate = kamerstuk.getPostDate();
 
         kamerstuk.setPostDateFromDate(postDate);
         kamerstuk.setVoteDateFromDate(voteDate);
         kamerstukRepository.save(kamerstuk);
+
+        doBundleChecking(kamerstuk, oldDate);
+
         notificationService.addNotification(new Notification(String.format(Constants.REQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.REQUEUED_TEXT, mod)));
         if (kamerstuk.getSubmittedBy() != null) {
             try {
@@ -311,6 +319,7 @@ public class KamerstukkenService {
 
     public void dequeueKamerstuk(String kamerstukId, String reason, String mod) throws KamerstukNotFoundException, InvalidUsernameException {
         Kamerstuk kamerstuk = getKamerstukForId(kamerstukId);
+        Date oldDate = kamerstuk.getPostDate();
 
         kamerstuk.setReason(reason);
         notificationService.addNotification(new Notification(String.format(Constants.DEQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.DEQUEUED_TEXT, mod)));
@@ -325,6 +334,8 @@ public class KamerstukkenService {
         kamerstuk.unsetPostDate();
         kamerstuk.setCallsign(null);
         kamerstukRepository.save(kamerstuk);
+
+        doBundleChecking(kamerstuk, oldDate);
     }
 
     public void denyKamerstuk(String kamerstukId, String reason, String mod) throws KamerstukNotFoundException, InvalidUsernameException {
@@ -407,7 +418,7 @@ public class KamerstukkenService {
             comment.toReference(redditSupplier.redditClient).distinguish(DistinguishedStatus.MODERATOR, true);
         }
 
-        if(!kamerstuk.getAdvice().isEmpty()) {
+        if(kamerstuk.getAdvice() != null && !kamerstuk.getAdvice().isEmpty()) {
             submission.reply(kamerstuk.getAdvice());
         }
     }
@@ -547,6 +558,38 @@ public class KamerstukkenService {
         }
         else
             return 0;
+    }
+
+    private void doBundleChecking(Kamerstuk kamerstuk) {
+        if(kamerstuk.getPostDate() != null) {
+            List<Kamerstuk> possibleBundle = kamerstukRepository.findAllByTypeEqualsAndPostDateNotNull(KamerstukType.MOTIE).stream()
+                    .filter(kamerstuk1 -> DateUtils.isSameDay(kamerstuk1.getPostDate(), kamerstuk.getPostDate()))
+                    .collect(Collectors.toList());
+            if (possibleBundle.size() > 1) {
+                for (Kamerstuk bundleItem : possibleBundle) {
+                    bundleItem.setBundled(true);
+                    kamerstukRepository.save(bundleItem);
+                }
+            }
+        }
+    }
+
+    private void doBundleChecking(Kamerstuk kamerstuk, Date oldDate) {
+        List<Kamerstuk> possibleOldBundle = kamerstukRepository.findAllByTypeEqualsAndPostDateNotNull(KamerstukType.MOTIE).stream()
+                .filter(kamerstuk1 -> DateUtils.isSameDay(kamerstuk1.getPostDate(), oldDate))
+                .collect(Collectors.toList());
+
+        if(possibleOldBundle.size() < 2) {
+            for(Kamerstuk bundleItem : possibleOldBundle) {
+                bundleItem.setBundled(false);
+                kamerstukRepository.save(bundleItem);
+            }
+        }
+
+        kamerstuk.setBundled(false);
+        kamerstukRepository.save(kamerstuk);
+        doBundleChecking(kamerstuk);
+
     }
 
     public long getNonScheduledCount() {

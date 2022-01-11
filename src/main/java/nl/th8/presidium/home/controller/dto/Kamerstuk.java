@@ -59,6 +59,8 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     private String advice;
 
+    private boolean isBundled;
+
     public Kamerstuk() {
         this.toCall = new ArrayList<>();
         this.posted = false;
@@ -318,5 +320,13 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     public void setAdvice(String advice) {
         this.advice = advice;
+    }
+
+    public boolean isBundled() {
+        return isBundled;
+    }
+
+    public void setBundled(boolean bundled) {
+        isBundled = bundled;
     }
 }

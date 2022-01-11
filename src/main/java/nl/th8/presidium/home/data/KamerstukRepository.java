@@ -1,6 +1,7 @@
 package nl.th8.presidium.home.data;
 
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
+import nl.th8.presidium.home.controller.dto.KamerstukType;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Date;
@@ -29,6 +30,8 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
     List<Kamerstuk> findAllByPostDateIsBeforeAndCallsignIsNotNull(Date date1);
 
     List<Kamerstuk> findAllByDeniedIsTrueAndPostedIsFalse();
+
+    List<Kamerstuk> findAllByTypeEqualsAndPostDateNotNull(KamerstukType type);
 
     long countAllByPostDateIsNullAndDeniedIsFalse();
 

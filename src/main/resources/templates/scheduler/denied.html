@@ -7,10 +7,12 @@
         <main class="new-container">
             <aside id="sidebar-location"></aside>
 
+            <div th:replace="fragments.html :: scheduler-errors"></div>
+
             <section class="new-content">
                 <nav th:replace="fragments.html :: menu (true)"></nav>
 
-                <h1 class="middle">Ingekomen stukken</h1>
+                <h1 class="middle">Afgewezen stukken</h1>
 
                 <div class="new-list-item" th:each="item : ${items}" th:classappend="${item.isUrgent()}? urgent">
                     <p th:text="${item.title}" class="title"></p>
