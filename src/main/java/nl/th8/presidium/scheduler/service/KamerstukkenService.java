@@ -531,7 +531,8 @@ public class KamerstukkenService {
         switch (type) {
             case WET:
             case MOTIE:
-                isAllowed = callsign.matches("[MW][0-9]{4}");
+            case NOTA:
+                isAllowed = callsign.matches("[MWN][0-9]{4}");
                 break;
             case BRIEF:
             case DEBAT:
@@ -550,7 +551,7 @@ public class KamerstukkenService {
         if(callsign.matches("[W][0-9]{4}-[IV]{1,3}")) {
             return 7;
         }
-        else if(callsign.substring(0, 5).matches("[MW][0-9]{4}")) {
+        else if(callsign.substring(0, 5).matches("[MWN][0-9]{4}")) {
             return 5;
         }
         else if(callsign.substring(0, 6).matches("[KD][SBV][0-9]{4}")) {

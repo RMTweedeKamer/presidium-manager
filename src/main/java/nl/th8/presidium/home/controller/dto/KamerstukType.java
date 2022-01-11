@@ -12,6 +12,7 @@ public enum KamerstukType {
     WET ("Wet", "W", true, true, true),
     AMENDEMENT ("Amendement", "W", true, true, true),
     BRIEF ("Kamerbrief", "KS", true, false, false),
+    NOTA("Nota", "N", true, false, false),
     BESLUIT ("Koninklijk Besluit", "KB", true, false, true),
     DEBAT ("Debat", "DB", true, false, false),
     VRAGEN ("Kamervragen", "KV", true, false, false),
