@@ -51,4 +51,51 @@
       </li>
     </ul>
   </nav>
+
+  <div th:fragment="scheduler-errors">
+    <div class="info" th:if="${param.planned}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      Kamerstuk ingepland.
+    </div>
+    <div class="info" th:if="${param.edited}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      Kamerstuk is aangepast.
+    </div>
+    <div class="info" th:if="${param.unplanned}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      Kamerstuk uit de wachtrij gehaald.
+    </div>
+    <div class="info" th:if="${param.denied}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      Kamerstuk afgewezen.
+    </div>
+    <div class="info" th:if="${param.rescheduled}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      Kamerstuk is verzet.
+    </div>
+    <div class="info" th:if="${param.withdrawn}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      Kamerstuk is ingetrokken.
+    </div>
+    <div class="info" th:if="${param.delayed}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      Stemming is uitgesteld.
+    </div>
+    <div class="alert" th:if="${param.notfound}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      Kamerstuk is niet gevonden.
+    </div>
+    <div class="alert" th:if="${param.invalidUsername}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      De gebruikersnaam van de indiener was incorrect, deze is dus niet op de hoogte gesteld. De rest van de operatie is wel succesvol uitgevoerd.
+    </div>
+    <div class="alert" th:if="${param.duplicateCallsign}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      De identificator van het kamerstuk is al in gebruik, voer een andere identificator in.
+    </div>
+    <div class="alert" th:if="${param.invalidCallsign}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      De identificator van het kamerstuk is niet correct. Zorg dat je een juiste letter combinatie met 4 cijfers hebt gebruikt.
+    </div>
+  </div>
 </html>

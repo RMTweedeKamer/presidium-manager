@@ -359,7 +359,7 @@ input {
     display: inline-block;
 }
 
-input[type=text],textarea,input[type=number],select {
+input[type=text],textarea,input[type=number],select,input[type=password] {
     padding: 5px;
     border-width: 0;
     border-color: #cccccc;
@@ -564,6 +564,7 @@ td {
 
 .new-list-item {
     width: 75%;
+    min-width: min-content;
     display: flex;
     flex-direction: row;
     align-items: center;
