@@ -6,6 +6,7 @@ import nl.th8.presidium.user.controller.dto.User;
 import nl.th8.presidium.user.data.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,7 +27,7 @@ public class UserService implements UserDetailsService {
     private final String rvsSecret;
 
     @Autowired
-    public UserService(UserRepository repository, PasswordEncoder passwordEncoder, @Value("${manager.user-secret}") String secret, @Value("${manager.rvs-secret}") String rvsSecret) {
+    public UserService(UserRepository repository, @Lazy PasswordEncoder passwordEncoder, @Value("${manager.user-secret}") String secret, @Value("${manager.rvs-secret}") String rvsSecret) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.secret = secret;
