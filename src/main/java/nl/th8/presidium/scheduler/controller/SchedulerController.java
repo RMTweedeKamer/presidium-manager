@@ -44,7 +44,7 @@ public class SchedulerController {
         if(redditStatus.isPresent())
             return redditStatus.get();
 
-        model.addAttribute("kamerstukken", kamerstukkenService.getNonScheduledKamerstukken());
+        model.addAttribute("kamerstukken", kamerstukkenService.getNonScheduledKamerstukken(0, false));
         model.addAttribute("queue", kamerstukkenService.getKamerstukkenQueue());
         model.addAttribute("notifications", notificationService.getAllSettings().getNotifications());
         model.addAttribute("votesDelayed", kamerstukkenService.getDelayedKamerstukkenVoteQueue());
@@ -66,12 +66,12 @@ public class SchedulerController {
     }
 
     @GetMapping("/inbox")
-    public String showInbox(Model model) {
+    public String showInbox(Model model, @RequestParam(defaultValue = "0") int filter, @RequestParam(required = false) boolean urgent) {
         Optional<String> redditStatus = controllerUtils.checkRedditStatus();
         if(redditStatus.isPresent())
             return redditStatus.get();
 
-        model.addAttribute("items", kamerstukkenService.getNonScheduledKamerstukken());
+        model.addAttribute("items", kamerstukkenService.getNonScheduledKamerstukken(filter, urgent));
 
         return "scheduler/inbox";
     }

@@ -178,8 +178,29 @@ public class KamerstukkenService {
         }
     }
 
-    public List<Kamerstuk> getNonScheduledKamerstukken() {
-        return kamerstukRepository.findAllByPostDateIsNullAndDeniedIsFalse();
+    public List<Kamerstuk> getNonScheduledKamerstukken(int minQueueAmountFilter, boolean mustBeUrgent) {
+
+        List<Kamerstuk> inbox = kamerstukRepository.findAllByPostDateIsNullAndDeniedIsFalse();
+
+        if(minQueueAmountFilter > 0) {
+            Set<String> toFilter = getToukieQueue().stream()
+                    .collect(Collectors.groupingBy(Kamerstuk::getSubmittedBy)).entrySet().stream()
+                    .filter(entry -> entry.getValue().size() >= minQueueAmountFilter)
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toSet());
+
+            inbox = inbox.stream()
+                            .filter(kamerstuk -> !toFilter.contains(kamerstuk.getSubmittedBy()))
+                            .collect(Collectors.toList());
+        }
+
+        if(mustBeUrgent) {
+            inbox = inbox.stream()
+                    .filter(Kamerstuk::isUrgent)
+                    .collect(Collectors.toList());
+        }
+
+        return inbox;
     }
 
     public List<Kamerstuk> getKamerstukkenQueue() {

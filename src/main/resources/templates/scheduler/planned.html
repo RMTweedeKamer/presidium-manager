@@ -24,7 +24,7 @@
                     <div class="actions">
                         <a th:href="'#edit-' + ${itemStat.count}" rel="modal:open"><button>Aanpassen</button></a>
                         <a th:href="'#reschedule-' + ${itemStat.count}" rel="modal:open"><button>Verplaatsen</button></a>
-                        <a th:href="'#dequeue-' + ${itemStat.count}" rel="modal:open"><button>Terugtrekken</button></a>
+                        <a th:href="'#dequeue-' + ${itemStat.count}" rel="modal:open"><button class="destructive">Terugtrekken</button></a>
                     </div>
 
 
@@ -90,7 +90,7 @@
                                 <p>Reden:</p>
                                 <input class="submitpanel big" type="text" th:name="reason" th:value="*{reason}" required>
                             </label>
-                            <input type="submit" th:value="'Terugtrekken'">
+                            <input type="submit" class="destructive" th:value="'Terugtrekken'">
                         </form>
                     </div>
                 </div>

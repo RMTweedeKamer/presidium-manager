@@ -14,13 +14,37 @@
 
                 <h1 class="middle">Ingekomen stukken</h1>
 
+                <p class="middle">Hieronder staan alle ingediende, maar nog niet ingeplande stukken.</p>
+
+                <h2 class="middle">Filters</h2>
+
+                <p class="middle">
+                    Met deze filters kunnen kamerstukken van mensen die recent al veel stukken behandeld hebben zien worden verborgen.<br/>
+                    Ook kunnen alleen urgente kamerstukken worden getoond.
+                </p>
+
+                <form id="filter-form" th:method="get">
+                    <label>
+                        <p>Maximaal aantal recente kamerstukken: </p>
+                        <input type="number" name="filter" th:value="${param.filter}" th:onchange="submitForm()">
+                    </label>
+                    <label>
+                        <p>Alleen urgent: </p>
+                        <input type="checkbox" name="urgent" th:onchange="submitForm()" th:checked="${param.urgent}">
+                    </label>
+                </form>
+
+
+                <h2 class="middle" th:text="'Stukken (' + ${items.size()} + ')'"></h2>
+
+                <p class="middle loading-indicator">Filter aan het toepassen...</p>
                 <div class="new-list-item" th:each="item : ${items}" th:classappend="${item.isUrgent()}? urgent">
                     <p th:text="${item.title}" class="title"></p>
                     <p>|</p>
                     <p th:text="'' + ${item.submittedBy}"></p>
                     <div class="actions">
                         <a th:href="'#plan-' + ${itemStat.count}" rel="modal:open"><button>Inplannen</button></a>
-                        <a th:href="'#deny-' + ${itemStat.count}" rel="modal:open"><button>Afwijzen</button></a>
+                        <a th:href="'#deny-' + ${itemStat.count}" rel="modal:open"><button class="destructive">Afwijzen</button></a>
                     </div>
 
 
@@ -84,7 +108,7 @@
                                 <input class="submitpanel big" type="text" th:name="reason" th:value="*{reason}" placeholder="Laat leeg om geen bericht te sturen aan de indiener">
                             </label>
 
-                            <input type="submit" th:value="Afwijzen">
+                            <input type="submit" class="destructive" th:value="Afwijzen">
                         </form>
                     </div>
                 </div>
@@ -93,6 +117,16 @@
 
         <script>
             $("#sidebar-location").load("/scheduler/sidebar?page=Inbox")
+
+            function submitForm() {
+                $(".new-list-item").css({
+                    "visibility": "hidden"
+                })
+                $(".loading-indicator").css({
+                    "visibility": "visible"
+                })
+                $("#filter-form").submit()
+            }
         </script>
         <script>
             $(".datetime").datetimepicker({
