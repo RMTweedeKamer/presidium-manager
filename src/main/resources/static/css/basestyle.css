@@ -613,6 +613,7 @@ td {
 .new-list-item .actions {
     display: flex;
     margin-left: auto;
+    padding-left: 5%;
 }
 
 .new-list-item p {
