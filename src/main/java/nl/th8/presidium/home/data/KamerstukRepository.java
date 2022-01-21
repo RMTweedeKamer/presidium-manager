@@ -31,7 +31,9 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
 
     List<Kamerstuk> findAllByDeniedIsTrueAndPostedIsFalse();
 
-    List<Kamerstuk> findAllByTypeEqualsAndPostDateNotNull(KamerstukType type);
+    List<Kamerstuk> findAllByTypeEqualsAndPostDateNotNullAndPostedIsFalse(KamerstukType type);
+
+    List<Kamerstuk> findAllByTypeEqualsAndPostDateBeforeAndPostedIsFalse(KamerstukType type, Date postDateBefore);
 
     long countAllByPostDateIsNullAndDeniedIsFalse();
 

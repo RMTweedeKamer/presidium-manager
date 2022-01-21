@@ -26,7 +26,7 @@
                 <form id="filter-form" th:method="get">
                     <label>
                         <p>Maximaal aantal recente kamerstukken: </p>
-                        <input type="number" name="filter" th:value="${param.filter}" th:onchange="submitForm()">
+                        <input type="number" name="filter" th:value="${param.filter}" th:onchange="submitForm()" min="0">
                     </label>
                     <label>
                         <p>Alleen urgent: </p>

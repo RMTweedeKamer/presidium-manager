@@ -118,10 +118,17 @@ public class KamerstukkenService {
             redditSupplier.retryGetReddit();
             return;
         }
-        PriorityQueue<Kamerstuk> queueToPost = kamerstukRepository.findAllByPostDateIsBeforeAndPostedIsFalseAndDeniedIsFalse(new Date());
-        List<Kamerstuk> batchPost = queueToPost.stream()
-                                .filter(kamerstuk -> kamerstuk.getType() == KamerstukType.MOTIE)
+        Date today = new Date();
+        PriorityQueue<Kamerstuk> queueToPost = kamerstukRepository.findAllByPostDateIsBeforeAndPostedIsFalseAndDeniedIsFalse(today);
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(today);
+        c.add(Calendar.DATE, 1);
+        Date tomorrow = c.getTime();
+
+        List<Kamerstuk> batchPost = kamerstukRepository.findAllByTypeEqualsAndPostDateBeforeAndPostedIsFalse(KamerstukType.MOTIE, tomorrow).stream()
                                 .filter(kamerstuk -> DateUtils.isSameDay(kamerstuk.getPostDate(), new Date()))
+                                .sorted(Comparator.comparing(Kamerstuk::getCallnumber))
                                 .collect(Collectors.toList());
 
         logger.info("Checking for kamerstukken to post at {}", checktime);
@@ -129,7 +136,6 @@ public class KamerstukkenService {
 
         if(batchPost.size() > 1) {
             String identifiers = postKamerstukkenAsBatch(batchPost);
-            queueToPost.removeAll(batchPost);
 
 
             logger.info("Posting batched kamerstukken with identifier: {}", identifiers);
@@ -139,17 +145,18 @@ public class KamerstukkenService {
 
         while(!queueToPost.isEmpty()) {
             Kamerstuk toPost = queueToPost.poll();
-            postKamerstuk(toPost);
-            if(toPost.getCallsign() != null) {
-                logger.info("Posting kamerstuk with identifier: {}", toPost.getCallsign());
-                notificationService.addNotification(new Notification(String.format("Kamerstuk met identificator: %s is gepost.", toPost.getCallsign()),
-                        String.format("Gepost op: %s", new Date())));
-            } else {
-                logger.info("Posting kamerstuk of type: {}", toPost.getType().getName());
-                notificationService.addNotification(new Notification(String.format("Kamerstuk van het type: %s is gepost.", toPost.getType().getName()),
-                        String.format("Gepost op: %s", new Date())));
+            if(!toPost.isPosted()) {
+                postKamerstuk(toPost);
+                if (toPost.getCallsign() != null) {
+                    logger.info("Posting kamerstuk with identifier: {}", toPost.getCallsign());
+                    notificationService.addNotification(new Notification(String.format("Kamerstuk met identificator: %s is gepost.", toPost.getCallsign()),
+                            String.format("Gepost op: %s", new Date())));
+                } else {
+                    logger.info("Posting kamerstuk of type: {}", toPost.getType().getName());
+                    notificationService.addNotification(new Notification(String.format("Kamerstuk van het type: %s is gepost.", toPost.getType().getName()),
+                            String.format("Gepost op: %s", new Date())));
+                }
             }
-
         }
     }
 
@@ -451,7 +458,7 @@ public class KamerstukkenService {
         Kamerstuk first = kamerstukken.get(0);
         Kamerstuk last = kamerstukken.get(kamerstukken.size()-1);
 
-        if(first.getBundleTitle() == null)
+        if(first.getBundleTitle() == null || first.getBundleTitle().isEmpty())
             first.setBundleTitle("Motiebundel zonder naam.");
 
         //Construct title
@@ -464,7 +471,7 @@ public class KamerstukkenService {
         //Construct content
         content.append("##").append(first.getBundleTitle()).append("\n\n --- \n\n");
         for(Kamerstuk kamerstuk : kamerstukken) {
-            content.append("##").append(kamerstuk.getTitle()).append("\n \n");
+            content.append("##").append(kamerstuk.getCallsign()).append(": ").append(kamerstuk.getTitle()).append("\n \n");
             content.append(kamerstuk.getContent()).append("\n\n --- \n\n");
         }
         content.append("###").append(first.getReadLengthString());
@@ -584,7 +591,7 @@ public class KamerstukkenService {
 
     private void doBundleChecking(Kamerstuk kamerstuk) {
         if(kamerstuk.getPostDate() != null) {
-            List<Kamerstuk> possibleBundle = kamerstukRepository.findAllByTypeEqualsAndPostDateNotNull(KamerstukType.MOTIE).stream()
+            List<Kamerstuk> possibleBundle = kamerstukRepository.findAllByTypeEqualsAndPostDateNotNullAndPostedIsFalse(KamerstukType.MOTIE).stream()
                     .filter(kamerstuk1 -> DateUtils.isSameDay(kamerstuk1.getPostDate(), kamerstuk.getPostDate()))
                     .collect(Collectors.toList());
             if (possibleBundle.size() > 1) {
@@ -597,7 +604,7 @@ public class KamerstukkenService {
     }
 
     private void doBundleChecking(Kamerstuk kamerstuk, Date oldDate) {
-        List<Kamerstuk> possibleOldBundle = kamerstukRepository.findAllByTypeEqualsAndPostDateNotNull(KamerstukType.MOTIE).stream()
+        List<Kamerstuk> possibleOldBundle = kamerstukRepository.findAllByTypeEqualsAndPostDateNotNullAndPostedIsFalse(KamerstukType.MOTIE).stream()
                 .filter(kamerstuk1 -> DateUtils.isSameDay(kamerstuk1.getPostDate(), oldDate))
                 .collect(Collectors.toList());
 
