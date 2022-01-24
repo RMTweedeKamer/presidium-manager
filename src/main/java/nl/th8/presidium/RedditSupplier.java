@@ -23,14 +23,17 @@ public class RedditSupplier {
     public RedditClient redditClient;
     public InboxReference inbox;
     public boolean redditDown = false;
+    public boolean doNotPost = false;
 
     @Autowired
     public RedditSupplier(@Value("${manager.subreddit}") String subreddit,
                           @Value("${manager.reddit-username}") String username,
                           @Value("${manager.reddit-password}") String password,
                           @Value("${manager.reddit-client-id}") String redditClientId,
-                          @Value("${manager.reddit-client-secret}") String redditClientSecret)
+                          @Value("${manager.reddit-client-secret}") String redditClientSecret,
+                          @Value("${manager.do-not-post}") boolean doNotPostSetting)
     {
+        this.doNotPost = doNotPostSetting;
         SUBREDDIT = subreddit;
         this.userAgent = new UserAgent("GERDI-RMTK", "nl.th8.presidium", "v1.1", username);
         this.credentials = Credentials.script(username, password, redditClientId, redditClientSecret);
@@ -43,6 +46,8 @@ public class RedditSupplier {
             this.redditDown = true;
         }
     }
+
+
 
     public void retryGetReddit() {
         if(redditDown) {

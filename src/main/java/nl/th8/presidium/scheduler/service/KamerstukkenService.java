@@ -287,7 +287,7 @@ public class KamerstukkenService {
                 String.format(Constants.QUEUED_TEXT, kamerstuk.getPostDateAsString(), mod)));
 
         //Notify submitter via reddit
-        if(kamerstuk.getSubmittedBy() != null) {
+        if(kamerstuk.getSubmittedBy() != null && !redditSupplier.doNotPost) {
             try {
                 redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.QUEUED_SUBJECT, String.format(Constants.QUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
             } catch (Exception e) {
@@ -328,7 +328,7 @@ public class KamerstukkenService {
         doBundleChecking(kamerstuk, oldDate);
 
         notificationService.addNotification(new Notification(String.format(Constants.REQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.REQUEUED_TEXT, mod)));
-        if (kamerstuk.getSubmittedBy() != null) {
+        if (kamerstuk.getSubmittedBy() != null && !redditSupplier.doNotPost) {
             try {
                 redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.REQUEUED_SUBJECT, String.format(Constants.REQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getPostDateAsString()));
             } catch (Exception e) {
@@ -351,7 +351,7 @@ public class KamerstukkenService {
 
         kamerstuk.setReason(reason);
         notificationService.addNotification(new Notification(String.format(Constants.DEQUEUED_TITLE, kamerstuk.getCallsign()), String.format(Constants.DEQUEUED_TEXT, mod)));
-        if(kamerstuk.getSubmittedBy() != null) {
+        if(kamerstuk.getSubmittedBy() != null && !redditSupplier.doNotPost) {
             try {
                 redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DEQUEUED_SUBJECT, String.format(Constants.DEQUEUED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), kamerstuk.getReason()));
             } catch (Exception e) {
@@ -372,7 +372,7 @@ public class KamerstukkenService {
         kamerstuk.setDenied(true);
         kamerstukRepository.save(kamerstuk);
         notificationService.addNotification(new Notification(String.format(Constants.DENIED_TITLE, kamerstuk.getTitle()), String.format(Constants.DENIED_TEXT, mod)));
-        if(kamerstuk.getSubmittedBy() != null && !reason.isEmpty()) {
+        if(kamerstuk.getSubmittedBy() != null && !reason.isEmpty() && !redditSupplier.doNotPost) {
             try {
                 redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DENIED_SUBJECT, String.format(Constants.DENIED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), reason));
             } catch (Exception e) {
@@ -403,12 +403,15 @@ public class KamerstukkenService {
         kamerstuk.setAdvice(advice);
         kamerstukRepository.save(kamerstuk);
 
-        if(sendNotification) {
+        if(sendNotification && !redditSupplier.doNotPost) {
             redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), String.format(Constants.RVS_SUBJECT, kamerstuk.getTitle()), String.format(Constants.RVS_BODY, advice));
         }
     }
 
     private void postKamerstuk(Kamerstuk kamerstuk) {
+        if(redditSupplier.doNotPost)
+            return;
+
         //Set title
         String title;
         if(kamerstuk.getCallsign() != null) {
@@ -452,6 +455,9 @@ public class KamerstukkenService {
     }
 
     private String postKamerstukkenAsBatch(List<Kamerstuk> kamerstukken) {
+        if(redditSupplier.doNotPost)
+            return "";
+
         //Set title
         StringBuilder title = new StringBuilder();
         StringBuilder content = new StringBuilder();
@@ -626,11 +632,11 @@ public class KamerstukkenService {
     }
 
     public long getQueuedCount() {
-        return kamerstukRepository.countAllByPostDateIsNotNullAndPostedIsFalse();
+        return kamerstukRepository.countAllByPostDateIsAfterAndDeniedIsFalseAndPostedIsFalse(new Date());
     }
 
     public long getVoteCount() {
-        return kamerstukRepository.countAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse();
+        return kamerstukRepository.countAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull();
     }
 
     public long getDelayedCount() {

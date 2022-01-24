@@ -14,6 +14,8 @@
 
                 <h1 class="middle">Afgewezen stukken</h1>
 
+                <p th:if="${items.size() <= 0}" class="middle">Geen afgewezen stukken...</p>
+
                 <div class="new-list-item" th:each="item : ${items}" th:classappend="${item.isUrgent()}? urgent">
                     <p th:text="${item.title}" class="title"></p>
                     <p>|</p>
@@ -30,6 +32,10 @@
                             <h3 th:text="${item.title}"></h3>
                         </label>
                         <textarea class="submitpanel" th:name="content" th:text="${item.content}" readonly></textarea>
+                        <label>
+                            <p>Reden voor afwijzing:</p>
+                            <input class="big" type="text" th:value="${item.getReason()}" placeholder="Geen reden opgegeven..." readonly>
+                        </label>
                     </div>
                 </div>
             </section>

@@ -49,6 +49,10 @@
       "name": "manager.rvs-secret",
       "type": "java.lang.String",
       "description": "User secret used to validate accounts for RvS members."
+    },
+    {
+      "name": "manager.do-not-post",
+      "type": "java.lang.String",
+      "description": "For testing enviroments, do not post kamerstukken."
     }
-
   ] }

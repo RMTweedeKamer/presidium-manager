@@ -39,6 +39,7 @@
           <input
             class="big"
             type="text"
+            id="kamerstukTitle"
             th:field="*{title}"
             placeholder="Motie tot..."
             required
@@ -49,7 +50,7 @@
           <textarea
             maxlength="40000"
             th:field="*{content}"
-            id="motieContent"
+            id="kamerstukContent"
             required
             onkeyup="doPreview()"
           ></textarea>
@@ -79,11 +80,9 @@
     </main>
     <script>
       function doPreview() {
-        document.getElementById(
-          "preview"
-        ).innerHTML = SnuOwnd.getParser().render(
-          document.getElementById("motieContent").value
-        );
+        let title = "##" + $('#kamerstukTitle').val()
+        let content = $('#kamerstukContent').val()
+        $("#preview").html(SnuOwnd.getParser().render(title + "\n\n" + content));
       }
     </script>
   </body>

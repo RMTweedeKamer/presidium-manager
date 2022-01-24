@@ -16,28 +16,39 @@
 
                 <p class="middle">Hieronder staan alle ingediende, maar nog niet ingeplande stukken.</p>
 
-                <h2 class="middle">Filters</h2>
+                <div class="filter-sidebar">
+                    <span th:onclick="closeFilters()">X</span>
+                    <h2 class="middle">Filters</h2>
 
-                <p class="middle">
-                    Met deze filters kunnen kamerstukken van mensen die recent al veel stukken behandeld hebben zien worden verborgen.<br/>
-                    Ook kunnen alleen urgente kamerstukken worden getoond.
-                </p>
 
-                <form id="filter-form" th:method="get">
-                    <label>
-                        <p>Maximaal aantal recente kamerstukken: </p>
-                        <input type="number" name="filter" th:value="${param.filter}" th:onchange="submitForm()" min="0">
-                    </label>
-                    <label>
-                        <p>Alleen urgent: </p>
-                        <input type="checkbox" name="urgent" th:onchange="submitForm()" th:checked="${param.urgent}">
-                    </label>
-                </form>
+                    <p class="middle">
+                        Met deze filters kunnen kamerstukken van mensen die recent al veel stukken behandeld hebben zien worden verborgen.<br/>
+                        Ook kunnen alleen urgente kamerstukken worden getoond.
+                    </p>
+
+                    <form id="filter-form" th:method="get">
+                        <label>
+                            <p>Maximaal aantal recente kamerstukken: </p>
+                            <input type="number" name="filter" th:value="${param.filter}" th:onchange="submitForm()" min="0">
+                        </label>
+                        <label>
+                            <p>Alleen urgent: </p>
+                            <input type="checkbox" name="urgent" th:onchange="submitForm()" th:checked="${param.urgent}">
+                        </label>
+                    </form>
+                </div>
 
 
                 <h2 class="middle" th:text="'Stukken (' + ${items.size()} + ')'"></h2>
 
                 <p class="middle loading-indicator">Filter aan het toepassen...</p>
+
+                <div class="filter-button">
+                    <button th:onclick="openFilters()">Filters</button>
+                </div>
+
+                <p th:if="${items.size() <= 0}" class="middle">Geen ingediende stukken...</p>
+
                 <div class="new-list-item" th:each="item : ${items}" th:classappend="${item.isUrgent()}? urgent">
                     <p th:text="${item.title}" class="title"></p>
                     <p>|</p>
@@ -127,11 +138,30 @@
                 })
                 $("#filter-form").submit()
             }
+
+            function openFilters() {
+                $(".filter-sidebar").trigger("sidebar:open")
+            }
+
+            function closeFilters() {
+                $(".filter-sidebar").trigger("sidebar:close")
+            }
         </script>
-        <script>
+        <script th:inline="javascript">
             $(".datetime").datetimepicker({
                 format: "d-m-Y H:i"
             })
+            let filterSidebar = $(".filter-sidebar")
+            filterSidebar.sidebar({side: "right"})
+
+            /*<![CDATA[*/
+
+            let openSidebar = /*[[${sidebarOpen}]]*/ false;
+            if(openSidebar) {
+                filterSidebar.trigger("sidebar:open", [{ speed: 0 }])
+            }
+
+            /*]]>*/
         </script>
     </body>
 </html>

@@ -72,6 +72,7 @@ public class SchedulerController {
             return redditStatus.get();
 
         model.addAttribute("items", kamerstukkenService.getNonScheduledKamerstukken(filter, urgent));
+        model.addAttribute("sidebarOpen", filter > 0 || urgent);
 
         return "scheduler/inbox";
     }

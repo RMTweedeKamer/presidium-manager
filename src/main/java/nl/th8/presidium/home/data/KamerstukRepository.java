@@ -37,9 +37,9 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
 
     long countAllByPostDateIsNullAndDeniedIsFalse();
 
-    long countAllByPostDateIsNotNullAndPostedIsFalse();
+    long countAllByPostDateIsAfterAndDeniedIsFalseAndPostedIsFalse(Date date);
 
-    long countAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse();
+    long countAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull();
 
     long countAllByPostedIsFalseAndDeniedIsTrue();
 

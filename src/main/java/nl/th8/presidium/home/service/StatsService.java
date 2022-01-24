@@ -5,6 +5,8 @@ import nl.th8.presidium.home.data.KamerstukRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class StatsService {
 
@@ -17,8 +19,8 @@ public class StatsService {
 
     public StatDTO getStats() {
         long kamerstukken = repository.count();
-        long queue = repository.countAllByPostDateIsNullAndDeniedIsFalse() + repository.countAllByPostDateIsNotNullAndPostedIsFalse();
-        long queueVote = repository.countAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalse();
+        long queue = repository.countAllByPostDateIsNullAndDeniedIsFalse() + repository.countAllByPostDateIsAfterAndDeniedIsFalseAndPostedIsFalse(new Date());
+        long queueVote = repository.countAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull();
         long denied = repository.countAllByPostedIsFalseAndDeniedIsTrue();
         long withdrawn = repository.countAllByPostedIsTrueAndDeniedIsTrue();
         long succesfullyPosted = repository.countAllByPostedIsTrueAndVotePostedIsTrue();
