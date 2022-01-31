@@ -14,10 +14,10 @@
 
                 <h1 class="middle">Ingeplande stukken</h1>
 
-                <p th:if="${items.size() <= 0}"class="middle">Geen geplande stukken...</p>
+                <p th:if="${items.size() <= 0}" class="middle">Geen geplande stukken...</p>
 
                 <div class="new-list-item" th:each="item : ${items}" th:classappend="${item.isUrgent()}? urgent">
-                    <p th:text="${item.title}" class="title"></p>
+                    <a th:id="${itemStat.count}" onclick="openPreview(this)"><p th:text="${item.getCallsign()} + ': ' + ${item.title}" class="title"></p></a>
                     <p>|</p>
                     <p th:text="'' + ${item.submittedBy}"></p>
                     <p>|</p>
@@ -29,7 +29,17 @@
                         <a th:href="'#dequeue-' + ${itemStat.count}" rel="modal:open"><button class="destructive">Terugtrekken</button></a>
                     </div>
 
+                    <div th:id="'preview-' + ${itemStat.count}" class="modal middle">
+                        <h2>Preview</h2>
+                        <p>Hieronder staat een preview van hoe het kamerstuk er op RMTK uit komt te zien</p>
 
+                        <input class="titleValue" type="hidden" th:value="'##' + ${item.title}">
+                        <input class="contentValue" type="hidden" th:value="${item.content}">
+                        <input class="readLengthValue" type="hidden" th:value="'###' + ${item.getReadLengthString()}">
+                        <div class="preview-container">
+
+                        </div>
+                    </div>
                     <div th:id="'edit-' + ${itemStat.count}" class="modal">
                         <h2>Aanpassen</h2>
                         <p>Hier kunnen een aantal dingen aan het kamerstuk worden aangepast, zoals correcte formatting voor Reddit.</p>
@@ -100,7 +110,18 @@
         </main>
 
         <script>
-            $("#sidebar-location").load("/scheduler/sidebar?page=Ingepland")
+            $("#sidebar-location").load("/scheduler/sidebar?page=Ingepland");
+
+            function openPreview(caller) {
+                let id = caller.id;
+                let previewModal = $('#preview-' + id)
+                let title = $('#preview-' + id + ' .titleValue').val()
+                let content = $('#preview-' + id + ' .contentValue').val()
+                let readLength = $('#preview-' + id + " .readLengthValue").val()
+                let previewContainer = $("#preview-" + id + " .preview-container")
+                previewContainer.html(SnuOwnd.getParser().render(title + '\n\n' + content + '\n\n' + readLength));
+                previewModal.modal();
+            }
         </script>
         <script>
             $(".datetime").datetimepicker({

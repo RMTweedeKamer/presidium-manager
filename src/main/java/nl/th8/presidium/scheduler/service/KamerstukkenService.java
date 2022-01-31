@@ -211,19 +211,21 @@ public class KamerstukkenService {
     }
 
     public List<Kamerstuk> getKamerstukkenQueue() {
-        return kamerstukRepository.findAllByPostDateIsAfterAndDeniedIsFalse(new Date()).stream()
+        return kamerstukRepository.findAllByPostDateIsAfterAndDeniedIsFalseAndPostedIsFalse(new Date()).stream()
                 .sorted(Comparator.comparing(Kamerstuk::getPostDate))
                 .collect(Collectors.toList());
     }
 
     public List<Kamerstuk> getDelayedKamerstukkenVoteQueue() {
         return kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNull().stream()
+                .filter(kamerstuk -> kamerstuk.getCallsign() != null)
                 .sorted(Comparator.comparing(Kamerstuk::getCallsign))
                 .collect(Collectors.toList());
     }
 
     public List<Kamerstuk> getKamerstukkenVoteQueue() {
         return kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull().stream()
+                .filter(kamerstuk -> kamerstuk.getCallsign() != null)
                 .sorted(Comparator.comparing(Kamerstuk::getVoteDate).thenComparing(Kamerstuk::getCallsign))
                 .collect(Collectors.toList());
     }
@@ -255,7 +257,7 @@ public class KamerstukkenService {
     public List<Kamerstuk> getRvSQueue() {
         Predicate<Kamerstuk> isRelevant = kamerstuk -> kamerstuk.getType().forRvS();
 
-        return kamerstukRepository.findAllByPostDateIsAfterAndDeniedIsFalse(new Date()).stream()
+        return kamerstukRepository.findAllByPostDateIsAfterAndDeniedIsFalseAndPostedIsFalse(new Date()).stream()
                 .filter(isRelevant)
                 .sorted(Comparator.comparing(Kamerstuk::getPostDate))
                 .collect(Collectors.toList());

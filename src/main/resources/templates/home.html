@@ -23,7 +23,7 @@
     </div>
     <main class="middle content">
       <h1>Dien een kamerstuk in</h1>
-      <form th:action="@{/}" th:object="${kamerstuk}" th:method="post">
+      <form id="kamerstukForm" th:action="@{/}" th:object="${kamerstuk}" th:method="post">
         <label class="submitpanel">
           <p>Type kamerstuk:</p>
           <select th:field="*{type}">
@@ -43,6 +43,7 @@
             th:field="*{title}"
             placeholder="Motie tot..."
             required
+            onkeyup="doPreview()"
           />
         </label>
         <label class="submitpanel">
@@ -62,6 +63,7 @@
         <label class="submitpanel">
           <p>Gebruikersnaam indiener:</p>
           <input
+            id="username"
             class="medium"
             type="text"
             th:field="*{submittedBy}"
@@ -79,6 +81,17 @@
       </form>
     </main>
     <script>
+      $('#kamerstukForm').submit(function () {
+          let content = $('#kamerstukContent').val()
+          let username = $('#username').val()
+          if(!content.includes(username)) {
+            alert("Uw gebruikersnaam komt niet voor in het kamerstuk. \n" +
+                    "Vergeet niet onderaan het kamerstuk te zetten door wie deze is ingediend in het volgende format: \n\n" +
+                    "###Ingediend door ... namens ...")
+            return false;
+          }
+      })
+
       function doPreview() {
         let title = "##" + $('#kamerstukTitle').val()
         let content = $('#kamerstukContent').val()
