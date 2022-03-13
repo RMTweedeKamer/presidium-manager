@@ -4,6 +4,7 @@ import com.mrpowergamerbr.temmiewebhook.DiscordEmbed;
 import com.mrpowergamerbr.temmiewebhook.DiscordMessage;
 import com.mrpowergamerbr.temmiewebhook.TemmieWebhook;
 import com.mrpowergamerbr.temmiewebhook.embed.FieldEmbed;
+import net.dean.jraw.ApiException;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,6 +49,25 @@ public class TemmieSupplier {
                                 .value(kamerstuk.getSubmittedBy())
                                 .build()
                 ))
+                .color(color)
+                .build();
+
+        DiscordMessage message = DiscordMessage.builder()
+                .username("GERDI-RMTK")
+                .content("")
+                .embed(embed)
+                .build();
+
+        schedulerWebhook.sendMessage(message);
+    }
+
+    public void schedulerErrorEmbeddedMessage(ApiException exception, Kamerstuk kamerstuk) {
+        int color = 13980228;
+
+        DiscordEmbed embed = DiscordEmbed.builder()
+                .title("Er ging iets mis met het posten van " + kamerstuk.getCallsign())
+                .description("Het kamerstuk is teruggezet naar de wachtrij. De error was: " + exception.getMessage() + ", als je dit niet snapt, laat het weten aan th8.")
+                .url("https://indienen.rmtk.nl/scheduler")
                 .color(color)
                 .build();
 

@@ -1,5 +1,6 @@
 package nl.th8.presidium.scheduler.service;
 
+import net.dean.jraw.ApiException;
 import net.dean.jraw.models.*;
 import net.dean.jraw.pagination.DefaultPaginator;
 import net.dean.jraw.references.SubmissionReference;
@@ -126,21 +127,22 @@ public class KamerstukkenService {
         c.add(Calendar.DATE, 1);
         Date tomorrow = c.getTime();
 
-        List<Kamerstuk> batchPost = kamerstukRepository.findAllByTypeEqualsAndPostDateBeforeAndPostedIsFalse(KamerstukType.MOTIE, tomorrow).stream()
+        Map<String, List<Kamerstuk>> batchPost = kamerstukRepository.findAllByTypeEqualsAndPostDateBeforeAndPostedIsFalseAndBundleTitleIsNotNull(KamerstukType.MOTIE, tomorrow).stream()
                                 .filter(kamerstuk -> DateUtils.isSameDay(kamerstuk.getPostDate(), new Date()))
                                 .sorted(Comparator.comparing(Kamerstuk::getCallnumber))
-                                .collect(Collectors.toList());
+                                .collect(Collectors.groupingBy(Kamerstuk::getBundleTitle));
 
         logger.info("Checking for kamerstukken to post at {}", checktime);
         StatDTO.setLastToPostCheck(checktime);
 
-        if(batchPost.size() > 1) {
-            String identifiers = postKamerstukkenAsBatch(batchPost);
+        for(List<Kamerstuk> batchSet : batchPost.values()) {
+            if(batchSet.size() > 1) {
+                String identifiers = postKamerstukkenAsBatch(batchSet);
 
-
-            logger.info("Posting batched kamerstukken with identifier: {}", identifiers);
-            notificationService.addNotification(new Notification(String.format("Kamerstukken met identificator: %s zijn samen gepost.", identifiers),
-                    String.format("Gepost op: %s", new Date())));
+                logger.info("Posting batched kamerstukken with identifier: {}", identifiers);
+                notificationService.addNotification(new Notification(String.format("Kamerstukken met identificator: %s zijn samen gepost.", identifiers),
+                        String.format("Gepost op: %s", new Date())));
+            }
         }
 
         while(!queueToPost.isEmpty()) {
@@ -426,18 +428,34 @@ public class KamerstukkenService {
         String content;
         if(kamerstuk.getType().isSelectable()) {
             content = String.format("##%s \n \n%s \n \n###%s", kamerstuk.getTitle(), kamerstuk.getContent(), kamerstuk.getReadLengthString());
+            content = content.replaceAll("\\r", "");
         }
         else {
             content = String.format("##%s \n \n%s", kamerstuk.getTitle(), kamerstuk.getContent());
+            content = content.replaceAll("\\r", "");
         }
 
+        SubmissionReference submission;
         //Post to reddit
-        SubmissionReference submission = redditSupplier.redditClient.subreddit(RedditSupplier.SUBREDDIT).submit(SubmissionKind.SELF, title, content, false);
+        try {
+            submission = redditSupplier.redditClient.subreddit(RedditSupplier.SUBREDDIT).submit(SubmissionKind.SELF, title, content, false);
+        } catch (ApiException apiException) {
+            logger.warn("Er ging iets mis bij het posten van: " +  kamerstuk.getCallsign() + ": " + apiException.getMessage() + ". Hierna volgt de stacktrace...");
+            apiException.printStackTrace();
+            discordWebhooks.schedulerErrorEmbeddedMessage(apiException, kamerstuk);
+            kamerstuk.unsetPostDate();
+            kamerstukRepository.save(kamerstuk);
+            return;
+
+        }
+
+
         kamerstuk.setUrl("https://reddit.com/r/"+RedditSupplier.SUBREDDIT+"/comments/"+submission.getId());
         kamerstuk.setPosted(true);
         if(!kamerstuk.getType().needsVote()) {
             kamerstuk.setVotePosted(true);
         }
+
         kamerstukRepository.save(kamerstuk);
 
         //Call relevant users

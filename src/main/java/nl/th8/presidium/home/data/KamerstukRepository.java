@@ -33,7 +33,7 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
 
     List<Kamerstuk> findAllByTypeEqualsAndPostDateNotNullAndPostedIsFalse(KamerstukType type);
 
-    List<Kamerstuk> findAllByTypeEqualsAndPostDateBeforeAndPostedIsFalse(KamerstukType type, Date postDateBefore);
+    List<Kamerstuk> findAllByTypeEqualsAndPostDateBeforeAndPostedIsFalseAndBundleTitleIsNotNull(KamerstukType type, Date postDateBefore);
 
     long countAllByPostDateIsNullAndDeniedIsFalse();
 
