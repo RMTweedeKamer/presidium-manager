@@ -619,6 +619,7 @@ public class KamerstukkenService {
         if(kamerstuk.getPostDate() != null) {
             List<Kamerstuk> possibleBundle = kamerstukRepository.findAllByTypeEqualsAndPostDateNotNullAndPostedIsFalse(KamerstukType.MOTIE).stream()
                     .filter(kamerstuk1 -> DateUtils.isSameDay(kamerstuk1.getPostDate(), kamerstuk.getPostDate()))
+                    .filter(kamerstuk1 -> kamerstuk1.getBundleTitle().equals(kamerstuk.getBundleTitle()))
                     .collect(Collectors.toList());
             if (possibleBundle.size() > 1) {
                 for (Kamerstuk bundleItem : possibleBundle) {
@@ -632,6 +633,7 @@ public class KamerstukkenService {
     private void doBundleChecking(Kamerstuk kamerstuk, Date oldDate) {
         List<Kamerstuk> possibleOldBundle = kamerstukRepository.findAllByTypeEqualsAndPostDateNotNullAndPostedIsFalse(KamerstukType.MOTIE).stream()
                 .filter(kamerstuk1 -> DateUtils.isSameDay(kamerstuk1.getPostDate(), oldDate))
+                .filter(kamerstuk1 -> kamerstuk1.getBundleTitle().equals(kamerstuk.getBundleTitle()))
                 .collect(Collectors.toList());
 
         if(possibleOldBundle.size() < 2) {
