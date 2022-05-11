@@ -74,9 +74,9 @@
                                 <p>Titel:</p>
                                 <input class="submitpanel big"  type="text" th:name="title" th:value="*{title}" required>
                             </label>
-                            <label>
+                            <label th:if="${item.type == T(nl.th8.presidium.home.controller.dto.KamerstukType).MOTIE}">
                                 <p>Bundeltitel:</p>
-                                <input class="submitpanel big"  type="text" th:name="bundleTitle" th:value="*{bundleTitle}" placeholder="Alleen invullen indien dit de eerste motie in een bundel is">
+                                <input class="submitpanel big"  type="text" th:name="bundleTitle" th:value="*{bundleTitle}" placeholder="Kamerstukken met dezelfde bundeltitel worden gegroepeerd">
                             </label>
                             <label>
                                 <p>Inhoud:</p>
@@ -104,7 +104,7 @@
                             </div>
                             <label>
                                 <p>Oproepen:</p>
-                                <input class="submitpanel big" type="text" th:name="toCallString" th:value="*{toCallString}" placeholder="Bijvoorbeeld: De Minister van ICT, /u/th8">
+                                <input class="submitpanel big" type="text" th:name="toCallString" th:value="*{toCallString}" placeholder="Bijvoorbeeld: De Minister van ICT, /u/th8;De Staatssecretaris van Indienpanelen, /u/th9">
                             </label>
 
                             <input type="submit" th:value="Inplannen">

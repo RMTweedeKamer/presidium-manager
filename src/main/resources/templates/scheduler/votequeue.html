@@ -14,7 +14,9 @@
 
                 <h1 class="middle">Stemwachtrij</h1>
 
-                <p th:if="${items.size() <= 0}"class="middle">Geen stukken in de stemwachtrij...</p>
+                <p th:if="${items.size() > 0}" class="middle">Let op: stemmingen gebeuren altijd op zaterdag, wil je dit veranderen neem contact op met /u/th8.</p>
+
+                <p th:if="${items.size() <= 0}" class="middle">Geen stukken in de stemwachtrij...</p>
 
                 <div class="new-list-item" th:each="item : ${items}" th:classappend="${item.isUrgent()}? urgent">
                     <p th:text="${item.title}" class="title"></p>

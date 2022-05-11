@@ -136,7 +136,7 @@ public class KamerstukkenService {
         StatDTO.setLastToPostCheck(checktime);
 
         for(List<Kamerstuk> batchSet : batchPost.values()) {
-            if(batchSet.size() > 1) {
+            if(batchSet.size() > 1 && batchSet.stream().anyMatch(kamerstuk -> kamerstuk.getPostDate().before(new Date()))) {
                 String identifiers = postKamerstukkenAsBatch(batchSet);
 
                 logger.info("Posting batched kamerstukken with identifier: {}", identifiers);
