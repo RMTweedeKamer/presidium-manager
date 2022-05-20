@@ -5,6 +5,7 @@ import nl.th8.presidium.archive.controller.dto.FilterDTO;
 import nl.th8.presidium.archive.service.ArchiveService;
 import nl.th8.presidium.home.controller.dto.KamerstukType;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,7 +40,7 @@ public class ArchiveController {
     }
 
     @GetMapping("/{type}")
-    public String showArchiveForType(Model model, @PathVariable String type, Principal principal) {
+    public String showFilteredArchiveForType(Model model, @PathVariable String type, @RequestParam(name = "search", required = false) String search, Principal principal) {
         boolean loggedIn;
         try {
             loggedIn = principal.getName().length() > 0;
@@ -48,34 +49,17 @@ public class ArchiveController {
         }
 
         try {
-            model.addAttribute("kamerstukken", archiveService.getKamerstukkenForType(type));
+            if(StringUtils.isEmpty(search)) {
+                model.addAttribute("kamerstukken", archiveService.getKamerstukkenForType(type));
+            } else {
+                model.addAttribute("kamerstukken", archiveService.getKamerstukkenForTypeFiltered(type, search));
+            }
         } catch (TypeNotFoundException e) {
             return "redirect:/archive/" + type+ "?notfound";
         }
         model.addAttribute("loggedIn", loggedIn);
         model.addAttribute("current", type);
-        model.addAttribute("filterDTO", new FilterDTO(""));
-
-        return "archive";
-    }
-
-    @PostMapping("/{type}")
-    public String showFilteredArchiveForType(Model model, @PathVariable String type, @ModelAttribute FilterDTO filterDTO, Principal principal) {
-        boolean loggedIn;
-        try {
-            loggedIn = principal.getName().length() > 0;
-        } catch (NullPointerException e) {
-            loggedIn = false;
-        }
-
-        try {
-            model.addAttribute("kamerstukken", archiveService.getKamerstukkenForTypeFiltered(type, filterDTO.getFilterString()));
-        } catch (TypeNotFoundException e) {
-            return "redirect:/archive/" + type+ "?notfound";
-        }
-        model.addAttribute("loggedIn", loggedIn);
-        model.addAttribute("current", type);
-        model.addAttribute("filterDTO", filterDTO);
+        model.addAttribute("searchTerm", search);
 
         return "archive";
     }

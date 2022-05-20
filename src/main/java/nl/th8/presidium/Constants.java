@@ -1,22 +1,23 @@
 package nl.th8.presidium;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class Constants {
+
+
 
     private Constants() {
         //Hide public constructor
+        throw new UnsupportedOperationException();
     }
 
     /* Properties */
-    public static final int MAX_NOTIFICATIONS = 50;
+    public static final int MAX_NOTIFICATIONS = 250;
     public static final String DATE_FORMAT = "EEEE, d MMMM";
     public static final int CALLSIGN_LENGTH = 4;
+    public static final String SPAM_ANSWER = "RMTKMeta";
 
     /* --- Notifications --- */
     public static final String QUEUED_TITLE = "Kamerstuk met nummer: %s is in de wachtrij gezet.";
-    public static final String QUEUED_TEXT = "Ingepland op: %s door %s";
+    public static final String QUEUED_TEXT = "Ingepland voor: %s door %s";
 
     public static final String EDIT_TITLE = "Kamerstuk met nummer: %s is aangepast";
     public static final String EDIT_TEXT = "Aangepast door %s";

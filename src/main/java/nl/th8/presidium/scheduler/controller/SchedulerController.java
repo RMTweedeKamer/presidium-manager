@@ -121,6 +121,17 @@ public class SchedulerController {
         return "scheduler/denied";
     }
 
+    @GetMapping("/log")
+    public String showAuditLogItems(Model model) {
+        Optional<String> redditStatus = controllerUtils.checkRedditStatus();
+        if(redditStatus.isPresent())
+            return redditStatus.get();
+
+        model.addAttribute("items", notificationService.getAllSettings().getNotifications());
+
+        return "scheduler/log";
+    }
+
     @PostMapping("/plan")
     public String planKamerstuk(@ModelAttribute Kamerstuk kamerstuk, Principal principal) {
         Optional<String> redditStatus = controllerUtils.checkRedditStatus();

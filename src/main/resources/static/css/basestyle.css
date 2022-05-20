@@ -129,6 +129,7 @@ table.lobby {
     border-collapse: collapse;
     min-width: 1000px!important;
     width: 90%;
+    font-size: 17px!important;
 }
 
 table.toukie {
@@ -136,7 +137,7 @@ table.toukie {
 }
 
 tr.headerrow {
-    border-bottom: 2px solid black;
+    border-bottom: 3px solid black;
 }
 
 th {
@@ -485,10 +486,6 @@ table.stats {
     margin-right: auto;
     width: 80%;
     border-collapse: collapse;
-}
-
-tr.headerrow {
-    border-bottom: 2px solid black;
 }
 
 tr {

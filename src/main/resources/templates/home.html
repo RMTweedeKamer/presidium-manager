@@ -15,6 +15,12 @@
       >
       Er is helaas iets misgegaan, laat dit even weten aan /u/th8.
     </div>
+    <div class="alert" th:if="${param.spam}">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';"
+      >&times;</span
+      >
+      Uw antwoord op de anti-spam vraag klopt niet, vraag het anders even op discord.
+    </div>
     <div class="alert" th:if="${param.accessdenied}">
       <span class="closebtn" onclick="this.parentElement.style.display='none';"
       >&times;</span
@@ -77,20 +83,47 @@
           <p>Spoed?</p>
           <input type="checkbox" th:field="*{urgent}" />
         </label>
-        <input type="submit" value="Indienen" />
+        <button type="button" onclick="checkSubmit()">Inplannen</button>
+
+        <div th:id="spam-check" class="modal">
+          <h2>Indienen</h2>
+          <p>Omdat er veel spam in het indienpaneel beland door bots, vragen wij je de volgende vraag te beantwoorden.</p>
+          <hr>
+          <p>Hoe heet de subreddit waar je metazaken kunt bespreken?</p>
+
+          <label class="submitpanel">
+            <input
+                    id="spamcheck"
+                    class="medium"
+                    type="text"
+                    th:name="spamcheck"
+                    required
+            />
+          </label>
+
+          <input type="submit" th:value="Bevestigen" onclick="submitKamerstuk()">
+        </div>
       </form>
     </main>
     <script>
-      $('#kamerstukForm').submit(function () {
-          let content = $('#kamerstukContent').val()
-          let username = $('#username').val()
-          if(!content.includes(username)) {
-            alert("Uw gebruikersnaam komt niet voor in het kamerstuk. \n" +
-                    "Vergeet niet onderaan het kamerstuk te zetten door wie deze is ingediend in het volgende format: \n\n" +
-                    "###Ingediend door ... namens ...")
-            return false;
-          }
-      })
+      function checkSubmit() {
+        let content = $('#kamerstukContent').val()
+        let username = $('#username').val()
+        if(!content.includes(username)) {
+          alert("Uw gebruikersnaam komt niet voor in het kamerstuk. \n" +
+                  "Vergeet niet onderaan het kamerstuk te zetten door wie deze is ingediend in het volgende format: \n\n" +
+                  "###Ingediend door /u/" + username + " namens ...")
+        }
+        else {
+          $('#spam-check').modal()
+        }
+      }
+
+
+      function submitKamerstuk() {
+        let spamcheckAnswer = $('#spamcheck').val()
+        $('#kamerstukForm').append('<input name="spamcheck" value="'+ spamcheckAnswer + '" type="hidden"/>').submit();
+      }
 
       function doPreview() {
         let title = "##" + $('#kamerstukTitle').val()

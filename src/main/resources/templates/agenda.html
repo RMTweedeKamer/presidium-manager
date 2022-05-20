@@ -12,40 +12,53 @@
         <br>
         Verder naar beneden vindt u de stukken waarover nog zal worden gestemd.
       </p>
-      <table class="lobby">
-        <tr class="headerrow">
-          <th>Postdatum</th>
-          <th>Kenmerk</th>
-          <th>Soort</th>
-          <th>Indiener</th>
-          <th>Titel</th>
-          <th>Stemmingsdatum</th>
-        </tr>
-        <tr th:each="kamerstuk : ${queue}">
-          <td th:text="${kamerstuk.getPostDateAsString()}">Postdatum</td>
-          <td th:text="${kamerstuk.getCallsign()}">Kenmerk</td>
-          <td th:text="${kamerstuk.getType().getName()}">Soort</td>
-          <td th:text="${kamerstuk.getSubmittedBy()}">Indiener</td>
-          <td th:text="${kamerstuk.getTitle()}">Titel</td>
-          <td th:text="${kamerstuk.getVoteDateAsString()}">Stemmingsdatum</td>
-        </tr>
+      <table id="agenda" class="lobby">
+        <thead>
+          <tr class="headerrow">
+            <th>Postdatum</th>
+            <th>Kenmerk</th>
+            <th>Soort</th>
+            <th>Indiener</th>
+            <th>Titel</th>
+            <th>Stemmingsdatum</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="kamerstuk : ${queue}">
+            <td th:text="${kamerstuk.getPostDateAsString()}">Postdatum</td>
+            <td th:text="${kamerstuk.getCallsign()}">Kenmerk</td>
+            <td th:text="${kamerstuk.getType().getName()}">Soort</td>
+            <td th:text="${kamerstuk.getSubmittedBy()}">Indiener</td>
+            <td th:text="${kamerstuk.getTitle()}">Titel</td>
+            <td th:text="${kamerstuk.getVoteDateAsString()}">Stemmingsdatum</td>
+          </tr>
+        </tbody>
       </table>
       <hr>
       <h2>Stemagenda</h2>
-      <table class="lobby">
-        <tr class="headerrow">
-          <th>Stemmingsdatum</th>
-          <th>Kenmerk</th>
-          <th>Indiener</th>
-          <th>Titel</th>
-        </tr>
-        <tr th:each="kamerstuk : ${voteQueue}">
-          <td th:text="${kamerstuk.getVoteDateAsString()}">Stemmingsdatum</td>
-          <td th:text="${kamerstuk.getCallsign()}">Kenmerk</td>
-          <td th:text="${kamerstuk.getSubmittedBy()}">Indiener</td>
-          <td><a th:text="${kamerstuk.getTitle()}" th:href="${kamerstuk.getUrl()}">Titel</a></td>
-        </tr>
+      <table id="vote-agenda" class="lobby">
+        <thead>
+          <tr class="headerrow">
+            <th>Stemmingsdatum</th>
+            <th>Kenmerk</th>
+            <th>Indiener</th>
+            <th>Titel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="kamerstuk : ${voteQueue}">
+            <td th:text="${kamerstuk.getVoteDateAsString()}">Stemmingsdatum</td>
+            <td th:text="${kamerstuk.getCallsign()}">Kenmerk</td>
+            <td th:text="${kamerstuk.getSubmittedBy()}">Indiener</td>
+            <td><a th:text="${kamerstuk.getTitle()}" th:href="${kamerstuk.getUrl()}">Titel</a></td>
+          </tr>
+        </tbody>
       </table>
     </main>
   </body>
 </html>
+
+<script>
+  $("#agenda").tablesorter()
+  $("#vote-agenda").tablesorter()
+</script>

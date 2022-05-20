@@ -140,8 +140,6 @@ public class KamerstukkenService {
                 String identifiers = postKamerstukkenAsBatch(batchSet);
 
                 logger.info("Posting batched kamerstukken with identifier: {}", identifiers);
-                notificationService.addNotification(new Notification(String.format("Kamerstukken met identificator: %s zijn samen gepost.", identifiers),
-                        String.format("Gepost op: %s", new Date())));
             }
         }
 
@@ -151,12 +149,8 @@ public class KamerstukkenService {
                 postKamerstuk(toPost);
                 if (toPost.getCallsign() != null) {
                     logger.info("Posting kamerstuk with identifier: {}", toPost.getCallsign());
-                    notificationService.addNotification(new Notification(String.format("Kamerstuk met identificator: %s is gepost.", toPost.getCallsign()),
-                            String.format("Gepost op: %s", new Date())));
                 } else {
                     logger.info("Posting kamerstuk of type: {}", toPost.getType().getName());
-                    notificationService.addNotification(new Notification(String.format("Kamerstuk van het type: %s is gepost.", toPost.getType().getName()),
-                            String.format("Gepost op: %s", new Date())));
                 }
             }
         }
@@ -428,11 +422,11 @@ public class KamerstukkenService {
         String content;
         if(kamerstuk.getType().isSelectable()) {
             content = String.format("##%s \n \n%s \n \n###%s", kamerstuk.getTitle(), kamerstuk.getContent(), kamerstuk.getReadLengthString());
-            content = content.replaceAll("\\r", "");
+            content = content.replace("\\r", "");
         }
         else {
             content = String.format("##%s \n \n%s", kamerstuk.getTitle(), kamerstuk.getContent());
-            content = content.replaceAll("\\r", "");
+            content = content.replace("\\r", "");
         }
 
         SubmissionReference submission;
@@ -459,7 +453,7 @@ public class KamerstukkenService {
         kamerstukRepository.save(kamerstuk);
 
         //Call relevant users
-        if(kamerstuk.getToCall().size() > 0) {
+        if(!kamerstuk.getToCall().isEmpty()) {
             StringBuilder replyBuilder = new StringBuilder();
             replyBuilder.append("###Voor een reactie op dit kamerstuk wordt opgeroepen:  ").append("\n");
             for (String minister : kamerstuk.getToCall()) {
@@ -596,6 +590,9 @@ public class KamerstukkenService {
                 break;
             case AMENDEMENT:
                 isAllowed = callsign.matches("[W][0-9]{4}-[IV]{1,3}");
+                break;
+            default:
+                isAllowed = true;
                 break;
         }
         return isAllowed;

@@ -20,7 +20,7 @@ public class NotificationService {
     }
 
     public Settings getAllSettings() {
-        Optional<Settings> settings = settingsRepository.findById("Settings");
+        Optional<Settings> settings = settingsRepository.findById(Settings.SETTINGS_ID);
         if(settings.isPresent()) {
             return settings.get();
         }

@@ -1,19 +1,21 @@
 package nl.th8.presidium.home.controller;
 
+import nl.th8.presidium.Constants;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
 import nl.th8.presidium.home.controller.dto.KamerstukType;
 import nl.th8.presidium.home.controller.dto.StatDTO;
 import nl.th8.presidium.home.service.StatsService;
 import nl.th8.presidium.home.service.SubmitService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import java.security.Principal;
+import java.util.Objects;
 
 @SuppressWarnings({"SameReturnValue", "SpringMVCViewInspection"})
 @Controller
@@ -40,17 +42,23 @@ public class HomeController {
         }
 
         model.addAttribute("loggedIn", loggedIn);
-        model.addAttribute("kamerstuk", new Kamerstuk());
         model.addAttribute("types", KamerstukType.getPublics());
+        if(!model.containsAttribute("kamerstuk"))
+            model.addAttribute("kamerstuk", new Kamerstuk());
 
         return "home";
     }
 
     @PostMapping
-    public String submitKamerstuk(@ModelAttribute Kamerstuk kamerstuk) {
+    public String submitKamerstuk(@ModelAttribute Kamerstuk kamerstuk, @RequestParam(value = "spamcheck") String spamcheck, RedirectAttributes redirectAttributes) {
         try {
+            if(!StringUtils.equalsIgnoreCase(spamcheck, Constants.SPAM_ANSWER)) {
+                redirectAttributes.addFlashAttribute(kamerstuk);
+                return "redirect:/?spam";
+            }
             submitService.processKamerstuk(kamerstuk);
         } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute(kamerstuk);
             return "redirect:/?problem";
         }
 

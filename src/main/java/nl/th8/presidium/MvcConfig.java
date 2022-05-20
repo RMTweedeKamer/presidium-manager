@@ -13,17 +13,10 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Autowired
     public MvcConfig() {
+        //Empty method for spring things
     }
 
-//    @Override
-//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//        registry.addResourceHandler("/resources/**")
-//                .addResourceLocations("/resources/");
-//        registry.addResourceHandler("/")
-//                .addResourceLocations("resources/**")
-//                .addResourceLocations("classpath:/static/");
-//    }
-
+    @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/login").setViewName("login");
     }

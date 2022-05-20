@@ -21,14 +21,14 @@
         <h1>Zoeken</h1>
         <form
           th:action="@{'/archive/' + ${current}}"
-          th:method="POST"
-          th:object="${filterDTO}"
+          th:method="GET"
         >
           <input
+            id="search"
             class="submitpanel big"
             type="text"
-            name="filterString"
-            th:field="*{filterString}"
+            th:name="search"
+            th:value="${searchTerm}"
             placeholder="Zoeken..."
           />
           <input type="submit" th:value="Zoeken" />

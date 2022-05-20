@@ -11,24 +11,28 @@
         <h1 class="middle">
           Agenda van stukken 15 dagen terug en 30 dagen vooruit
         </h1>
-        <table class="lobby toukie">
-          <tr class="headerrow">
-            <th>Postdatum</th>
-            <th>Soort</th>
-            <th>Kenmerk</th>
-            <th>Indiener</th>
-            <th>Titel</th>
-            <th>Opgeroepen</th>
-          </tr>
-          <tr th:each="kamerstuk : ${queue}">
-            <td th:text="${kamerstuk.getPostDateAsString()}"></td>
-            <td th:text="${kamerstuk.getType().getName()}">Soort</td>
-            <td th:text="${kamerstuk.getCallsign()}">Kenmerk</td>
-            <td th:text="${kamerstuk.getSubmittedBy()}">Indiener</td>
-            <td th:if="${!kamerstuk.hasUrl()}" th:text="${kamerstuk.getTitle()}">Titel</td>
-            <td th:if="${kamerstuk.hasUrl()}"><a th:text="${kamerstuk.getTitle()}" th:href="${kamerstuk.getUrl()}">Titel</a></td>
-            <td th:utext="${kamerstuk.getToCallAsText()}">Opgeroepen</td>
-          </tr>
+        <table id="toukie" class="lobby toukie tablesorter">
+          <thead>
+            <tr class="headerrow">
+              <th>Postdatum</th>
+              <th>Soort</th>
+              <th>Kenmerk</th>
+              <th>Indiener</th>
+              <th>Titel</th>
+              <th>Opgeroepen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="kamerstuk : ${queue}">
+              <td th:text="${kamerstuk.getPostDateAsString()}"></td>
+              <td th:text="${kamerstuk.getType().getName()}">Soort</td>
+              <td th:text="${kamerstuk.getCallsign()}">Kenmerk</td>
+              <td th:text="${kamerstuk.getSubmittedBy()}">Indiener</td>
+              <td th:if="${!kamerstuk.hasUrl()}" th:text="${kamerstuk.getTitle()}">Titel</td>
+              <td th:if="${kamerstuk.hasUrl()}"><a th:text="${kamerstuk.getTitle()}" th:href="${kamerstuk.getUrl()}">Titel</a></td>
+              <td th:utext="${kamerstuk.getToCallAsText()}">Opgeroepen</td>
+            </tr>
+          </tbody>
         </table>
       </section>
     </main>
@@ -36,5 +40,6 @@
 
    <script>
      $("#sidebar-location").load("/scheduler/sidebar?page=Agenda")
+     $("#toukie").tablesorter();
    </script>
 </html>

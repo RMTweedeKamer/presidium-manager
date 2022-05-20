@@ -227,10 +227,8 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
     }
 
     public void processToCallString() {
-        if(this.toCallString != null) {
-            if (!this.toCallString.isEmpty()) {
-                this.toCall = Arrays.asList(this.toCallString.split(";"));
-            }
+        if(this.toCallString != null && !this.toCallString.isEmpty()) {
+            this.toCall = Arrays.asList(this.toCallString.split(";"));
         }
     }
 
@@ -255,6 +253,8 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
             case RESULTATEN:
             case STEMMING:
                 this.callsign = type.getName();
+                break;
+            default:
                 break;
         }
     }

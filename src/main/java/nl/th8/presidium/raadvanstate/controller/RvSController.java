@@ -1,7 +1,6 @@
 package nl.th8.presidium.raadvanstate.controller;
 
 import nl.th8.presidium.ControllerUtils;
-import nl.th8.presidium.RedditSupplier;
 import nl.th8.presidium.raadvanstate.controller.dto.AdviceDTO;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
 import nl.th8.presidium.scheduler.service.KamerstukkenService;
