@@ -23,7 +23,9 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
 
     List<Kamerstuk> findAllByPostedIsTrueAndCallsignContains(String contains);
 
-    List<Kamerstuk> findAllByPostDateIsNullAndDeniedIsFalse();
+    List<Kamerstuk> findAllByPostDateIsNullAndTypeIsNotAndDeniedIsFalse(KamerstukType type);
+
+    List<Kamerstuk> findAllByTypeIsAndDeniedIsFalseAndVoteProcessedIsFalseAndPostDateIsNull(KamerstukType type);
 
     List<Kamerstuk> findAllByPostDateIsBetweenAndCallsignIsNotNull(Date date1, Date date2);
 
@@ -34,6 +36,10 @@ public interface KamerstukRepository extends MongoRepository<Kamerstuk, String> 
     List<Kamerstuk> findAllByTypeEqualsAndPostDateNotNullAndPostedIsFalse(KamerstukType type);
 
     List<Kamerstuk> findAllByTypeEqualsAndPostDateBeforeAndPostedIsFalseAndBundleTitleIsNotNull(KamerstukType type, Date postDateBefore);
+
+    List<Kamerstuk> findAllByTypeEqualsAndVoteDateBeforeAndPostedIsTrueAndDeniedIsFalseAndVoteProcessedIsFalse(KamerstukType type, Date voteDateBefore);
+
+    Optional<Kamerstuk> findByUrlContainsOrUrlContains(String contains1, String contains2);
 
     long countAllByPostDateIsNullAndDeniedIsFalse();
 

@@ -4,8 +4,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,12 +11,8 @@ import java.util.List;
 public class User {
 
     @Id
-    @NotNull
-    @NotEmpty
     private String username;
 
-    @NotNull
-    @NotEmpty
     private String password;
 
     private String secret;

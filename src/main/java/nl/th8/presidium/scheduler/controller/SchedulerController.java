@@ -2,6 +2,7 @@ package nl.th8.presidium.scheduler.controller;
 
 import nl.th8.presidium.ControllerUtils;
 import nl.th8.presidium.home.controller.dto.Kamerstuk;
+import nl.th8.presidium.home.controller.dto.KamerstukType;
 import nl.th8.presidium.scheduler.DuplicateCallsignException;
 import nl.th8.presidium.scheduler.InvalidCallsignException;
 import nl.th8.presidium.scheduler.InvalidUsernameException;
@@ -46,7 +47,7 @@ public class SchedulerController {
 
         model.addAttribute("kamerstukken", kamerstukkenService.getNonScheduledKamerstukken(0, false));
         model.addAttribute("queue", kamerstukkenService.getKamerstukkenQueue());
-        model.addAttribute("notifications", notificationService.getAllSettings().getNotifications());
+        model.addAttribute("notifications", notificationService.getNotifications());
         model.addAttribute("votesDelayed", kamerstukkenService.getDelayedKamerstukkenVoteQueue());
         model.addAttribute("votesQueued", kamerstukkenService.getKamerstukkenVoteQueue());
 
@@ -127,7 +128,7 @@ public class SchedulerController {
         if(redditStatus.isPresent())
             return redditStatus.get();
 
-        model.addAttribute("items", notificationService.getAllSettings().getNotifications());
+        model.addAttribute("items", notificationService.getNotifications());
 
         return "scheduler/log";
     }
@@ -148,6 +149,9 @@ public class SchedulerController {
             return "redirect:/scheduler/inbox?invalidCallsign";
         }
         logger.info("Put kamerstuk " + kamerstuk.getCallsign() + " in queue for " + kamerstuk.getPostDate());
+
+        if(kamerstuk.getType() == KamerstukType.RESULTATEN)
+            return "redirect:/scheduler/voteSettings?planned";
 
         return "redirect:/scheduler/inbox?planned";
     }
@@ -241,7 +245,10 @@ public class SchedulerController {
         } catch (InvalidUsernameException e) {
             return "redirect:/scheduler/inbox?invalidUsername";
         }
-        logger.info("Denied kamerstuk " + kamerstuk.getTitle());
+        logger.info("Denied kamerstuk {}", kamerstuk.getTitle());
+
+        if(kamerstuk.getType() == KamerstukType.RESULTATEN)
+            return "redirect:/scheduler/voteSettings?denied";
 
         return "redirect:/scheduler/inbox?denied";
     }

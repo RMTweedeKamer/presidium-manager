@@ -1,5 +1,7 @@
 package nl.th8.presidium.home.controller.dto;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.util.Date;
 
 @SuppressWarnings("unused")

@@ -1,14 +1,15 @@
 package nl.th8.presidium.home.controller.dto;
 
 import nl.th8.presidium.Constants;
-import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.Id;
 
-import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class Kamerstuk implements Comparable<Kamerstuk> {
@@ -18,21 +19,16 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     private String secret;
 
-    @NotNull
     private KamerstukType type;
 
-    @UniqueElements
     private String callsign;
 
-    @NotNull
     private String title;
 
     private String bundleTitle;
 
-    @NotNull
     private String content;
 
-    @NotNull
     private boolean urgent;
 
     private List<String> toCall;
@@ -53,6 +49,8 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     private boolean denied;
 
+    private boolean voteProcessed;
+
     private String url;
 
     private int readingLength;
@@ -61,12 +59,16 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     private boolean isBundled;
 
+    private Map<String, VoteType> voteMap;
+
     public Kamerstuk() {
         this.toCall = new ArrayList<>();
         this.posted = false;
         this.votePosted = false;
         this.denied = false;
+        this.voteProcessed = false;
         this.readingLength = 3;
+        this.voteMap = new HashMap<>();
     }
 
     public String getId() {
@@ -283,6 +285,14 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
         this.denied = denied;
     }
 
+    public boolean isVoteProcessed() {
+        return voteProcessed;
+    }
+
+    public void setVoteProcessed(boolean voteProcessed) {
+        this.voteProcessed = voteProcessed;
+    }
+
     public String getUrl() {
         return url;
     }
@@ -328,5 +338,45 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
 
     public void setBundled(boolean bundled) {
         isBundled = bundled;
+    }
+
+    public Map<String, VoteType> getVoteMap() {
+        return voteMap;
+    }
+
+    public void setVoteMap(Map<String, VoteType> voteMap) {
+        this.voteMap = voteMap;
+    }
+
+    public String getResultFromVoteMap() {
+        StringBuilder resultBuilder = new StringBuilder();
+        final long[] votesFor = new long[1];
+        final long[] votesAgainst = new long[1];
+        for(VoteType voteType : VoteType.values()) {
+            long count = voteMap.values().stream().filter(type -> type == voteType).count();
+            resultBuilder.append(voteType.getName()).append(": ").append(count).append("  \n");
+            if (voteType == VoteType.VOOR)
+                votesFor[0] = count;
+            else if (voteType == VoteType.TEGEN)
+                votesAgainst[0] = count;
+        }
+
+        if(votesFor[0] > votesAgainst[0]) {
+            resultBuilder.append("\nDeze ").append(type.getName().toLowerCase()).append(" is aangenomen");
+            if(type == KamerstukType.WET)
+                resultBuilder.append(", en gaat door naar de Eerste Kamer. \n");
+            else
+                resultBuilder.append(". \n");
+        } else {
+            resultBuilder.append("\nDeze ").append(type.getName().toLowerCase()).append(" is afgewezen. \n");
+        }
+
+        return resultBuilder.toString();
+    }
+
+    public String getTurnoutForKamerstuk() {
+        long validVotes = voteMap.values().stream().filter(voteType -> voteType != VoteType.NG).count();
+
+        return "De opkomst was: " + BigDecimal.valueOf(validVotes / (float) voteMap.values().size() * 100).setScale(2, RoundingMode.HALF_UP) + "%\n";
     }
 }

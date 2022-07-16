@@ -16,6 +16,7 @@ import nl.th8.presidium.scheduler.InvalidCallsignException;
 import nl.th8.presidium.scheduler.InvalidUsernameException;
 import nl.th8.presidium.scheduler.KamerstukNotFoundException;
 import nl.th8.presidium.scheduler.controller.dto.Notification;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,34 +157,11 @@ public class KamerstukkenService {
         }
     }
 
-    @Scheduled(cron = "0 0 12 ? * SAT")
-    public void postVote() {
-        List<Kamerstuk> kamerstukkenToCheck = kamerstukRepository.findAllByPostedIsTrueAndVotePostedIsFalseAndDeniedIsFalseAndVoteDateIsNotNull();
 
-        Date currentDate = new Date();
-        logger.info("Checking for vote to post at {}", currentDate);
-        StatDTO.setLastToVoteCheck(currentDate);
-
-        Predicate<Kamerstuk> onSameDay = kamerstuk -> DateUtils.isSameDay(kamerstuk.getVoteDate(), currentDate);
-        Predicate<Kamerstuk> dayHasPassed = kamerstuk -> kamerstuk.getVoteDate().before(currentDate);
-        kamerstukkenToCheck = kamerstukkenToCheck.stream()
-                .filter(onSameDay.or(dayHasPassed))
-                .sorted(Comparator.comparing(Kamerstuk::getCallsign))
-                .collect(Collectors.toList());
-        kamerstukkenToCheck
-                .forEach(kamerstuk -> {
-                    kamerstuk.setVotePosted(true);
-                    kamerstukRepository.save(kamerstuk);
-                });
-
-        if(!kamerstukkenToCheck.isEmpty()) {
-            constructVotePost(kamerstukkenToCheck);
-        }
-    }
 
     public List<Kamerstuk> getNonScheduledKamerstukken(int minQueueAmountFilter, boolean mustBeUrgent) {
 
-        List<Kamerstuk> inbox = kamerstukRepository.findAllByPostDateIsNullAndDeniedIsFalse();
+        List<Kamerstuk> inbox = kamerstukRepository.findAllByPostDateIsNullAndTypeIsNotAndDeniedIsFalse(KamerstukType.RESULTATEN);
 
         if(minQueueAmountFilter > 0) {
             Set<String> toFilter = getToukieQueue().stream()
@@ -261,7 +239,7 @@ public class KamerstukkenService {
 
     public void queueKamerstuk(Kamerstuk kamerstuk, String mod) throws InvalidUsernameException, DuplicateCallsignException, InvalidCallsignException {
         //Check callsign
-        if(kamerstukRepository.existsByCallsignAndIdIsNot(kamerstuk.getCallsign(), kamerstuk.getId())) {
+        if(kamerstukRepository.existsByCallsignAndIdIsNot(kamerstuk.getCallsign(), kamerstuk.getId()) && kamerstuk.getType() != KamerstukType.RESULTATEN) {
             throw new DuplicateCallsignException();
         }
         if(!checkCallsignFormat(kamerstuk.getType(), kamerstuk.getCallsign())) {
@@ -370,7 +348,7 @@ public class KamerstukkenService {
         kamerstuk.setDenied(true);
         kamerstukRepository.save(kamerstuk);
         notificationService.addNotification(new Notification(String.format(Constants.DENIED_TITLE, kamerstuk.getTitle()), String.format(Constants.DENIED_TEXT, mod)));
-        if(kamerstuk.getSubmittedBy() != null && !reason.isEmpty() && !redditSupplier.doNotPost) {
+        if(kamerstuk.getSubmittedBy() != null && StringUtils.isNotEmpty(reason) && !redditSupplier.doNotPost) {
             try {
                 redditSupplier.inbox.compose(kamerstuk.getSubmittedBy(), Constants.DENIED_SUBJECT, String.format(Constants.DENIED_BODY, kamerstuk.getSubmittedBy(), kamerstuk.getTitle(), reason));
             } catch (Exception e) {
@@ -522,46 +500,6 @@ public class KamerstukkenService {
         }
 
         return String.format("%s-%s", first.getCallsign(), last.getCallsign());
-    }
-
-    private void constructVotePost(List<Kamerstuk> votesToPost) {
-        StringBuilder title = new StringBuilder();
-        StringBuilder links = new StringBuilder();
-        StringBuilder format = new StringBuilder();
-        StringBuilder content = new StringBuilder();
-        Kamerstuk newVote = new Kamerstuk();
-        Calendar c = Calendar.getInstance();
-        c.setTime(new Date());
-        c.add(Calendar.DATE, 3);
-        newVote.setVoteDateFromDate(c.getTime());
-        title.append("Stemming Tweede Kamer over ");
-
-        String prefix = "";
-        for(Kamerstuk kamerstuk : votesToPost) {
-            title.append(prefix).append(kamerstuk.getCallsign());
-            prefix = ", ";
-            links.append("[").append(kamerstuk.getCallsign()).append(": ").append(kamerstuk.getTitle()).append("](").append(kamerstuk.getUrl()).append(")  \n");
-            format.append(kamerstuk.getCallsign()).append(":  \n");
-        }
-        content.append("Leden van de Tweede Kamer der Staten-Generaal,\n\n");
-        content.append("**U kunt op de volgende kamerstuk(ken) uw stem uitbrengen:**  \n");
-        content.append(links.toString());
-        content.append("\n---\n");
-        content.append("**Hanteer a.u.b. het volgende format:**\n\n");
-        content.append("Telkens met twee spaties achter de regel\n");
-        content.append("Voor/Tegen/Onthouden:\n\n");
-        content.append(format.toString());
-        content.append("\n---\n");
-        content.append("###Deze stemming sluit op: ").append(newVote.getVoteDateAsString()).append("\n");
-        content.append("**Let op: stemmen na deze datum zijn ongeldig**");
-
-        newVote.setType(KamerstukType.STEMMING);
-        newVote.setTitle(title.toString());
-        newVote.setContent(content.toString());
-        newVote.setUrgent(false);
-        newVote.setPostDateFromDate(new Date());
-        newVote.setVotePosted(true);
-        kamerstukRepository.save(newVote);
     }
 
     private Kamerstuk getKamerstukForId(String id) throws KamerstukNotFoundException {
