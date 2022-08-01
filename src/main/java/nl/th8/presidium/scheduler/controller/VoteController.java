@@ -22,25 +22,16 @@ import java.util.NoSuchElementException;
 @RequestMapping("/scheduler")
 public class VoteController {
 
-    private final Logger logger = LoggerFactory.getLogger(VoteService.class);
-
-    private final KamerstukkenService kamerstukkenService;
-
-    private final NotificationService notificationService;
+    private final Logger logger = LoggerFactory.getLogger(VoteController.class);
 
     private final SettingsProvider settingsProvider;
 
     private final VoteService voteService;
 
-    private final ControllerUtils controllerUtils;
-
     @Autowired
-    public VoteController(KamerstukkenService kamerstukkenService, NotificationService notificationService, SettingsProvider settingsProvider, VoteService voteService, ControllerUtils controllerUtils) {
-        this.kamerstukkenService = kamerstukkenService;
-        this.notificationService = notificationService;
+    public VoteController(SettingsProvider settingsProvider, VoteService voteService) {
         this.settingsProvider = settingsProvider;
         this.voteService = voteService;
-        this.controllerUtils = controllerUtils;
     }
 
     @GetMapping("/voteSettings")

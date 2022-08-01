@@ -18,11 +18,13 @@
 
                 <div class="new-list-item" th:each="item : ${items}" th:classappend="${item.isUrgent()}? urgent">
                     <p th:text="${item.title}" class="title"></p>
-                    <p>|</p>
-                    <p th:text="'' + ${item.submittedBy}"></p>
-                    <div class="actions">
-                        <a th:href="'#plan-' + ${itemStat.count}" rel="modal:open"><button>Inplannen</button></a>
-                        <a th:href="'#withdraw-' + ${itemStat.count}" rel="modal:open"><button class="destructive">Intrekken</button></a>
+                    <div class="to-right">
+                        <p>|</p>
+                        <p class="date" th:text="'' + ${item.submittedBy}"></p>
+                        <div class="actions">
+                            <a th:href="'#plan-' + ${itemStat.count}" rel="modal:open"><button>Inplannen</button></a>
+                            <a th:href="'#withdraw-' + ${itemStat.count}" rel="modal:open"><button class="destructive">Intrekken</button></a>
+                        </div>
                     </div>
 
 

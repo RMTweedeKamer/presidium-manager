@@ -83,7 +83,7 @@ public class VoteService {
         }
     }
 
-    @Scheduled(cron = "* 15 * * *")
+    @Scheduled(cron = "* 15 * * * *")
     public void checkAndProcessVoteResults() {
         List<Kamerstuk> concludedVotes = kamerstukRepository.findAllByTypeEqualsAndVoteDateBeforeAndPostedIsTrueAndDeniedIsFalseAndVoteProcessedIsFalse(KamerstukType.STEMMING, new Date());
         getVoteResults(concludedVotes);

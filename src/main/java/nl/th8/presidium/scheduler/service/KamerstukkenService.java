@@ -26,6 +26,8 @@ import org.apache.commons.lang3.time.DateUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -602,5 +604,21 @@ public class KamerstukkenService {
 
     public long getDeniedCount() {
         return kamerstukRepository.countAllByPostedIsFalseAndDeniedIsTrue();
+    }
+
+    public Map<String, String> getHighlightMapForQueue(List<Kamerstuk> kamerstukken) {
+        List<String> highlightColorClassMap = new ArrayList<>(List.of("nectarine", "pink", "bud", "mblue", "koamaru", "eagle", "beekeeper", "apple", "ice", "spink", "blurple"));
+
+        Map<String, String> highlightMap = new HashMap<>();
+        kamerstukken.stream()
+                .collect(Collectors.groupingBy(kamerstuk -> kamerstuk.getPostDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()))
+                .forEach((key, value) -> {
+                    if(value.size() <= 1)
+                        return;
+                    String colorClassName = highlightColorClassMap.get(0);
+                    Collections.rotate(highlightColorClassMap, 1);
+                    value.forEach(kamerstuk -> highlightMap.put(kamerstuk.getCallsign(), colorClassName));
+                });
+        return highlightMap;
     }
 }

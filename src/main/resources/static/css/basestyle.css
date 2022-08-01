@@ -530,7 +530,7 @@ td {
 .sidebar-container {
     display: flex;
     flex-direction: column;
-    min-width: 100px;
+    min-width: 150px;
     height: 100%;
     position: sticky;
     position: -webkit-sticky;
@@ -549,7 +549,7 @@ td {
 .sidebar-content {
     display: flex;
     flex-direction: column;
-    flex: 89;
+    flex: 87.5;
     background: #2c3e50;
     color: white;
 }
@@ -616,29 +616,41 @@ td {
     background: white;
     box-shadow: 3px 3px lightgray;
     width: 75%;
-    min-width: min-content;
+    min-width: 1000px;
 
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: right;
 
     border: 1px solid lightgray;
     border-left: 8px solid rgba(52, 152, 219, 0.5);
     border-radius: 6px;
 
     padding: 10px 0 10px 0;
-    margin: 8px auto;
+    margin: 8px 5%;
 }
 
 .new-list-item.urgent {
     border-left: 8px solid #c0392b;
 }
 
-.new-list-item .actions {
+.new-list-item .to-right {
     display: flex;
+    justify-content: right;
+    align-content: center;
     margin-left: auto;
-    padding-left: 5%;
+    padding-left: 10%;
+}
+
+.new-list-item .actions {
+    margin-left: 3%;
+    display: flex;
+}
+
+.new-list-item .date {
+    text-align: right;
+    flex-shrink: 0;
 }
 
 .new-list-item p {
@@ -651,4 +663,39 @@ td {
 
 .new-list-item button {
     margin: 0 10px;
+}
+
+/*--- Colour classes ---*/
+.beekeeper {
+    border-left: 8px solid #f6e58d;
+}
+.pink {
+    border-left: 8px solid #ff7979;
+}
+.bud {
+    border-left: 8px solid #badc58;
+}
+.mblue {
+    border-left: 8px solid #7ed6df;
+}
+.koamaru {
+    border-left: 8px solid #30336b;
+}
+.eagle {
+    border-left: 8px solid #95afc0;
+}
+.nectarine {
+    border-left: 8px solid #ffbe76;
+}
+.apple {
+    border-left: 8px solid #6ab04c;
+}
+.ice {
+    border-left: 8px solid #c7ecee;
+}
+.spink {
+    border-left: 8px solid #be2edd;
+}
+.blurple {
+    border-left: 8px solid #4834d4;
 }

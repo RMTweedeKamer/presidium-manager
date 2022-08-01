@@ -20,16 +20,17 @@
 
                 <div class="new-list-item" th:each="item : ${items}" th:classappend="${item.isUrgent()}? urgent">
                     <p th:text="${item.title}" class="title"></p>
-                    <p>|</p>
-                    <p th:text="'' + ${item.submittedBy}"></p>
-                    <p>|</p>
-                    <p th:text="${item.getVoteDateAsString()}"></p>
-                    <div class="actions">
-                        <a th:href="'#reschedule-' + ${itemStat.count}" rel="modal:open"><button>Verplaatsen</button></a>
-                        <a th:href="'#delay-' + ${itemStat.count}" rel="modal:open"><button>Uitstellen</button></a>
-                        <a th:href="'#withdraw-' + ${itemStat.count}" rel="modal:open"><button class="destructive">Intrekken</button></a>
+                    <div class="to-right">
+                        <p>|</p>
+                        <p th:text="'' + ${item.submittedBy}"></p>
+                        <p>|</p>
+                        <p class="date" th:text="${item.getVoteDateAsString()}"></p>
+                        <div class="actions">
+                            <a th:href="'#reschedule-' + ${itemStat.count}" rel="modal:open"><button>Verplaatsen</button></a>
+                            <a th:href="'#delay-' + ${itemStat.count}" rel="modal:open"><button>Uitstellen</button></a>
+                            <a th:href="'#withdraw-' + ${itemStat.count}" rel="modal:open"><button class="destructive">Intrekken</button></a>
+                        </div>
                     </div>
-
 
                     <div th:id="'reschedule-' + ${itemStat.count}" class="modal">
                         <h2>Verplaatsen</h2>

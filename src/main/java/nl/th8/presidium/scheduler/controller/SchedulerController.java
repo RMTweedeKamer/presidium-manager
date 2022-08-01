@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings({"SameReturnValue", "SpringMVCViewInspection"})
@@ -84,7 +85,9 @@ public class SchedulerController {
         if(redditStatus.isPresent())
             return redditStatus.get();
 
-        model.addAttribute("items", kamerstukkenService.getKamerstukkenQueue());
+        List<Kamerstuk> kamerstukken = kamerstukkenService.getKamerstukkenQueue();
+        model.addAttribute("items", kamerstukken);
+        model.addAttribute("highlightMap", kamerstukkenService.getHighlightMapForQueue(kamerstukken));
 
         return "scheduler/planned";
     }

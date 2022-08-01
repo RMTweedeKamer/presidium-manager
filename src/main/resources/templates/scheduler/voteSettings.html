@@ -33,7 +33,7 @@
 
                 <div class="new-list-item" th:each="item: ${results}">
                     <p th:text="${item.title}" class="title"></p>
-                    <div class="actions">
+                    <div class="to-right">
                         <a th:href="'#plan-' + ${itemStat.count}" rel="modal:open"><button>Inplannen</button></a>
                         <a th:href="'#deny-' + ${itemStat.count}" rel="modal:open"><button class="destructive">Afwijzen</button></a>
                     </div>
