@@ -132,6 +132,7 @@ public class KamerstukkenService {
 
         Map<String, List<Kamerstuk>> batchPost = kamerstukRepository.findAllByTypeEqualsAndPostDateBeforeAndPostedIsFalseAndBundleTitleIsNotNull(KamerstukType.MOTIE, tomorrow).stream()
                                 .filter(kamerstuk -> DateUtils.isSameDay(kamerstuk.getPostDate(), new Date()))
+                                .filter(kamerstuk -> StringUtils.isNotBlank(kamerstuk.getBundleTitle()))
                                 .sorted(Comparator.comparing(Kamerstuk::getCallnumber))
                                 .collect(Collectors.groupingBy(Kamerstuk::getBundleTitle));
 
@@ -257,7 +258,8 @@ public class KamerstukkenService {
 
 
         //Proces bundling
-        doBundleChecking(kamerstuk);
+        if(StringUtils.isNotBlank(kamerstuk.getBundleTitle()))
+            doBundleChecking(kamerstuk);
 
         //Log to scheduler notifications
         notificationService.addNotification(new Notification(String.format(Constants.QUEUED_TITLE, kamerstuk.getCallsign()),
@@ -280,12 +282,18 @@ public class KamerstukkenService {
 
     public void editKamerstuk(String kamerstukId, String title, String bundleTitle, String content, String toCallString, String mod) throws KamerstukNotFoundException {
         Kamerstuk kamerstuk = getKamerstukForId(kamerstukId);
+        String oldBundleTitle = kamerstuk.getBundleTitle();
 
         kamerstuk.setTitle(title);
         kamerstuk.setBundleTitle(bundleTitle);
         kamerstuk.setContent(content);
         kamerstuk.setToCallString(toCallString);
         kamerstuk.processToCallString();
+
+
+        if(StringUtils.isNotBlank(oldBundleTitle))
+            doBundleChecking(kamerstuk, oldBundleTitle);
+
         kamerstukRepository.save(kamerstuk);
 
         //Notify
@@ -566,7 +574,27 @@ public class KamerstukkenService {
         }
     }
 
+    private void doBundleChecking(Kamerstuk kamerstuk, String oldBundleTitle) {
+        List<Kamerstuk> possibleOldBundle = kamerstukRepository.findAllByTypeEqualsAndPostDateNotNullAndPostedIsFalse(KamerstukType.MOTIE).stream()
+                .filter(kamerstuk1 -> DateUtils.isSameDay(kamerstuk1.getPostDate(), kamerstuk.getPostDate()))
+                .filter(kamerstuk1 -> kamerstuk1.getBundleTitle().equals(oldBundleTitle))
+                .collect(Collectors.toList());
+
+        if(possibleOldBundle.size() < 2) {
+            for(Kamerstuk bundleItem : possibleOldBundle) {
+                bundleItem.setBundled(false);
+                kamerstukRepository.save(bundleItem);
+            }
+        }
+
+        if(StringUtils.isNotBlank(kamerstuk.getBundleTitle()))
+            doBundleChecking(kamerstuk);
+    }
+
     private void doBundleChecking(Kamerstuk kamerstuk, Date oldDate) {
+        if(StringUtils.isBlank(kamerstuk.getBundleTitle()))
+            return;
+
         List<Kamerstuk> possibleOldBundle = kamerstukRepository.findAllByTypeEqualsAndPostDateNotNullAndPostedIsFalse(KamerstukType.MOTIE).stream()
                 .filter(kamerstuk1 -> DateUtils.isSameDay(kamerstuk1.getPostDate(), oldDate))
                 .filter(kamerstuk1 -> kamerstuk1.getBundleTitle().equals(kamerstuk.getBundleTitle()))
@@ -582,7 +610,6 @@ public class KamerstukkenService {
         kamerstuk.setBundled(false);
         kamerstukRepository.save(kamerstuk);
         doBundleChecking(kamerstuk);
-
     }
 
     public long getNonScheduledCount() {
