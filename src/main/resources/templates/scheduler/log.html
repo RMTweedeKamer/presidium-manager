@@ -18,8 +18,12 @@
 
                 <div class="new-list-item" th:each="item : ${items}">
                     <p th:text="${item.title}" class="title"></p>
-                    <p>|</p>
-                    <p th:text="'' + ${item.text}"></p>
+                    <div class="to-right">
+                        <p>|</p>
+                        <p th:text="'' + ${item.text}"></p>
+                        <div class="actions"></div>
+                    </div>
+
                 </div>
             </section>
         </main>

@@ -17,7 +17,10 @@
                 <p th:if="${items.size() <= 0}" class="middle">Geen geplande stukken...</p>
 
                 <div class="new-list-item" th:each="item : ${items}" th:classappend="${highlightMap.getOrDefault(item.getCallsign(), '')}">
-                    <a th:id="${itemStat.count}" onclick="openPreview(this)"><p th:text="${item.getCallsign()} + ': ' + ${item.title}" class="title"></p></a>
+                    <a th:id="${itemStat.count}" onclick="openPreview(this)">
+                        <p th:if="${item.getCallsign() != null}" th:text="${item.getCallsign()} + ': ' + ${item.title}" class="title"></p>
+                        <p th:if="${item.getCallsign() == null}" th:text="${item.title}" class="title"></p>
+                    </a>
                     <div class="to-right">
                         <p>|</p>
                         <p th:text="'' + ${item.submittedBy}"></p>

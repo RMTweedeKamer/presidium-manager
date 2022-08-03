@@ -91,7 +91,12 @@ public class VoteService {
 
     public void processVoteResultsForUrl(String url) throws NoSuchElementException {
         String[] urlSplit = url.split("/");
-        getVoteResults(List.of(kamerstukRepository.findByUrlContainsOrUrlContains(urlSplit[urlSplit.length-2], urlSplit[urlSplit.length-1]).orElseThrow()));
+        String partLongUrl = urlSplit[urlSplit.length -2];
+        String partShortUrl = urlSplit[urlSplit.length -1];
+        if(partLongUrl.equals("comments"))
+            partLongUrl = partShortUrl;
+
+        getVoteResults(List.of(kamerstukRepository.findByUrlContainsOrUrlContains(partLongUrl, partShortUrl).orElseThrow()));
     }
 
     public void getVoteResults(List<Kamerstuk> concludedVotes) {
@@ -115,6 +120,11 @@ public class VoteService {
             for(CommentNode<?> commentNode : submissionReference.comments()) {
                 String userName = commentNode.getSubject().getAuthor();
                 String userVoteString = commentNode.getSubject().getBody();
+                if(commentNode.getSubject().getCreated().after(kamerstuk.getVoteDate()) || (commentNode.getSubject().getEdited() != null && commentNode.getSubject().getEdited().after(kamerstuk.getVoteDate()))) {
+                    parsingErrors.add(userName + " heeft te laat gestemd.");
+                    continue;
+                }
+
                 //Parse comment to a map of callsign - votetype
                 Map<String, VoteType> userVoteMap = processSingleVote(parsingErrors, tkMembersToCheck, userName, userVoteString);
 
@@ -128,6 +138,7 @@ public class VoteService {
                         Optional<Kamerstuk> optionalKamerstuk = kamerstukRepository.findByCallsignEqualsAndPostedIsTrue(singleUserVote.getKey());
                         if(optionalKamerstuk.isPresent()) {
                             votedOn.put(singleUserVote.getKey(), optionalKamerstuk.get());
+                            votedOn.get(singleUserVote.getKey()).getVoteMap().clear();
                             votedOn.get(singleUserVote.getKey()).getVoteMap().putAll(initialVote);
                             votedOn.get(singleUserVote.getKey()).getVoteMap().replace(userName, singleUserVote.getValue());
                         } else {
@@ -145,7 +156,8 @@ public class VoteService {
             notificationService.addNotification(new Notification("Stemresultaten van: " + new SimpleDateFormat(Constants.DATE_FORMAT).format(kamerstuk.getPostDate()),
                     "Dit ging er mis: " + StringUtils.joinWith("\n\n", parsingErrors)));
 
-            constructVoteResultPost(new ArrayList<>(votedOn.values()));
+            if(votedOn.size() > 0)
+                constructVoteResultPost(new ArrayList<>(votedOn.values()));
         }
     }
 
@@ -162,7 +174,7 @@ public class VoteService {
                 }
             }
         } else {
-            parseErrors.add(username + " heeft gestemd maar staat niet ingesteld als Kamerlid.");
+            parseErrors.add(username + " heeft gestemd maar staat niet ingesteld als Kamerlid, kloppen de hoofdletters precies?.");
         }
         return returnValue;
     }

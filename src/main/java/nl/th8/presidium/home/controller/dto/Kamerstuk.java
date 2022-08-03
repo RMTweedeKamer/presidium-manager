@@ -250,17 +250,6 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
         this.secret = secret;
     }
 
-    public void processCallsigns() {
-        switch(type) {
-            case RESULTATEN:
-            case STEMMING:
-                this.callsign = type.getName();
-                break;
-            default:
-                break;
-        }
-    }
-
     public boolean isPosted() {
         return posted;
     }
@@ -362,11 +351,7 @@ public class Kamerstuk implements Comparable<Kamerstuk> {
         }
 
         if(votesFor[0] > votesAgainst[0]) {
-            resultBuilder.append("\nDeze ").append(type.getName().toLowerCase()).append(" is aangenomen");
-            if(type == KamerstukType.WET)
-                resultBuilder.append(", en gaat door naar de Eerste Kamer. \n");
-            else
-                resultBuilder.append(". \n");
+            resultBuilder.append("\nDeze ").append(type.getName().toLowerCase()).append(" is aangenomen. \n");
         } else {
             resultBuilder.append("\nDeze ").append(type.getName().toLowerCase()).append(" is afgewezen. \n");
         }

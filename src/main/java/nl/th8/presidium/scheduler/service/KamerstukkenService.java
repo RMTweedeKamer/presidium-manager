@@ -251,7 +251,6 @@ public class KamerstukkenService {
 
         //Process kamerstuk data
         kamerstuk.processToCallString();
-        kamerstuk.processCallsigns();
 
         //Save kamerstuk to MongoDB
         kamerstukRepository.save(kamerstuk);
