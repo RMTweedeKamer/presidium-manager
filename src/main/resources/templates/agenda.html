@@ -25,12 +25,12 @@
         </thead>
         <tbody>
           <tr th:each="kamerstuk : ${queue}">
-            <td th:text="${kamerstuk.getPostDateAsString()}">Postdatum</td>
+            <td class="sorter-dutchdateparser" th:text="${kamerstuk.getPostDateAsString()}">Postdatum</td>
             <td th:text="${kamerstuk.getCallsign()}">Kenmerk</td>
             <td th:text="${kamerstuk.getType().getName()}">Soort</td>
             <td th:text="${kamerstuk.getSubmittedBy()}">Indiener</td>
             <td th:text="${kamerstuk.getTitle()}">Titel</td>
-            <td th:text="${kamerstuk.getVoteDateAsString()}">Stemmingsdatum</td>
+            <td class="sorter-dutchdateparser" th:text="${kamerstuk.getVoteDateAsString()}">Stemmingsdatum</td>
           </tr>
         </tbody>
       </table>
@@ -59,6 +59,19 @@
 </html>
 
 <script>
+  $.tablesorter.addParser({
+  // use a unique id
+  id: 'dutchdateparser',
+  is: function(s, table, cell, $cell) {
+    return false;
+  },
+  format: function(s, table, cell, cellIndex) {
+    return new Date(s).getTime();
+  },
+  // flag for filter widget (true = ALWAYS search parsed values; false = search cell text)
+  parsed: false,
+  type: 'numeric'
+});
   $("#agenda").tablesorter()
   $("#vote-agenda").tablesorter()
 </script>
