@@ -40,7 +40,7 @@
 
                     <div th:id="'plan-' + ${itemStat.count}" class="modal">
                         <h2>Inplannen</h2>
-                        <p>Plan hier de resultaten in. Kijk goed of de resultaten kloppen.</p>
+                        <p>Plan hier de resultaten in. Kijk goed of de resultaten kloppen. In de audit log kun je eventuele fouten zien. Als deze gefixt zijn kun je de stemming opnieuw laten verwerken.</p>
                         <form th:object="${item}" th:action="@{/scheduler/plan}" th:method="post">
                             <input type="hidden" th:name="id" th:value="*{id}">
                             <input type="hidden" th:name="type" th:value="*{type}">
@@ -53,6 +53,10 @@
                             <label>
                                 <p>Inhoud:</p>
                                 <textarea class="submitpanel" th:name="content" th:text="*{content}" required></textarea>
+                            </label>
+                            <label>
+                                <p>Resultaten voor het spreadsheet:</p>
+                                <textarea class="submitpanel" th:name="advice" th:text="*{advice}" readonly></textarea>
                             </label>
                             <label>
                                 <p>Indiener:</p>

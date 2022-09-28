@@ -631,6 +631,25 @@ td {
     margin: 8px 5%;
 }
 
+.new-log-item {
+    background: white;
+    box-shadow: 3px 3px lightgray;
+    width: 75%;
+    min-width: 1000px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: right;
+
+    border: 1px solid lightgray;
+    border-left: 8px solid rgba(52, 152, 219, 0.5);
+    border-radius: 6px;
+
+    padding: 10px 0 10px 0;
+    margin: 8px 5%;
+}
+
 .new-list-item.urgent {
     border-left: 8px solid #c0392b;
 }

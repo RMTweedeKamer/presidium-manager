@@ -16,14 +16,9 @@
 
                 <p th:if="${items.size() <= 0}" class="middle">Geen log items...</p>
 
-                <div class="new-list-item" th:each="item : ${items}">
+                <div class="new-log-item" th:each="item : ${items}">
                     <p th:text="${item.title}" class="title"></p>
-                    <div class="to-right">
-                        <p>|</p>
-                        <p th:text="'' + ${item.text}"></p>
-                        <div class="actions"></div>
-                    </div>
-
+                    <p th:utext="${item.text}"></p>
                 </div>
             </section>
         </main>

@@ -15,12 +15,12 @@
       <table id="agenda" class="lobby">
         <thead>
           <tr class="headerrow">
-            <th>Postdatum</th>
+            <th class="sorter-dutchdateparser">Postdatum</th>
             <th>Kenmerk</th>
             <th>Soort</th>
             <th>Indiener</th>
             <th>Titel</th>
-            <th>Stemmingsdatum</th>
+            <th class="sorter-dutchdateparser">Stemmingsdatum</th>
           </tr>
         </thead>
         <tbody>
@@ -59,6 +59,21 @@
 </html>
 
 <script>
+  $.tablesorter.addParser({
+    // use a unique id
+    id: 'dutchdateparser',
+    is: function(s, table, cell, $cell) {
+      return false;
+    },
+    format: function(s, table, cell, cellIndex) {
+      console.log(s)
+      console.log(new Date(s).toString())
+      return new Date(s).getTime();
+    },
+    // flag for filter widget (true = ALWAYS search parsed values; false = search cell text)
+    parsed: false,
+    type: 'numeric'
+  });
   $("#agenda").tablesorter()
   $("#vote-agenda").tablesorter()
 </script>

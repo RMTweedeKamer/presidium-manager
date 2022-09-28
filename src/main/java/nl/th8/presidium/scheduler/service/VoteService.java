@@ -20,6 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -83,7 +84,7 @@ public class VoteService {
         }
     }
 
-    @Scheduled(cron = "* 15 * * * *")
+    @Scheduled(cron = "0 0 15 * * *")
     public void checkAndProcessVoteResults() {
         List<Kamerstuk> concludedVotes = kamerstukRepository.findAllByTypeEqualsAndVoteDateBeforeAndPostedIsTrueAndDeniedIsFalseAndVoteProcessedIsFalse(KamerstukType.STEMMING, new Date());
         getVoteResults(concludedVotes);
@@ -100,9 +101,10 @@ public class VoteService {
     }
 
     public void getVoteResults(List<Kamerstuk> concludedVotes) {
-        logger.info("Checking for new voteResults to queue at {}", new Date());
+        logger.info("Checking for new voteResults to queue at {}", LocalDateTime.now());
         List<String> parsingErrors = new ArrayList<>();
         Set<String> tkMembersToCheck = new HashSet<>(settingsProvider.getTkMembers());
+        Set<String> tkMembersLowerCased = tkMembersToCheck.stream().map(u -> u.toLowerCase(Locale.ROOT)).collect(Collectors.toSet());
         Map<String, VoteType> initialVote = new HashMap<>();
         tkMembersToCheck.stream().filter(StringUtils::isNotBlank).forEach(member -> initialVote.put(member, VoteType.NG));
 
@@ -123,6 +125,18 @@ public class VoteService {
                 if(commentNode.getSubject().getCreated().after(kamerstuk.getVoteDate()) || (commentNode.getSubject().getEdited() != null && commentNode.getSubject().getEdited().after(kamerstuk.getVoteDate()))) {
                     parsingErrors.add(userName + " heeft te laat gestemd.");
                     continue;
+                }
+
+                //Normalise names
+                if(!tkMembersToCheck.contains(userName) && tkMembersLowerCased.contains(userName.toLowerCase(Locale.ROOT))) {
+                    Optional<String> wrongName = initialVote.keySet().stream().filter(key -> key.toLowerCase(Locale.ROOT).equals(userName.toLowerCase(Locale.ROOT))).findAny();
+                    if(wrongName.isPresent()) {
+                        initialVote.remove(wrongName.get());
+                        initialVote.put(userName, VoteType.NG);
+                        List<String> wrongTkMemberList = settingsProvider.getTkMembers();
+                        wrongTkMemberList.set(wrongTkMemberList.indexOf(wrongName.get()), userName);
+                        settingsProvider.setTkMembers(wrongTkMemberList);
+                    }
                 }
 
                 //Parse comment to a map of callsign - votetype
@@ -149,12 +163,18 @@ public class VoteService {
                     }
                 }
             }
+
+            for(String tkMember : settingsProvider.getTkMembers()) {
+                if(!votedOn.values().stream().filter(kamerstuk1 -> kamerstuk1.getVoteMap().get(tkMember) == VoteType.NG).collect(Collectors.toSet()).isEmpty())
+                    parsingErrors.add(tkMember + " heeft op 1 of meerdere voorstellen niet gestemd.");
+            }
+
             votedOn.values().forEach(kamerstuk1 -> kamerstuk1.setVoteProcessed(true));
             kamerstukRepository.saveAll(votedOn.values());
             kamerstuk.setVoteProcessed(true);
             kamerstukRepository.save(kamerstuk);
             notificationService.addNotification(new Notification("Stemresultaten van: " + new SimpleDateFormat(Constants.DATE_FORMAT).format(kamerstuk.getPostDate()),
-                    "Dit ging er mis: " + StringUtils.joinWith("\n\n", parsingErrors)));
+                    "Dit ging er mis: </br></br> - " + String.join("</br></br> - ", parsingErrors)));
 
             if(votedOn.size() > 0)
                 constructVoteResultPost(new ArrayList<>(votedOn.values()));
@@ -163,18 +183,25 @@ public class VoteService {
 
     private Map<String, VoteType> processSingleVote(List<String> parseErrors, Set<String> allowedUsernames, String username, String voteString) {
         Map<String, VoteType> returnValue = new HashMap<>();
-        if(allowedUsernames.contains(username) && StringUtils.isNotEmpty(voteString)) {
+        Set<String> allowedUsernamesLowercased = allowedUsernames.stream().map(u -> u.toLowerCase(Locale.ROOT)).collect(Collectors.toSet());
+
+        if(allowedUsernamesLowercased.contains(username.toLowerCase(Locale.ROOT)) && StringUtils.isNotEmpty(voteString)) {
             List<String> votesSplit = Arrays.stream(voteString.split("[:\\s+]")).filter(StringUtils::isNotBlank).collect(Collectors.toList());
 
             for(int i = 0; i < votesSplit.size()-1; i++) {
                 String part = votesSplit.get(i);
                 if(part.matches("[WM][0-9]{4}|[W][0-9]{4}-[IV]{1,3}")) {
                     String nextPart = votesSplit.get(i+1);
-                    returnValue.put(part, VoteType.fromString(nextPart));
+                    VoteType voteType = VoteType.fromString(nextPart);
+                    returnValue.put(part, voteType);
+
+                    if(voteType == VoteType.NG) {
+                        parseErrors.add(username + "heeft '" + nextPart + "' ingevuld, hier kon geen duidelijke stem van worden afgeleid.");
+                    }
                 }
             }
         } else {
-            parseErrors.add(username + " heeft gestemd maar staat niet ingesteld als Kamerlid, kloppen de hoofdletters precies?.");
+            parseErrors.add(username + " heeft gestemd maar staat niet ingesteld als Kamerlid, klopt de naam precies?");
         }
         return returnValue;
     }

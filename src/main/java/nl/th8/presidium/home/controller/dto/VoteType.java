@@ -19,11 +19,11 @@ public enum VoteType {
     }
 
     public static VoteType fromString(String nextPart) {
-        if(StringUtils.containsIgnoreCase(nextPart, "voor"))
+        if(StringUtils.containsIgnoreCase(nextPart, "voor") && !StringUtils.containsIgnoreCase(nextPart, "tegen") && !StringUtils.containsIgnoreCase(nextPart, "onthouden"))
             return VOOR;
-        else if (StringUtils.containsIgnoreCase(nextPart, "tegen"))
+        else if (StringUtils.containsIgnoreCase(nextPart, "tegen") && !StringUtils.containsIgnoreCase(nextPart, "voor") && !StringUtils.containsIgnoreCase(nextPart, "onthouden"))
             return TEGEN;
-        else if (StringUtils.containsIgnoreCase(nextPart, "onthouden"))
+        else if (StringUtils.containsIgnoreCase(nextPart, "onthouden") && !StringUtils.containsIgnoreCase(nextPart, "voor") && !StringUtils.containsIgnoreCase(nextPart, "tegen"))
             return SO;
         else
             return NG;

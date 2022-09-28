@@ -53,4 +53,10 @@ public class SettingsProvider {
         settings.setTkUsersFromString(tkMembersString);
         settingsRepository.save(settings);
     }
+
+    public void setTkMembers(List<String> tkMembersList) {
+        Settings settings = getAllSettings();
+        settings.setTkUsers(tkMembersList);
+        settingsRepository.save(settings);
+    }
 }
