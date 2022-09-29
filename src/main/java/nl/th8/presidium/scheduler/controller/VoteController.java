@@ -37,6 +37,7 @@ public class VoteController {
     @GetMapping("/voteSettings")
     public String showSettings(Model model) {
         model.addAttribute("tkSetting", settingsProvider.getTkMembers());
+        model.addAttribute("tkSettingString", settingsProvider.getTkMembersAsString());
         model.addAttribute("results", voteService.getToPostResults());
 
         return "scheduler/voteSettings";

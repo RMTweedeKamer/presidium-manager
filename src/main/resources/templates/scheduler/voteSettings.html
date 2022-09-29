@@ -100,7 +100,7 @@
                     <form th:action="@{/scheduler/voteSettings}" th:method="post">
                         <label>
                             <p>Nieuwe kamerleden: </p>
-                            <textarea class="submitpanel big" th:name="newTkMemberString" th:value="*{tkSetting}" placeholder="Voer hier de kamerleden in."></textarea>
+                            <textarea class="submitpanel big" th:name="newTkMemberString" th:text="${tkSettingString}" placeholder="Voer hier de kamerleden in."></textarea>
                         </label>
 
                         <input type="submit" th:value="Opslaan">

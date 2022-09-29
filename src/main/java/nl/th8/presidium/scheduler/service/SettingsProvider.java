@@ -59,4 +59,16 @@ public class SettingsProvider {
         settings.setTkUsers(tkMembersList);
         settingsRepository.save(settings);
     }
+
+    public String getTkMembersAsString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        getTkMembers().forEach(member -> {
+            if(member.equals("NVT"))
+                stringBuilder.append(member).append(System.lineSeparator());
+            else
+                stringBuilder.append("/u/").append(member).append(System.lineSeparator());
+        });
+
+        return stringBuilder.toString();
+    }
 }
